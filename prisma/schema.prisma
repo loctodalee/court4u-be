@@ -8,6 +8,16 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
+model User {
+  id            String    @id
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  Account       Account[]
+  Session       Session[]
+}
+
 model Account {
   id                 String  @id
   user_id            String
@@ -34,16 +44,6 @@ model Session {
   user_id       String
   expires       DateTime
   User          User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-}
-
-model User {
-  id            String    @id
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  Account       Account[]
-  Session       Session[]
 }
 
 model VerificationToken {
