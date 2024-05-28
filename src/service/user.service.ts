@@ -1,9 +1,6 @@
 import { User } from '@prisma/client';
 import { UserRepository } from '../repository/user.repository';
-
-export interface IUserService {
-  getUserById(id: string): Promise<User | undefined>;
-}
+import { IUserService } from './iUser.service';
 
 export class UserService implements IUserService {
   public async getUserById(id: string): Promise<User | undefined> {
