@@ -1,13 +1,30 @@
 import { PrismaClient } from "@prisma/client";
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
+import { IErrorResponse } from "./handleError/iError.response";
+
+const { ErrorResponse } = require("./handleError/error.response");
 
 const app = express();
 
 const prisma = new PrismaClient();
-
-// app.get("/", (req: Request, res: Response) => {
-//   res.send("Hello, TypeScript Express!");
-// });
-
+// init route
 app.use("/", require("./route"));
+
+//handler Error
+app.use((req: Request, res: Response, next: NextFunction) => {
+  const error = new ErrorResponse("Not found", 404);
+  next(error);
+});
+
+app.use(
+  (error: IErrorResponse, req: Request, res: Response, next: NextFunction) => {
+    const statusCode = error.status || 500;
+    return res.status(statusCode).json({
+      status: "error",
+      code: statusCode,
+      stack: error.stack,
+      message: error.message || "Internal Server Error",
+    });
+  }
+);
 module.exports = app;
