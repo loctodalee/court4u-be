@@ -1,6 +1,6 @@
-import { IErrorResponse } from "./iError.response";
+import { IErrorResponse } from './iError.response';
 
-const { StatusCodes, ReasonPhrases } = require("../util/httpStatusCode");
+const { StatusCodes, ReasonPhrases } = require('../util/httpStatusCode');
 
 class ErrorResponse extends Error implements IErrorResponse {
   status: number;

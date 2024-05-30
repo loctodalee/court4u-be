@@ -1,6 +1,6 @@
-import { Response } from "express";
+import { Response } from 'express';
 
-const { StatusCodes, ReasonPhrases } = require("../util/httpStatusCode");
+const { StatusCodes, ReasonPhrases } = require('../util/httpStatusCode');
 
 class SuccessResponse {
   message: string;
