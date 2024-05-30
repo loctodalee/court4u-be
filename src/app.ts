@@ -3,10 +3,19 @@ import express, { NextFunction, Request, Response } from "express";
 import { IErrorResponse } from "./handleError/iError.response";
 
 const { ErrorResponse } = require("./handleError/error.response");
-
+const morgan = require("morgan");
 const app = express();
 
+app.use(express.json());
+app.use(
+  express.urlencoded({
+    extended: true,
+  })
+);
+
 const prisma = new PrismaClient();
+//init middleware
+app.use(morgan("dev"));
 // init route
 app.use("/", require("./route"));
 
