@@ -1,5 +1,6 @@
-import { User } from '@prisma/client';
+import { users } from "@prisma/client";
 
 export interface IUserRepository {
-  getUserById(id: string): Promise<User | null>;
+  getUserById(id: string): Promise<users | null>;
+  getUserByEmail({ email }: { email: string }): Promise<users | null>;
 }

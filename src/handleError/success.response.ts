@@ -29,7 +29,4 @@ class SuccessResponse {
     return res.status(this.statusCode).json(this);
   }
 }
-
-module.exports = {
-  SuccessResponse,
-};
+export { SuccessResponse };

@@ -10,11 +10,20 @@ export class UserController {
     }
     return this.Instance;
   }
+
   async getUserById(req: Request, res: Response) {
     var userService: IUserService = new UserService();
     new SuccessResponse({
       message: 'Get Success',
       metaData: await userService.getUserById('awdad'),
+    }).send(res);
+  }
+
+  async sendMailVerify(req: Request, res: Response) {
+    var userService: IUserService = new UserService();
+    new SuccessResponse({
+      message: 'Send mail verify',
+      metaData: await userService.newUser({ ...req.body }),
     }).send(res);
   }
 }

@@ -28,8 +28,28 @@ class BadRequestError extends ErrorResponse {
   }
 }
 
-module.exports = {
+class NotImplementError extends ErrorResponse {
+  constructor(
+    message: string = ReasonPhrases.NOT_IMPLEMENTED,
+    status: number = StatusCodes.NOT_IMPLEMENTED
+  ) {
+    super(message, status);
+  }
+}
+
+class NotFoundError extends ErrorResponse {
+  constructor(
+    message: string = ReasonPhrases.NOT_FOUND,
+    status: number = StatusCodes.NOT_FOUND
+  ) {
+    super(message, status);
+  }
+}
+
+export {
   ErrorResponse,
   ConflictRequestError,
   BadRequestError,
+  NotImplementError,
+  NotFoundError,
 };

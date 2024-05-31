@@ -64,182 +64,209 @@ model dinosaur {
   discovered_year Int?
 }
 
+model users {
+  id                 String               @id
+  username           String               @db.VarChar
+  password           String               @db.VarChar
+  email              String               @db.VarChar @unique
+  phone              String               @db.VarChar
+  sex                Sex
+  avatarUrl          String?              @db.VarChar
+  dateOfBirth        DateTime
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  booking            booking[]
+  cancellation       cancellation[]
+  club               club[]
+  memberSubscription memberSubscription[]
+  review             review[]
+  keyToken keyTokens? 
+}
+model keyTokens {
+  id   String @id @default(uuid())
+  userId  String @unique
+  publicKey String
+  privateKey String
+  refreshTokenUsed String[]
+  refreshToken String 
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  user         users    @relation(fields: [userId], references: [id])
+}
+
+model otp {
+  id String @default(uuid()) @id
+  otpToken BigInt
+  otpEmail String   @db.VarChar @unique
+  otpStatus OtpStatus @default(pending)
+  createdAt  DateTime   @default(now())
+ 
+}
+model role {
+  id   String @id
+  name Role
+}
+
+model template {
+  id String @default(uuid()) @id
+  name String @db.VarChar()
+  status String @default("active")
+  tem_html String
+}
+
+model userRole {
+  id     Int    @id @default(autoincrement())
+  userId String
+}
+
+model review {
+  id           String @id
+  reviewerId   String
+  clubId       String
+  content      String @db.VarChar
+  parentId     String
+  commentLeft  String @db.VarChar
+  commentRight String @db.VarChar
+  club         club   @relation(fields: [clubId], references: [id])
+  user         users   @relation(fields: [reviewerId], references: [id])
+}
+
+model cancellation {
+  id             String  @id
+  canceledSlotId String?
+  cancelerId     String
+  user           users    @relation(fields: [cancelerId], references: [id])
+}
+
+model bookedSlot {
+  id        String   @id
+  bookingId String
+  date      DateTime
+  slotId    String
+  checkedIn String
+  slot      slot     @relation(fields: [slotId], references: [id])
+}
+
+model booking {
+  id     String   @id
+  userId String
+  billId String
+  date   DateTime
+  status Boolean
+  user   users     @relation(fields: [userId], references: [id])
+}
+
+model bill {
+  id     String   @id
+  method String
+  total  Float
+  date   DateTime
+  type   String   @db.VarChar
+}
+
+model club {
+  id                 String               @id
+  courtOwnerId       String
+  name               String               @db.VarChar
+  address            String               @db.VarChar
+  district           String               @db.VarChar
+  cityOfProvince     String               @db.VarChar
+  logoUrl            String?              @db.VarChar
+  description        String?              @db.VarChar
+  user               users                 @relation(fields: [courtOwnerId], references: [id])
+  clubImage          clubImage[]
+  court              court[]
+  pricing            pricing[]
+  review             review[]
+  slot               slot[]
+  subscriptionOption subscriptionOption[]
+}
+
+model pricing {
+  id       String @id
+  clubId   String
+  type     String @db.VarChar
+  duration String @db.VarChar
+  price    Float
+  club     club   @relation(fields: [clubId], references: [id])
+}
+
+model clubImage {
+  id     String @id
+  clubId String
+  name   String @db.VarChar
+  url    String @db.VarChar
+  club   club   @relation(fields: [clubId], references: [id])
+}
+
+model court {
+  id         String   @id
+  clubId     String
+  startTime  DateTime
+  endTime    DateTime
+  dateOfWeek DateTime
+  club       club     @relation(fields: [clubId], references: [id])
+}
+
+model subscriptionOption {
+  id                 String                   @id
+  clubId             String
+  name               String                   @db.VarChar
+  price              Float
+  startDate          DateTime
+  endDate            DateTime
+  status             SubscriptionOptionStatus
+  memberSubscription memberSubscription[]
+  subOptionSlot      subOptionSlot[]
+  club               club                     @relation(fields: [clubId], references: [id])
+}
+
+model subOptionSlot {
+  id                 String             @id
+  subOpId            String
+  slotId             String
+  slot               slot               @relation(fields: [slotId], references: [id])
+  subscriptionOption subscriptionOption @relation(fields: [subOpId], references: [id])
+}
+
+model slot {
+  id            String          @id
+  clubId        String
+  startTime     DateTime
+  endTime       DateTime
+  dateOfWeek    DateTime
+  bookedSlot    bookedSlot[]
+  club          club            @relation(fields: [clubId], references: [id])
+  subOptionSlot subOptionSlot[]
+}
+
+model memberSubscription {
+  id                 String             @id
+  subscriptionId     String
+  memberId           String
+  billId             String
+  user               users               @relation(fields: [memberId], references: [id])
+  subscriptionOption subscriptionOption @relation(fields: [subscriptionId], references: [id])
+}
+
 enum Sex {
   female
   male
   other
 }
 
-/////////////////////////////////////////////////////////////////////////////
-
-model user {
-  id String @id
-  username String @db.VarChar()
-  password String @db.VarChar()
-  email String @db.VarChar()
-  phone String @db.VarChar()
-  sex Sex
-  avatarUrl String? @db.VarChar()
-  dateOfBirth DateTime
-  club club[]
-  review review[]
-  memberSubscription memberSubscription[]
-  cancellation cancellation[]
-  booking booking[]
-  //thieu userrole chua add
-}
-
 enum Role {
- admin
- staff
- member
-}
-
-model role {
-  id String @id
-  name Role
-}
-
-model userRole {
-  id Int @id @default(autoincrement())
-  userId String 
-  
-}
-
-model review {
- id String @id
- reviewerId String
- clubId String
- content String @db.VarChar()
- parentId String 
- commentLeft String @db.VarChar()
- commentRight String @db.VarChar()
- user user @relation(fields: [reviewerId], references: [id])
- club club @relation(fields: [clubId], references: [id])
-}
-
-model cancellation {
-  id String @id
-  canceledSlotId String?
-  cancelerId String 
-  user user @relation(fields: [cancelerId], references: [id])
-  //bookedSlot bookedSlot? @relation(fields: [canceledSlotId], references: [id])
-}
-
-model bookedSlot {
-  id String @id
-  bookingId String 
-  date DateTime
-  slotId String
-  checkedIn String
-  slot slot @relation(fields: [slotId], references: [id])
-  //cancellation cancellation? @relation(fields: [id], references: [canceledSlotId])
-}
-
-model booking {
-  id String @id
-  userId String
-  billId String
-  date DateTime
-  status Boolean
-  user user @relation(fields: [userId], references: [id])
-  //thieu bookedSlot vs bill can sua
-}
-
-model bill {
-  id String @id
-  method String
-  total Float
-  date DateTime
-  type String @db.VarChar()
-  // thieu fk of memberSubscription
-}
-
-model club {
-  id String @id
-  courtOwnerId String
-  name String @db.VarChar()
-  address String @db.VarChar()
-  district String @db.VarChar()
-  cityOfProvince String @db.VarChar()
-  logoUrl String? @db.VarChar()
-  description String? @db.VarChar()
-  review review[]
-  pricing pricing[]
-  clubImage clubImage[]
-  court court[]
-  subscriptionOption subscriptionOption[]
-  slot slot[]
-  user user @relation(fields: [courtOwnerId], references: [id])
-  //thieu staffrole vs clubrole vs permission
-}
-
-model pricing {
-  id String @id
-  clubId String
-  type String @db.VarChar()
-  duration String @db.VarChar()
-  price Float
-  club club @relation(fields: [clubId], references: [id])
-}
-
-model clubImage {
-  id String @id
-  clubId String
-  name String @db.VarChar()
-  url String @db.VarChar()
-  club club @relation(fields: [clubId], references: [id])
-}
-
-model court {
-  id String @id
-  clubId String 
-  startTime DateTime
-  endTime DateTime
-  dateOfWeek DateTime
-  club club @relation(fields: [clubId], references: [id])
+  admin
+  staff
+  member
 }
 
 enum SubscriptionOptionStatus {
   block
 }
-model subscriptionOption {
-  id String @id
-  clubId String
-  name String @db.VarChar()
-  price Float
-  startDate DateTime
-  endDate DateTime
-  status SubscriptionOptionStatus
-  memberSubscription memberSubscription[]
-  subOptionSlot subOptionSlot[]
-  club club @relation(fields: [clubId], references: [id])
-}
 
-model subOptionSlot{
-  id String @id
-  subOpId String
-  slotId String
-  subscriptionOption subscriptionOption @relation(fields: [subOpId], references: [id])
-  slot slot @relation(fields: [slotId], references: [id])
-}
-
-model slot {
-  id String @id
-  clubId String
-  startTime DateTime
-  endTime DateTime
-  dateOfWeek DateTime
-  subOptionSlot subOptionSlot[]
-  bookedSlot bookedSlot[]
-  club club @relation(fields: [clubId], references: [id])
-}
-
-model memberSubscription {
-  id String @id
-  subscriptionId String 
-  memberId String
-  billId String
-  user user @relation(fields: [memberId], references: [id])
-  subscriptionOption subscriptionOption @relation(fields: [subscriptionId], references: [id])
+enum OtpStatus {
+  pending
+  active
+  block
 }

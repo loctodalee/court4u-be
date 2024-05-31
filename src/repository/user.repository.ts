@@ -1,6 +1,6 @@
-import prisma from '../lib/prisma';
-import { User } from '@prisma/client';
-import { IUserRepository } from './iUser.repository';
+import { users } from "@prisma/client";
+import prisma from "../lib/prisma";
+import { IUserRepository } from "./iUser.repository";
 
 export class UserRepository implements IUserRepository {
   private static Instance: UserRepository;
@@ -11,7 +11,20 @@ export class UserRepository implements IUserRepository {
     return UserRepository.Instance;
   }
 
-  public async getUserById(id: string): Promise<User | null> {
-    return prisma.user.findFirst();
+  //get user by id
+  public async getUserById(id: string): Promise<users | null> {
+    return await prisma.users.findFirst();
+  }
+  // get user by email
+  public async getUserByEmail({
+    email,
+  }: {
+    email: string;
+  }): Promise<users | null> {
+    return await prisma.users.findFirst({
+      where: {
+        email,
+      },
+    });
   }
 }
