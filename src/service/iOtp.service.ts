@@ -1,5 +1,5 @@
-import { otp } from "@prisma/client";
+// import { otp } from "@prisma/client";
 
-export interface IOtpService {
-  newOtp({ email }: { email: string }): Promise<otp>;
-}
+// export interface IOtpService {
+//   newOtp({ email }: { email: string }): Promise<otp>;
+// }

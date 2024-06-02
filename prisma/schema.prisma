@@ -65,14 +65,15 @@ model dinosaur {
 }
 
 model users {
-  id                 String               @id
+  id                 String               @id @default(uuid())
   username           String               @db.VarChar
   password           String               @db.VarChar
   email              String               @db.VarChar @unique
   phone              String               @db.VarChar
-  sex                Sex
+  sex                Sex                  @default(other)
   avatarUrl          String?              @db.VarChar
-  dateOfBirth        DateTime
+  dateOfBirth        DateTime?
+  status UserStatus  @default(disable)
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
   booking            booking[]
@@ -81,6 +82,7 @@ model users {
   memberSubscription memberSubscription[]
   review             review[]
   keyToken keyTokens? 
+  otp String? @unique
 }
 model keyTokens {
   id   String @id @default(uuid())
@@ -94,14 +96,14 @@ model keyTokens {
   user         users    @relation(fields: [userId], references: [id])
 }
 
-model otp {
-  id String @default(uuid()) @id
-  otpToken BigInt
-  otpEmail String   @db.VarChar @unique
-  otpStatus OtpStatus @default(pending)
-  createdAt  DateTime   @default(now())
+// model otp {
+//   id String @default(uuid()) @id
+//   otpToken BigInt
+//   otpEmail String   @db.VarChar @unique
+//   otpStatus OtpStatus @default(pending)
+//   createdAt  DateTime   @default(now())
  
-}
+// }
 model role {
   id   String @id
   name Role
@@ -268,5 +270,11 @@ enum SubscriptionOptionStatus {
 enum OtpStatus {
   pending
   active
+  block
+}
+
+enum UserStatus {
+  active
+  disable
   block
 }

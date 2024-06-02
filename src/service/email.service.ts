@@ -2,16 +2,21 @@ import { BadRequestError, NotFoundError } from '../handleError/error.response';
 import { transport } from '../lib/init.nodemailer';
 import { replacePlaceholder } from '../util/replaceHtml';
 import { IEmailService } from './iEmail.service';
-import { IOtpService } from './iOtp.service';
+// import { IOtpService } from './iOtp.service';
 import { ITemplateService } from './iTemplate.service';
-import { OtpSerivce } from './otp.service';
+// import { OtpSerivce } from './otp.service';
 import { TemplateService } from './template.service';
+import crypto from 'crypto';
 export class EmailService implements IEmailService {
-  private _otpService: IOtpService;
+  // private _otpService: IOtpService;
   private _templateService: ITemplateService;
   constructor() {
-    this._otpService = new OtpSerivce();
+    // this._otpService = new OtpSerivce();
     this._templateService = new TemplateService();
+  }
+  private generateRandomToken(): number {
+    const token = crypto.randomInt(0, Math.pow(2, 32));
+    return token;
   }
   public async sendEmailLinkVerify({
     html,
@@ -47,10 +52,11 @@ export class EmailService implements IEmailService {
   public async sendEmailToken({ email }: { email: string }): Promise<any> {
     try {
       //1. get Token
-      const token = await this._otpService.newOtp({
-        email,
-      });
+      // const token = await this._otpService.newOtp({
+      //   email,
+      // });
 
+      const token = this.generateRandomToken();
       //2. get template
       const template = await this._templateService.getTemplate({
         name: 'HTML EMAIL TOKEN',
@@ -61,7 +67,7 @@ export class EmailService implements IEmailService {
 
       //3. replace content
       const params = {
-        link_verify: `http://localhost:3055/v1/api/user/welcome_back?token=${token.otpToken}`,
+        link_verify: `http://localhost:3000/v1/api/auth/welcome_back?token=${token}`,
       };
       const content = replacePlaceholder(template.tem_html, params);
       console.log('send email link verify');
@@ -73,7 +79,7 @@ export class EmailService implements IEmailService {
       }).catch((error) => {
         throw new Error(error);
       });
-      return 1;
+      return token;
     } catch (error: any) {
       throw new Error(error);
     }
