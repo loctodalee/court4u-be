@@ -4,7 +4,7 @@ import { IUserService } from './iUser.service';
 import {
   NotFoundError,
   NotImplementError,
-} from '../handleError/error.response';
+} from '../handleResponse/error.response';
 import { IEmailService } from './iEmail.service';
 import { EmailService } from './email.service';
 import prisma from '../lib/prisma';

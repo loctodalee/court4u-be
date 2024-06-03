@@ -1,4 +1,7 @@
-import { BadRequestError, NotFoundError } from '../handleError/error.response';
+import {
+  BadRequestError,
+  NotFoundError,
+} from '../handleResponse/error.response';
 import { transport } from '../lib/init.nodemailer';
 import { replacePlaceholder } from '../util/replaceHtml';
 import { IEmailService } from './iEmail.service';

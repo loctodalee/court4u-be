@@ -1,7 +1,7 @@
 import { IUserService } from '../service/iUser.service';
 import { UserService } from './../service/user.service';
 import { Request, Response } from 'express';
-const { SuccessResponse } = require('../handleError/success.response');
+const { SuccessResponse } = require('../handleResponse/success.response');
 export class UserController {
   private static Instance: UserController;
   public static getInstance(): UserController {

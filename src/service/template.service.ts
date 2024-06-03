@@ -1,8 +1,8 @@
-import { template } from "@prisma/client";
-import { ITemplateRepository } from "../repository/iTemplate.repository";
-import { TemplateRepostory } from "../repository/template.repository";
-import { NotFoundError } from "../handleError/error.response";
-import { ITemplateService } from "./iTemplate.service";
+import { template } from '@prisma/client';
+import { ITemplateRepository } from '../repository/iTemplate.repository';
+import { TemplateRepostory } from '../repository/template.repository';
+import { NotFoundError } from '../handleResponse/error.response';
+import { ITemplateService } from './iTemplate.service';
 export class TemplateService implements ITemplateService {
   private readonly _templateRepository: ITemplateRepository;
   constructor() {

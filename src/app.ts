@@ -1,8 +1,10 @@
 import { PrismaClient } from '@prisma/client';
 import express, { NextFunction, Request, Response } from 'express';
-import { IErrorResponse } from './handleError/iError.response';
-
-const { ErrorResponse } = require('./handleError/error.response');
+import { IErrorResponse } from './handleResponse/iError.response';
+import session from 'express-session';
+import passport from './lib/init.googleOAuth';
+import facebookPassport from './lib/init.facebookOAuth';
+const { ErrorResponse } = require('./handleResponse/error.response');
 const morgan = require('morgan');
 const app = express();
 
@@ -16,6 +18,21 @@ app.use(
 const prisma = new PrismaClient();
 //init middleware
 app.use(morgan('dev'));
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || 'default_secret_key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }, // 30 days
+  })
+);
+//login with google
+app.use(passport.initialize());
+app.use(passport.session());
+
+//login with facebook
+app.use(facebookPassport.initialize());
+app.use(facebookPassport.session());
 // init route
 app.use('/', require('./route'));
 
@@ -36,4 +53,5 @@ app.use(
     });
   }
 );
+
 module.exports = app;

@@ -3,7 +3,7 @@ import {
   BadRequestError,
   NotFoundError,
   NotImplementError,
-} from '../handleError/error.response';
+} from '../handleResponse/error.response';
 import { IUserRepository } from '../repository/iUser.repository';
 import { UserRepository } from '../repository/user.repository';
 import { IAuthService } from './iAuth.service';
@@ -15,7 +15,8 @@ import { filterData } from '../util/filterData';
 import { IEmailService } from './iEmail.service';
 import { EmailService } from './email.service';
 import prisma from '../lib/prisma';
-
+import passport from '../lib/init.googleOAuth';
+import { users } from '@prisma/client';
 export class AuthService implements IAuthService {
   private readonly _userRepository: IUserRepository;
   private readonly _keyTokenService: IKeyTokenService;
@@ -153,6 +154,34 @@ export class AuthService implements IAuthService {
       user: filterData({
         fields: ['id', 'username', 'phone', 'avatarUrl', 'email'],
         object: foundUser,
+      }),
+      tokens,
+    };
+  }
+
+  //--------login with google
+  public async LoginWithThirdParty(user: any): Promise<any> {
+    const keys = this.createKeys();
+    const tokens = await createTokenPair({
+      payload: {
+        userId: user.id,
+        email: user.email,
+      },
+      publicKey: keys.publicKey,
+      privateKey: keys.privateKey,
+    });
+
+    await this._keyTokenService.createOrUpdateKeyToken({
+      userId: user.id,
+      privateKey: keys.privateKey,
+      publicKey: keys.publicKey,
+      refreshToken: tokens.refreshToken,
+    });
+
+    return {
+      user: filterData({
+        fields: ['id', 'username', 'phone', 'avatarUrl', 'email'],
+        object: user,
       }),
       tokens,
     };
