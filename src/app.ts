@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import express, { NextFunction, Request, Response } from 'express';
 import { IErrorResponse } from './handleResponse/iError.response';
 import session from 'express-session';
-import passport from './lib/init.googleOAuth';
+import googlePassport from './lib/init.googleOAuth';
 import facebookPassport from './lib/init.facebookOAuth';
 const { ErrorResponse } = require('./handleResponse/error.response');
 const morgan = require('morgan');
@@ -27,8 +27,8 @@ app.use(
   })
 );
 //login with google
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(googlePassport.initialize());
+app.use(googlePassport.session());
 
 //login with facebook
 app.use(facebookPassport.initialize());

@@ -159,8 +159,8 @@ export class AuthService implements IAuthService {
     };
   }
 
-  //--------login with google
-  public async LoginWithThirdParty(user: any): Promise<any> {
+  //--------login with third party
+  public async loginWithThirdParty(user: any): Promise<any> {
     const keys = this.createKeys();
     const tokens = await createTokenPair({
       payload: {

@@ -1,5 +1,8 @@
 import passport from 'passport';
 import prisma from './prisma';
+import { IUserService } from '../service/iUser.service';
+import { UserService } from '../service/user.service';
+import { users } from '@prisma/client';
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 passport.use(
@@ -16,27 +19,14 @@ passport.use(
       done: any
     ) => {
       try {
-        let user = await prisma.users.findUnique({
-          where: { googleId: profile.id },
+        var _userService: IUserService = new UserService();
+        let user = await _userService.createOrUpdateGoogleUser({
+          avatarUrl: profile.photos[0].value,
+          email: profile.emails[0].value,
+          googleAccessToken: accessToken,
+          googleId: profile.id,
+          username: profile.displayName,
         });
-
-        if (!user) {
-          user = await prisma.users.create({
-            data: {
-              email: profile.emails[0].value,
-              googleId: profile.id,
-              googleAccessToken: accessToken,
-              username: profile.displayName,
-              avatarUrl: profile.photos[0].value,
-              status: 'active',
-            },
-          });
-        } else {
-          user = await prisma.users.update({
-            where: { googleId: profile.id },
-            data: { googleAccessToken: accessToken },
-          });
-        }
 
         done(null, user);
       } catch (err) {

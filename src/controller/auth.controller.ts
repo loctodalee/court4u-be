@@ -52,8 +52,8 @@ export class AuthController {
   async LoginThirdParty(req: Request, res: Response) {
     var authService: IAuthService = new AuthService();
     new SuccessResponse({
-      message: 'Login google success',
-      metaData: await authService.LoginWithThirdParty(req.user),
+      message: 'Login success',
+      metaData: await authService.loginWithThirdParty(req.user),
     }).send(res);
   }
 }

@@ -1,5 +1,7 @@
 import passport from 'passport';
 import prisma from './prisma';
+import { IUserService } from '../service/iUser.service';
+import { UserService } from '../service/user.service';
 
 const FacebookStrategy = require('passport-facebook').Strategy;
 
@@ -18,29 +20,14 @@ passport.use(
       done: any
     ) => {
       try {
-        let user = await prisma.users.findUnique({
-          where: { googleId: profile.id },
+        var _userService: IUserService = new UserService();
+        let user = await _userService.createOrUpdateFacebookUser({
+          avatarUrl: profile.photos[0].value,
+          email: profile.emails[0].value,
+          facebookAccessToken: accessToken,
+          facebookId: profile.id,
+          username: profile.displayName,
         });
-        console.log(profile);
-
-        if (!user) {
-          user = await prisma.users.create({
-            data: {
-              email: profile.emails && profile.emails[0].value,
-              facebookId: profile.id,
-              facebookAccessToken: accessToken,
-              username: profile.displayName,
-              avatarUrl: profile.photos && profile.photos[0].value,
-              status: 'active',
-            },
-          });
-        } else {
-          user = await prisma.users.update({
-            where: { facebookId: profile.id },
-            data: { facebookAccessToken: accessToken },
-          });
-        }
-
         done(null, user);
       } catch (err) {
         done(err, null);

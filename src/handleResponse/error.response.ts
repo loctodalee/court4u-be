@@ -46,7 +46,17 @@ class NotFoundError extends ErrorResponse {
   }
 }
 
+class AuthFailure extends ErrorResponse {
+  constructor(
+    message: string = ReasonPhrases.UNAUTHORIZED,
+    status: number = StatusCodes.UNAUTHORIZED
+  ) {
+    super(message, status);
+  }
+}
+
 export {
+  AuthFailure,
   ErrorResponse,
   ConflictRequestError,
   BadRequestError,
