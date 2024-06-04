@@ -1,6 +1,8 @@
 import { createTokenPair } from '../auth/authUtils';
 import {
+  AuthFailure,
   BadRequestError,
+  ForbiddenError,
   NotFoundError,
   NotImplementError,
 } from '../handleResponse/error.response';
@@ -16,7 +18,7 @@ import { IEmailService } from './iEmail.service';
 import { EmailService } from './email.service';
 import prisma from '../lib/prisma';
 import passport from '../lib/init.googleOAuth';
-import { users } from '@prisma/client';
+import { keyTokens, users } from '@prisma/client';
 export class AuthService implements IAuthService {
   private readonly _userRepository: IUserRepository;
   private readonly _keyTokenService: IKeyTokenService;
@@ -45,7 +47,8 @@ export class AuthService implements IAuthService {
     if (!foundUser) {
       throw new BadRequestError('Login fail');
     }
-    const match = await bcrypt.compare(password, foundUser.email);
+    if (foundUser.password == null) throw new BadRequestError('Login fail');
+    const match = await bcrypt.compare(password, foundUser.password);
 
     if (!match) {
       throw new BadRequestError('Login fail');
@@ -76,6 +79,7 @@ export class AuthService implements IAuthService {
         fields: ['id', 'username', 'phone', 'avatarUrl', 'email'],
         object: foundUser,
       }),
+      tokens,
     };
   }
   //end login
@@ -120,6 +124,7 @@ export class AuthService implements IAuthService {
 
   //---------- check email token
   public async checkLoginEmailToken({ token }: { token: any }): Promise<any> {
+    console.log('Check login email token');
     // search and update status, set otp user to null
     const foundUser = await prisma.users.update({
       where: {
@@ -133,7 +138,6 @@ export class AuthService implements IAuthService {
 
     if (!foundUser) throw new NotFoundError('Token not found');
     const keys = this.createKeys();
-
     const tokens = await createTokenPair({
       payload: {
         userId: foundUser.id,
@@ -149,13 +153,14 @@ export class AuthService implements IAuthService {
       publicKey: keys.publicKey,
       refreshToken: tokens.refreshToken,
     });
+    const resUser = filterData({
+      fields: ['id', 'username', 'phone', 'avatarUrl', 'email'],
+      object: foundUser,
+    });
 
     return {
-      user: filterData({
-        fields: ['id', 'username', 'phone', 'avatarUrl', 'email'],
-        object: foundUser,
-      }),
-      tokens,
+      user: resUser,
+      tokens: tokens,
     };
   }
 
@@ -184,6 +189,45 @@ export class AuthService implements IAuthService {
         object: user,
       }),
       tokens,
+    };
+  }
+
+  public async handleRefreshToken({
+    keyStore,
+    user,
+    refreshToken,
+  }: {
+    keyStore: keyTokens;
+    user: any;
+    refreshToken: string;
+  }): Promise<any> {
+    const { userId, email } = user;
+    if (keyStore.refreshTokenUsed.includes(refreshToken)) {
+      this._keyTokenService.deleteKeyByUserId({ userId });
+      throw new ForbiddenError('Something go wrong');
+    }
+    if (keyStore.refreshToken !== refreshToken)
+      throw new AuthFailure('Refresh token is wrong');
+
+    const tokens = await createTokenPair({
+      payload: { userId, email },
+      privateKey: keyStore.privateKey,
+      publicKey: keyStore.publicKey,
+    });
+    const keyToken = await this._keyTokenService.foundKey({
+      userId,
+    });
+    if (!keyToken) throw new AuthFailure('Key token not found');
+
+    const result = await this._keyTokenService.updateKeyToken({
+      currentToken: keyToken,
+      refreshToken: tokens.refreshToken,
+      userId,
+    });
+
+    return {
+      tokens,
+      result,
     };
   }
 }

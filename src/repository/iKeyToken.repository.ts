@@ -1,4 +1,4 @@
-import { keyTokens } from "@prisma/client";
+import { keyTokens } from '@prisma/client';
 
 export interface IKeyTokenRepository {
   createOrUpdateKeyToken({
@@ -12,4 +12,16 @@ export interface IKeyTokenRepository {
     privateKey: string;
     refreshToken: string;
   }): Promise<keyTokens | null>;
+
+  foundKey({ userId }: { userId: string }): Promise<keyTokens | null>;
+  deleteKeyByUserId({ userId }: { userId: string }): Promise<any>;
+  updateKeyToken({
+    userId,
+    refreshToken,
+    currentToken,
+  }: {
+    userId: string;
+    refreshToken: string;
+    currentToken: keyTokens;
+  }): Promise<any>;
 }

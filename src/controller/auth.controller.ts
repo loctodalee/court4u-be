@@ -13,6 +13,14 @@ export class AuthController {
     return this.Instance;
   }
 
+  async Login(req: Request, res: Response) {
+    var authService: IAuthService = new AuthService();
+    new SuccessResponse({
+      message: 'Login success',
+      metaData: await authService.login({ ...req.body }),
+    }).send(res);
+  }
+
   /**
    * @description Gửi email khi tạo mới 1 CUSTOMER
    * @param req {username, password, email, phone}
@@ -37,7 +45,7 @@ export class AuthController {
     var authService: IAuthService = new AuthService();
     new SuccessResponse({
       message: 'Verify success',
-      meteData: await authService.checkLoginEmailToken({
+      metaData: await authService.checkLoginEmailToken({
         token: req.query.token,
       }),
     }).send(res);
@@ -54,6 +62,18 @@ export class AuthController {
     new SuccessResponse({
       message: 'Login success',
       metaData: await authService.loginWithThirdParty(req.user),
+    }).send(res);
+  }
+
+  async handleRefreshToken(req: Request, res: Response) {
+    var authService: IAuthService = new AuthService();
+    new SuccessResponse({
+      message: 'Login with refresh token',
+      metaData: await authService.handleRefreshToken({
+        keyStore: req.keyStores,
+        refreshToken: req.refreshToken,
+        user: req.user,
+      }),
     }).send(res);
   }
 }

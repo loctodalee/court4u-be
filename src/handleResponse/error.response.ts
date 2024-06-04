@@ -55,7 +55,16 @@ class AuthFailure extends ErrorResponse {
   }
 }
 
+class ForbiddenError extends ErrorResponse {
+  constructor(
+    message: string = ReasonPhrases.FORBIDDEN,
+    status: number = StatusCodes.FORBIDDEN
+  ) {
+    super(message, status);
+  }
+}
 export {
+  ForbiddenError,
   AuthFailure,
   ErrorResponse,
   ConflictRequestError,

@@ -1,5 +1,5 @@
-import _ from "lodash";
+import _ from 'lodash';
 
-export const filterData = ({ fields = [""], object = {} }) => {
+export const filterData = ({ fields = [''], object = {} }) => {
   return _.pick(object, fields);
 };
