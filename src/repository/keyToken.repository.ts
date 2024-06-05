@@ -11,33 +11,13 @@ export class KeyTokenRepository implements IKeyTokenRepository {
     return KeyTokenRepository.Instance;
   }
 
-  public async createOrUpdateKeyToken({
-    userId,
-    publicKey,
-    privateKey,
-    refreshToken,
+  public async upsertKey({
+    options,
   }: {
-    userId: string;
-    publicKey: string;
-    privateKey: string;
-    refreshToken: string;
+    options: any;
   }): Promise<keyTokens | null> {
-    const token = await prisma.keyTokens.upsert({
-      where: {
-        userId,
-      },
-      update: {
-        publicKey,
-        privateKey,
-        refreshToken,
-      },
-      create: {
-        userId,
-        publicKey,
-        privateKey,
-        refreshToken,
-      },
-    });
+    const token = await prisma.keyTokens.upsert(options);
+
     return token ?? null;
   }
 

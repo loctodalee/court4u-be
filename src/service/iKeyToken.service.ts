@@ -1,7 +1,7 @@
 import { keyTokens } from '@prisma/client';
 
 export interface IKeyTokenService {
-  createOrUpdateKeyToken({
+  upsertKey({
     userId,
     publicKey,
     privateKey,

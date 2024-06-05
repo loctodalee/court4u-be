@@ -1,14 +1,14 @@
 import { IKeyTokenService } from './iKeyToken.service';
 import { IKeyTokenRepository } from '../repository/iKeyToken.repository';
 import { KeyTokenRepository } from '../repository/keyToken.repository';
-import { keyTokens } from '@prisma/client';
+import { keyTokens, users } from '@prisma/client';
 
 export class KeyTokenService implements IKeyTokenService {
   private readonly _tokenRepository: IKeyTokenRepository;
   constructor() {
     this._tokenRepository = KeyTokenRepository.getInstance();
   }
-  async createOrUpdateKeyToken({
+  async upsertKey({
     userId,
     publicKey,
     privateKey,
@@ -19,12 +19,23 @@ export class KeyTokenService implements IKeyTokenService {
     privateKey: string;
     refreshToken: string;
   }): Promise<String | null> {
-    const token = await this._tokenRepository.createOrUpdateKeyToken({
-      userId,
-      privateKey,
-      publicKey,
-      refreshToken,
-    });
+    const options = {
+      where: {
+        userId,
+      },
+      update: {
+        publicKey,
+        privateKey,
+        refreshToken,
+      },
+      create: {
+        userId,
+        publicKey,
+        privateKey,
+        refreshToken,
+      },
+    };
+    const token = await this._tokenRepository.upsertKey({ options });
     return token ? token.publicKey : null;
   }
 
