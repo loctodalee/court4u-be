@@ -1,7 +1,7 @@
 import { IKeyTokenService } from './iKeyToken.service';
 import { IKeyTokenRepository } from '../repository/iKeyToken.repository';
 import { KeyTokenRepository } from '../repository/keyToken.repository';
-import { keyTokens, users } from '@prisma/client';
+import { keyTokens } from '@prisma/client';
 
 export class KeyTokenService implements IKeyTokenService {
   private readonly _tokenRepository: IKeyTokenRepository;

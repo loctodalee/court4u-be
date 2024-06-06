@@ -10,6 +10,11 @@ router.post(
   asyncHandler(AuthController.getInstance().sendMailVerify)
 );
 
+router.post(
+  '/owner/signup',
+  asyncHandler(AuthController.getInstance().signUpCourtOwner)
+);
+
 router.post('/login', asyncHandler(AuthController.getInstance().Login));
 
 router.get(

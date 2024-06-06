@@ -165,7 +165,7 @@ model bill {
 }
 
 model club {
-  id                 String               @id
+  id                 String               @id @default(uuid())
   courtOwnerId       String
   name               String               @db.VarChar
   address            String               @db.VarChar
@@ -202,9 +202,8 @@ model clubImage {
 model court {
   id         String   @id
   clubId     String
-  startTime  DateTime
-  endTime    DateTime
-  dateOfWeek DateTime
+  status     CourtStatus @default(active)
+  number Int
   club       club     @relation(fields: [clubId], references: [id])
 }
 
@@ -256,6 +255,7 @@ enum Sex {
 }
 
 enum Role {
+  owner
   admin
   staff
   member
@@ -275,4 +275,10 @@ enum UserStatus {
   active
   disable
   block
+}
+
+enum CourtStatus {
+  active
+  repair
+  booked
 }

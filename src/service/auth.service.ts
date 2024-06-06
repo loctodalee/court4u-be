@@ -81,6 +81,43 @@ export class AuthService implements IAuthService {
     };
   }
   //end login
+  // -------- new court owner
+  public async newCourtOwner({
+    username,
+    password,
+    phone,
+    email,
+  }: {
+    username: string;
+    password: string;
+    phone: string;
+    email: string;
+  }): Promise<any> {
+    const user = await this._userService.getUserByEmail({ email });
+    if (user) {
+      throw new NotImplementError('Email already existed');
+    }
+
+    // send mail
+    const result = await this._emailService.sendEmailToken({ email });
+    console.log(result);
+    // create user with status = false
+    const hashPassword = await bcrypt.hash(password, 10);
+
+    await this._userService.createNewUser({
+      email,
+      password: hashPassword,
+      otp: result.toString(),
+      phone,
+      status: 'disable',
+      username,
+      role: ['owner'],
+    });
+
+    return {
+      message: 'Verify email court owner',
+    };
+  }
 
   // ---------new customer
   public async newUser({

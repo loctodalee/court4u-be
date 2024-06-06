@@ -12,7 +12,11 @@ export class AuthController {
     }
     return this.Instance;
   }
-
+  /**
+   * @description Login
+   * @param req : {email, password}
+   * @param res : {user info, tokens}
+   */
   async Login(req: Request, res: Response) {
     var authService: IAuthService = new AuthService();
     new SuccessResponse({
@@ -65,6 +69,11 @@ export class AuthController {
     }).send(res);
   }
 
+  /**
+   * @description tự động get access token lại khi hết hạn
+   * @param req  gắn thêm refreshtoken và client-id vào header của request
+   * @param res {user info, tokens}
+   */
   async handleRefreshToken(req: Request, res: Response) {
     var authService: IAuthService = new AuthService();
     new SuccessResponse({
@@ -74,6 +83,18 @@ export class AuthController {
         refreshToken: req.refreshToken,
         user: req.user,
       }),
+    }).send(res);
+  }
+  /**
+   * @description đăng ký tài khoản cho court owner
+   * @param req {username, password, email, phone}
+   * @param res {message}
+   */
+  async signUpCourtOwner(req: Request, res: Response) {
+    var authService: IAuthService = new AuthService();
+    new SuccessResponse({
+      mesage: 'Send mail success',
+      metaData: await authService.newCourtOwner({ ...req.body }),
     }).send(res);
   }
 }

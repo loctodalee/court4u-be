@@ -15,7 +15,7 @@ export class UserController {
     var userService: IUserService = new UserService();
     new SuccessResponse({
       message: 'Get Success',
-      metaData: await userService.getUserById('awdad'),
+      metaData: await userService.getUserByEmail({ ...req.body }),
     }).send(res);
   }
 }

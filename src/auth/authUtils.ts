@@ -86,6 +86,7 @@ export const authentication = asyncHandler(
       }
       req.user = decodeUser;
       req.keyStores = keyStore;
+      next();
     } catch (error) {
       throw error;
     }
