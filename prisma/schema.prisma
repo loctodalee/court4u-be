@@ -8,62 +8,6 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
-model User {
-  id            String    @id
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  Account       Account[]
-  Session       Session[]
-}
-
-model Account {
-  id                 String  @id
-  user_id            String
-  type               String
-  provider           String
-  refresh_token      String?
-  access_token       String?
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?
-  session_state      String?
-  oauth_token_secret String?
-  oauth_token        String?
-  providerAccountId  String
-  User               User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-}
-
-model Session {
-  id            String   @id
-  session_token String   @unique
-  user_id       String
-  expires       DateTime
-  User          User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-}
-
-model VerificationToken {
-  id         Int      @id @default(autoincrement())
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
-}
-
-model dinosaur {
-  id              Int     @id @default(autoincrement())
-  species         String? @db.VarChar(255)
-  img_url         String? @db.VarChar
-  avatar_url      String? @db.VarChar
-  living_period   String? @db.VarChar(255)
-  discovered_year Int?
-}
-
 model users {
   id                 String               @id @default(uuid())
   username           String               @db.VarChar
@@ -200,7 +144,7 @@ model clubImage {
 }
 
 model court {
-  id         String   @id
+  id         String   @id @default(uuid())
   clubId     String
   status     CourtStatus @default(active)
   number Int
