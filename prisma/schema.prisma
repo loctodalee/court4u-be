@@ -32,6 +32,7 @@ model users {
   googleAccessToken  String?             
   facebookId           String?              @unique
   facebookAccessToken  String?        
+  apiKey String? @unique
 }
 model keyTokens {
   id   String @id @default(uuid())
@@ -56,6 +57,7 @@ model template {
   name String @db.VarChar()
   status String @default("active")
   tem_html String
+  
 }
 
 model userRole {
@@ -73,6 +75,8 @@ model review {
   commentRight String @db.VarChar
   club         club   @relation(fields: [clubId], references: [id])
   user         users   @relation(fields: [reviewerId], references: [id])
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 }
 
 model cancellation {
@@ -80,6 +84,8 @@ model cancellation {
   canceledSlotId String?
   cancelerId     String
   user           users    @relation(fields: [cancelerId], references: [id])
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 }
 
 model bookedSlot {
@@ -89,6 +95,8 @@ model bookedSlot {
   slotId    String
   checkedIn String
   slot      slot     @relation(fields: [slotId], references: [id])
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 }
 
 model booking {
@@ -98,6 +106,8 @@ model booking {
   date   DateTime
   status Boolean
   user   users     @relation(fields: [userId], references: [id])
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 }
 
 model bill {
@@ -106,6 +116,8 @@ model bill {
   total  Float
   date   DateTime
   type   String   @db.VarChar
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 }
 
 model club {
@@ -118,12 +130,15 @@ model club {
   logoUrl            String?              @db.VarChar
   description        String?              @db.VarChar
   user               users                 @relation(fields: [courtOwnerId], references: [id])
+  apiKey String @unique @default(uuid())
   clubImage          clubImage[]
   court              court[]
   pricing            pricing[]
   review             review[]
   slot               slot[]
   subscriptionOption subscriptionOption[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 }
 
 model pricing {
@@ -133,6 +148,8 @@ model pricing {
   duration String @db.VarChar
   price    Float
   club     club   @relation(fields: [clubId], references: [id])
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 }
 
 model clubImage {
@@ -141,6 +158,8 @@ model clubImage {
   name   String @db.VarChar
   url    String @db.VarChar
   club   club   @relation(fields: [clubId], references: [id])
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 }
 
 model court {
@@ -149,27 +168,49 @@ model court {
   status     CourtStatus @default(active)
   number Int
   club       club     @relation(fields: [clubId], references: [id])
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 }
 
 model subscriptionOption {
-  id                 String                   @id
+  id                 String                   @id 
   clubId             String
   name               String                   @db.VarChar
   price              Float
   startDate          DateTime
   endDate            DateTime
+  type               SubscriptionType
   status             SubscriptionOptionStatus
+  detail             Json
   memberSubscription memberSubscription[]
-  subOptionSlot      subOptionSlot[]
   club               club                     @relation(fields: [clubId], references: [id])
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 }
 
 model subOptionSlot {
   id                 String             @id
-  subOpId            String
   slotId             String
   slot               slot               @relation(fields: [slotId], references: [id])
-  subscriptionOption subscriptionOption @relation(fields: [subOpId], references: [id])
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+}
+
+model subOptionMonth {
+  id                 String             @id @default(uuid())
+  usesPerDay Int
+  playTime Int
+  usesHistory DateTime[] @default([])
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+}
+
+model subOptionTime {
+  id                 String             @id @default(uuid())
+  totalTime Int
+  timeRemain Int @default(0)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 }
 
 model slot {
@@ -181,6 +222,8 @@ model slot {
   bookedSlot    bookedSlot[]
   club          club            @relation(fields: [clubId], references: [id])
   subOptionSlot subOptionSlot[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 }
 
 model memberSubscription {
@@ -190,8 +233,14 @@ model memberSubscription {
   billId             String
   user               users               @relation(fields: [memberId], references: [id])
   subscriptionOption subscriptionOption @relation(fields: [subscriptionId], references: [id])
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 }
-
+enum SubscriptionType {
+  Month
+  Slot
+  Time
+}
 enum Sex {
   female
   male
@@ -206,7 +255,9 @@ enum Role {
 }
 
 enum SubscriptionOptionStatus {
+  active
   block
+  
 }
 
 enum OtpStatus {

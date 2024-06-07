@@ -1,4 +1,4 @@
-import { User, users } from '@prisma/client';
+import { users } from '@prisma/client';
 
 export interface IUserService {
   getUserByEmail({ email }: { email: string }): Promise<users | null>;
@@ -21,6 +21,13 @@ export interface IUserService {
   }): Promise<users>;
   updateUser({ options }: { options: any }): Promise<users>;
   updateUserAfterVerify({ otp }: { otp: string }): Promise<users>;
+  updateApiKey({
+    apiKey,
+    userId,
+  }: {
+    apiKey: string;
+    userId: string;
+  }): Promise<users>;
   createOrUpdateGoogleUser({
     email,
     googleId,

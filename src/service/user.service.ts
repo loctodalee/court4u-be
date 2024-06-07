@@ -50,6 +50,24 @@ export class UserService implements IUserService {
     return await UserRepository.getInstance().updateUser({ options });
   }
 
+  public async updateApiKey({
+    apiKey,
+    userId,
+  }: {
+    apiKey: string;
+    userId: string;
+  }): Promise<users> {
+    const options = {
+      where: {
+        id: userId,
+      },
+      data: {
+        apiKey,
+      },
+    };
+    return await UserRepository.getInstance().updateUser({ options });
+  }
+
   public async updateUserAfterVerify({ otp }: { otp: string }): Promise<users> {
     const options = {
       where: {

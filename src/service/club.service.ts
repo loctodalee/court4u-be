@@ -2,10 +2,14 @@ import { club } from '@prisma/client';
 import { IClubService } from './iClub.service';
 import { IClubRepository } from '../repository/iClub.repository';
 import { ClubRepository } from '../repository/club.repository';
+import { IUserService } from './iUser.service';
+import { UserService } from './user.service';
+import prisma from '../lib/prisma';
 export class ClubService implements IClubService {
   private readonly _clubRepository: IClubRepository;
-
+  private readonly _userService: IUserService;
   constructor() {
+    this._userService = new UserService();
     this._clubRepository = ClubRepository.getInstance();
   }
 
@@ -26,7 +30,7 @@ export class ClubService implements IClubService {
     logoUrl: string | null;
     description: string;
   }): Promise<club> {
-    return await this._clubRepository.createClub({
+    const newClub = await this._clubRepository.createClub({
       name,
       address,
       cityOfProvince,
@@ -35,5 +39,10 @@ export class ClubService implements IClubService {
       district,
       logoUrl,
     });
+    await this._userService.updateApiKey({
+      apiKey: newClub.apiKey,
+      userId: courtOwnerId,
+    });
+    return newClub;
   }
 }

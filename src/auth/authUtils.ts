@@ -11,6 +11,7 @@ declare module 'express-serve-static-core' {
     user?: any;
     refreshToken?: any;
     keyStores: any;
+    clubId?: any;
   }
 }
 export const createTokenPair = async ({
