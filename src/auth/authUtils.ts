@@ -4,7 +4,8 @@ import { NextFunction, Request, Response } from 'express';
 import { AuthFailure, BadRequestError } from '../handleResponse/error.response';
 import { IKeyTokenService } from '../service/iKeyToken.service';
 import { KeyTokenService } from '../service/keyToken.service';
-import { keyTokens, users } from '@prisma/client';
+import { keyTokens, users, club } from '@prisma/client';
+import prisma from '../lib/prisma';
 
 declare module 'express-serve-static-core' {
   interface Request {
@@ -91,5 +92,21 @@ export const authentication = asyncHandler(
     } catch (error) {
       throw error;
     }
+  }
+);
+
+export const CheckApiKey = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const apikey = req.headers['api-key'];
+    if (!apikey)
+      throw new BadRequestError('Api key is require for this action');
+    const club = await prisma.club.findFirst({
+      where: {
+        apiKey: apikey as string,
+      },
+    });
+    if (!club) throw new BadRequestError('Club not found');
+    req.clubId = club.id;
+    next();
   }
 );
