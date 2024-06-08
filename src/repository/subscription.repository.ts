@@ -23,6 +23,14 @@ export class SubscriptionRepository implements ISubscriptionRepository {
   }): Promise<subscriptionOption[] | null> {
     return await prisma.subscriptionOption.findMany(options);
   }
+
+  public async findSubscriptionOptionMonth({
+    options,
+  }: {
+    options: any;
+  }): Promise<subOptionMonth | null> {
+    return await prisma.subOptionMonth.findFirst(options);
+  }
   public async createSubscription({
     id,
     clubId,
@@ -60,29 +68,43 @@ export class SubscriptionRepository implements ISubscriptionRepository {
   }
 
   public async createSubscriptionMonth({
+    clubId,
     usesPerDay,
     playTime,
   }: {
+    clubId: string;
     usesPerDay: number;
     playTime: number;
   }): Promise<subOptionMonth> {
     return await prisma.subOptionMonth.create({
       data: {
+        clubId,
         playTime,
         usesPerDay,
       },
     });
   }
   public async createSubscriptionTime({
+    clubId,
     totalTime,
   }: {
+    clubId: string;
     totalTime: number;
   }): Promise<subOptionTime> {
     return await prisma.subOptionTime.create({
       data: {
+        clubId,
         totalTime,
         timeRemain: totalTime,
       },
     });
+  }
+
+  public async findSubscriptionOptionTime({
+    options,
+  }: {
+    options: any;
+  }): Promise<subOptionTime | null> {
+    return await prisma.subOptionTime.findFirst(options);
   }
 }

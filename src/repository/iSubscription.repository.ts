@@ -13,6 +13,18 @@ export interface ISubscriptionRepository {
     options: any;
   }): Promise<subscriptionOption[] | null>;
 
+  findSubscriptionOptionMonth({
+    options,
+  }: {
+    options: any;
+  }): Promise<subOptionMonth | null>;
+
+  findSubscriptionOptionTime({
+    options,
+  }: {
+    options: any;
+  }): Promise<subOptionTime | null>;
+
   createSubscription({
     id,
     clubId,
@@ -36,16 +48,20 @@ export interface ISubscriptionRepository {
   }): Promise<subscriptionOption>;
 
   createSubscriptionMonth({
+    clubId,
     usesPerDay,
     playTime,
   }: {
+    clubId: string;
     usesPerDay: number;
     playTime: number;
   }): Promise<subOptionMonth>;
 
   createSubscriptionTime({
+    clubId,
     totalTime,
   }: {
+    clubId: string;
     totalTime: number;
   }): Promise<subOptionTime>;
 }

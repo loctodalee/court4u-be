@@ -137,6 +137,8 @@ model club {
   review             review[]
   slot               slot[]
   subscriptionOption subscriptionOption[]
+  subOptionMonth    subOptionMonth?
+  subOptionTime     subOptionTime?
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
 }
@@ -198,15 +200,20 @@ model subOptionSlot {
 
 model subOptionMonth {
   id                 String             @id @default(uuid())
+  clubId      String @unique
+  club club @relation(fields: [clubId], references: [id])
   usesPerDay Int
   playTime Int
   usesHistory DateTime[] @default([])
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
+  
 }
 
 model subOptionTime {
   id                 String             @id @default(uuid())
+  clubId      String @unique
+  club club @relation(fields: [clubId], references: [id])
   totalTime Int
   timeRemain Int @default(0)
   createdAt  DateTime   @default(now())

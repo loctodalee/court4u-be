@@ -5,7 +5,10 @@ import {
   SubscriptionOptionStatus,
   SubscriptionType,
 } from '@prisma/client';
-import { BadRequestError } from '../handleResponse/error.response';
+import {
+  BadRequestError,
+  NotImplementError,
+} from '../handleResponse/error.response';
 import { ISubscriptionRepository } from '../repository/iSubscription.repository';
 import { SubscriptionRepository } from '../repository/subscription.repository';
 import { ISubscriptionService } from './iSubscription.service';
@@ -67,16 +70,25 @@ class Subscription {
   type: SubscriptionType;
   detail: any;
   _subscriptionRepository!: ISubscriptionRepository;
-  constructor(
-    clubId: string,
-    name: string,
-    price: number,
-    startDate: Date,
-    endDate: Date,
-    type: SubscriptionType,
-    status: SubscriptionOptionStatus,
-    detail: Record<string, any>
-  ) {
+  constructor({
+    clubId,
+    name,
+    price,
+    startDate,
+    endDate,
+    type,
+    status,
+    detail,
+  }: {
+    clubId: string;
+    name: string;
+    price: number;
+    startDate: Date;
+    endDate: Date;
+    type: SubscriptionType;
+    status: SubscriptionOptionStatus;
+    detail: any;
+  }) {
     this.clubId = clubId;
     this.name = name;
     this.price = price;
@@ -107,8 +119,20 @@ class Subscription {
 
 class SubscriptionOptionMonth extends Subscription {
   async createSubscription(): Promise<subscriptionOption> {
+    const options = {
+      where: {
+        clubId: this.clubId,
+      },
+    };
+    const found =
+      await this._subscriptionRepository.findSubscriptionOptionMonth({
+        options,
+      });
+    if (found)
+      throw new NotImplementError('Club already buy this subscription');
     const newSubsOptionMonth =
       await this._subscriptionRepository.createSubscriptionMonth({
+        clubId: this.clubId,
         ...this.detail,
       });
     if (!newSubsOptionMonth) throw new BadRequestError('Fail to create detail');
@@ -122,11 +146,22 @@ class SubscriptionOptionMonth extends Subscription {
 
 class SubscriptionOptionTime extends Subscription {
   async createSubscription(): Promise<subscriptionOption> {
+    const options = {
+      where: {
+        clubId: this.clubId,
+      },
+    };
+    const found = await this._subscriptionRepository.findSubscriptionOptionTime(
+      { options }
+    );
+    if (found) throw new NotImplementError('');
     const newSubsOptionTime =
       await this._subscriptionRepository.createSubscriptionTime({
+        clubId: this.clubId,
         ...this.detail,
       });
-    if (!newSubsOptionTime) throw new BadRequestError('Fail to create detail');
+    if (!newSubsOptionTime)
+      throw new NotImplementError('Club already buy this subscription');
     const newSubscription = await super.createSubscription(
       newSubsOptionTime.id
     );

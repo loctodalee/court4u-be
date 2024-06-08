@@ -12,6 +12,11 @@ export class SubscriptionController {
     return this.Instance;
   }
 
+  /**
+   * @description tạo ra subciption khi court owner mua
+   * @param req {clubId(req.headers.api-key), name, price, startDate, endDate, status, type, detail:json}
+   * @param res {subscription}
+   */
   async createSubscription(req: Request, res: Response) {
     var subscriptionService: ISubscriptionService = new SubscriptionFactory();
     new SuccessResponse({
@@ -20,6 +25,6 @@ export class SubscriptionController {
         ...req.body,
         clubId: req.clubId,
       }),
-    });
+    }).send(res);
   }
 }
