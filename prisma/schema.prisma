@@ -66,13 +66,13 @@ model userRole {
 }
 
 model review {
-  id           String @id
+  id           String @id @default(uuid())
   reviewerId   String
   clubId       String
   content      String @db.VarChar
-  parentId     String
-  commentLeft  String @db.VarChar
-  commentRight String @db.VarChar
+  parentId     String?
+  commentLeft  Int  @default(0)
+  commentRight Int @default(0)
   club         club   @relation(fields: [clubId], references: [id])
   user         users   @relation(fields: [reviewerId], references: [id])
   createdAt  DateTime   @default(now())
