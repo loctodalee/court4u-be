@@ -81,6 +81,7 @@ export class SubscriptionRepository implements ISubscriptionRepository {
         clubId,
         playTime,
         usesPerDay,
+        status: 'disable',
       },
     });
   }
@@ -96,6 +97,7 @@ export class SubscriptionRepository implements ISubscriptionRepository {
         clubId,
         totalTime,
         timeRemain: totalTime,
+        status: 'disable',
       },
     });
   }

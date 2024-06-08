@@ -6,5 +6,6 @@ router.use('/v1/api/auth', require('./auth'));
 router.use('/v1/api/club', require('./club'));
 router.use('/v1/api/court', require('./court'));
 router.use('/v1/api/subscription', require('./subscription'));
+router.use('/v1/api/payment', require('./payment'));
 
 module.exports = router;

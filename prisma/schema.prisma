@@ -205,6 +205,7 @@ model subOptionMonth {
   usesPerDay Int
   playTime Int
   usesHistory DateTime[] @default([])
+  status SubscriptionOptionStatus
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
   
@@ -216,6 +217,7 @@ model subOptionTime {
   club club @relation(fields: [clubId], references: [id])
   totalTime Int
   timeRemain Int @default(0)
+  status SubscriptionOptionStatus
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
 }
@@ -262,6 +264,7 @@ enum Role {
 }
 
 enum SubscriptionOptionStatus {
+  disable
   active
   block
   
@@ -283,4 +286,14 @@ enum CourtStatus {
   active
   repair
   booked
+}
+
+enum BillType {
+  memberSubscription
+  ownerSubscription
+}
+
+enum BillStatus {
+  pending
+  
 }

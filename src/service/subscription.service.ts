@@ -12,6 +12,8 @@ import {
 import { ISubscriptionRepository } from '../repository/iSubscription.repository';
 import { SubscriptionRepository } from '../repository/subscription.repository';
 import { ISubscriptionService } from './iSubscription.service';
+import { IPayementService } from './iPayment.service';
+import { PaymentService } from './payment.service';
 
 type SubscriptionConstructor = new (...args: any[]) => any;
 
@@ -70,6 +72,7 @@ class Subscription {
   type: SubscriptionType;
   detail: any;
   _subscriptionRepository!: ISubscriptionRepository;
+  _paymentService: IPayementService;
   constructor({
     clubId,
     name,
@@ -77,7 +80,7 @@ class Subscription {
     startDate,
     endDate,
     type,
-    status,
+    status = 'disable',
     detail,
   }: {
     clubId: string;
@@ -97,6 +100,7 @@ class Subscription {
     this.status = status;
     this.type = type;
     this._subscriptionRepository = SubscriptionRepository.getInstance();
+    this._paymentService = new PaymentService();
     this.detail = detail;
   }
 
@@ -118,7 +122,7 @@ class Subscription {
 }
 
 class SubscriptionOptionMonth extends Subscription {
-  async createSubscription(): Promise<subscriptionOption> {
+  async createSubscription(): Promise<any> {
     const options = {
       where: {
         clubId: this.clubId,
@@ -140,12 +144,19 @@ class SubscriptionOptionMonth extends Subscription {
     const newSubscription = await super.createSubscription(
       newSubsOptionMonth.id
     );
-    return newSubscription;
+    const payment = await this._paymentService.momoPayment({
+      price: newSubscription.price,
+      orderId: newSubscription.id,
+    });
+    return {
+      newSubscription,
+      payment,
+    };
   }
 }
 
 class SubscriptionOptionTime extends Subscription {
-  async createSubscription(): Promise<subscriptionOption> {
+  async createSubscription(): Promise<any> {
     const options = {
       where: {
         clubId: this.clubId,
@@ -154,7 +165,8 @@ class SubscriptionOptionTime extends Subscription {
     const found = await this._subscriptionRepository.findSubscriptionOptionTime(
       { options }
     );
-    if (found) throw new NotImplementError('');
+    if (found)
+      throw new NotImplementError('Club already buy this subscription');
     const newSubsOptionTime =
       await this._subscriptionRepository.createSubscriptionTime({
         clubId: this.clubId,
@@ -165,7 +177,14 @@ class SubscriptionOptionTime extends Subscription {
     const newSubscription = await super.createSubscription(
       newSubsOptionTime.id
     );
-    return newSubscription;
+    const payment = await this._paymentService.momoPayment({
+      price: newSubscription.price,
+      orderId: newSubscription.id,
+    });
+    return {
+      newSubscription,
+      payment,
+    };
   }
 }
 
