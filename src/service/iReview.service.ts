@@ -20,4 +20,12 @@ export interface iReviewService {
     clubId: string;
     parentId: string | null;
   }): Promise<any>;
+
+  deleteReviews({
+    reviewId,
+    clubId,
+  }: {
+    reviewId: string;
+    clubId: string;
+  }): Promise<void>;
 }

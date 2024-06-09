@@ -45,4 +45,18 @@ export class ClubService implements IClubService {
     });
     return newClub;
   }
+
+  public async foundClubById({
+    clubId,
+  }: {
+    clubId: string;
+  }): Promise<club | null> {
+    return this._clubRepository.foundClub({
+      options: {
+        where: {
+          id: clubId,
+        },
+      },
+    });
+  }
 }

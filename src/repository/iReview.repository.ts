@@ -19,4 +19,5 @@ export interface IReviewRepository {
     commentRight: number;
   }): Promise<review>;
   updateManyReview({ options }: { options: any }): Promise<any>;
+  deleteMany({ options }: { options: any }): Promise<any>;
 }

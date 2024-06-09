@@ -2,13 +2,20 @@ import { review } from '@prisma/client';
 import { iReviewService } from './iReview.service';
 import { IReviewRepository } from '../repository/iReview.repository';
 import { ReviewRepository } from '../repository/review.repository';
-import { BadRequestError } from '../handleResponse/error.response';
+import {
+  BadRequestError,
+  NotFoundError,
+} from '../handleResponse/error.response';
 import prisma from '../lib/prisma';
+import { IClubService } from './iClub.service';
+import { ClubService } from './club.service';
 
 export class ReviewService implements iReviewService {
   private _reviewRepository: IReviewRepository;
+  private _clubService: IClubService;
   constructor() {
     this._reviewRepository = ReviewRepository.getInstance();
+    this._clubService = new ClubService();
   }
   public async createReview({
     clubId,
@@ -104,7 +111,7 @@ export class ReviewService implements iReviewService {
 
   public async getCommentByParentId({
     clubId,
-    parentId,
+    parentId = null,
   }: {
     clubId: string;
     parentId: string | null;
@@ -143,5 +150,89 @@ export class ReviewService implements iReviewService {
       });
       return comments;
     }
+
+    const options = {
+      where: {
+        clubId,
+        parentId: null,
+      },
+      select: {
+        commentLeft: true,
+        commentRight: true,
+        content: true,
+      },
+      orderBy: {
+        commentLeft: 'asc',
+      },
+    };
+    const review = await this._reviewRepository.foundManyReview({ options });
+    return review;
+  }
+
+  public async deleteReviews({
+    reviewId,
+    clubId,
+  }: {
+    reviewId: string;
+    clubId: string;
+  }): Promise<void> {
+    const foundClub = await this._clubService.foundClubById({ clubId });
+    if (!foundClub) throw new NotFoundError('Club not found');
+
+    const review = await this._reviewRepository.foundReview({
+      options: {
+        where: {
+          id: reviewId,
+        },
+      },
+    });
+
+    if (!review) throw new NotFoundError('Review not found');
+
+    const leftValue = review.commentLeft;
+    const rightValue = review.commentRight;
+
+    const width = rightValue - leftValue + 1;
+
+    const deleteManyOption = {
+      where: {
+        clubId,
+        commentLeft: {
+          gte: leftValue,
+          lte: rightValue,
+        },
+      },
+    };
+    await this._reviewRepository.deleteMany({ options: deleteManyOption });
+
+    const updateRight = {
+      where: {
+        clubId,
+        commentRight: {
+          gt: rightValue,
+        },
+      },
+      data: {
+        commentRight: {
+          increment: -width,
+        },
+      },
+    };
+
+    const updateLeft = {
+      where: {
+        clubId,
+        commentLeft: {
+          gt: rightValue,
+        },
+      },
+      data: {
+        commentLeft: {
+          increment: -width,
+        },
+      },
+    };
+    await this._reviewRepository.updateManyReview({ options: updateRight });
+    await this._reviewRepository.updateManyReview({ options: updateLeft });
   }
 }

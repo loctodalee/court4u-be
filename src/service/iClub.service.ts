@@ -18,4 +18,6 @@ export interface IClubService {
     logoUrl: string | null;
     description: string;
   }): Promise<club>;
+
+  foundClubById({ clubId }: { clubId: string }): Promise<club | null>;
 }

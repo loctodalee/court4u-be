@@ -18,4 +18,5 @@ export interface IClubRepository {
     logoUrl: string | null;
     description: string;
   }): Promise<club>;
+  foundClub({ options }: { options: any }): Promise<club | null>;
 }

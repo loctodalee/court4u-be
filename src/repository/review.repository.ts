@@ -57,4 +57,8 @@ export class ReviewRepository implements IReviewRepository {
   }): Promise<review[] | null> {
     return prisma.review.findMany(options);
   }
+
+  public async deleteMany({ options }: { options: any }): Promise<any> {
+    return await prisma.review.deleteMany(options);
+  }
 }

@@ -39,4 +39,8 @@ export class ClubRepository implements IClubRepository {
       },
     });
   }
+
+  public async foundClub({ options }: { options: any }): Promise<club | null> {
+    return await prisma.club.findFirst(options);
+  }
 }

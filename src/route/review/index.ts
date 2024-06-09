@@ -11,4 +11,9 @@ router.post(
   asyncHandler(ReviewController.getInstance().createReview)
 );
 
+router.post(
+  '/delete',
+  asyncHandler(ReviewController.getInstance().deleteReview)
+);
+
 module.exports = router;
