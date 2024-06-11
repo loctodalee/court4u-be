@@ -27,13 +27,7 @@ export class ClubImageRepository implements IClubImageRepository {
     name: string;
     url: string;
   }): Promise<clubImage> {
-    return prisma.clubImage.create({
-      data: {
-        clubId: data.clubId,
-        name: data.name,
-        url: data.url,
-      },
-    });
+    return prisma.clubImage.create({ data });
   }
 
   public async updateClubImage(
