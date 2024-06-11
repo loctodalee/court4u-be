@@ -144,13 +144,14 @@ model booking {
 }
 
 model bill {
-  id        String   @id
+  id        String   @id @default(uuid())
   method    String
   total     Float
   date      DateTime
-  type      String   @db.VarChar
+  type      BillType  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  status    BillStatus
 }
 
 model club {
@@ -330,4 +331,6 @@ enum BillType {
 
 enum BillStatus {
   pending
+  success
+  fail
 }
