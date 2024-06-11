@@ -9,43 +9,44 @@ datasource db {
 }
 
 model users {
-  id                 String               @id @default(uuid())
-  username           String               @db.VarChar
-  password           String?               @db.VarChar
-  email              String               @db.VarChar @unique
-  phone              String?               @db.VarChar
-  sex                Sex                  @default(other)
-  avatarUrl          String?              @db.VarChar
-  dateOfBirth        DateTime?
-  role Role[]
-  status UserStatus  @default(disable)
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  booking            booking[]
-  cancellation       cancellation[]
-  club               club[]
-  memberSubscription memberSubscription[]
-  review             review[]
-  keyToken keyTokens? 
-  otp String? @unique
-  googleId           String?              @unique
-  googleAccessToken  String?             
-  facebookId           String?              @unique
-  facebookAccessToken  String?        
-  apiKey String? @unique
-}
-model keyTokens {
-  id   String @id @default(uuid())
-  userId  String @unique
-  publicKey String
-  privateKey String
-  refreshTokenUsed String[]
-  refreshToken String 
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  user         users    @relation(fields: [userId], references: [id])
+  id                  String               @id @default(uuid())
+  username            String               @db.VarChar
+  password            String?              @db.VarChar
+  email               String               @unique @db.VarChar
+  phone               String?              @db.VarChar
+  sex                 Sex                  @default(other)
+  avatarUrl           String?              @db.VarChar
+  dateOfBirth         DateTime?
+  role                Role[]
+  status              UserStatus           @default(disable)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  otp                 String?              @unique
+  googleId            String?              @unique
+  googleAccessToken   String?
+  facebookId          String?              @unique
+  facebookAccessToken String?
+  apiKey              String?              @unique
+  booking             booking[]
+  cancellation        cancellation[]
+  club                club[]
+  keyToken            keyTokens?
+  memberSubscription  memberSubscription[]
+  review              review[]
+  staffProfile        staffProfile?
 }
 
+model keyTokens {
+  id               String   @id @default(uuid())
+  userId           String   @unique
+  publicKey        String
+  privateKey       String
+  refreshTokenUsed String[]
+  refreshToken     String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  user             users    @relation(fields: [userId], references: [id])
+}
 
 model role {
   id   String @id
@@ -53,11 +54,10 @@ model role {
 }
 
 model template {
-  id String @default(uuid()) @id
-  name String @db.VarChar()
-  status String @default("active")
+  id       String @id @default(uuid())
+  name     String @db.VarChar
+  status   String @default("active")
   tem_html String
-  
 }
 
 model userRole {
@@ -65,27 +65,59 @@ model userRole {
   userId String
 }
 
+model staffProfile {
+  id Int @id @default(autoincrement())
+  userId String @unique
+  clubId String @unique
+  user users @relation(fields: [userId], references: [id])
+  club club @relation(fields: [clubId], references: [id])
+  staffRole staffRole[]
+}
+
+model staffRole {
+id String @id
+staffId Int @unique
+clubRoleId String @unique
+staffProfile staffProfile @relation(fields: [staffId], references: [id])
+clubRole clubRole @relation(fields: [clubRoleId], references: [id])
+}
+
+model clubRole {
+  id String @id
+  clubId String
+  roleName String
+  club club @relation(fields: [clubId], references: [id])
+  staffRole staffRole[]
+  permission permission[]
+}
+
+model permission{
+id String @id
+name String
+clubRoleId String @unique
+clubRole clubRole @relation(fields: [clubRoleId], references: [id])
+}
 model review {
-  id           String @id @default(uuid())
+  id           String   @id @default(uuid())
   reviewerId   String
   clubId       String
-  content      String @db.VarChar
+  content      String   @db.VarChar
   parentId     String?
-  commentLeft  Int  @default(0)
-  commentRight Int @default(0)
-  club         club   @relation(fields: [clubId], references: [id])
-  user         users   @relation(fields: [reviewerId], references: [id])
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  commentLeft  Int      @default(0)
+  commentRight Int      @default(0)
+  club         club     @relation(fields: [clubId], references: [id])
+  user         users    @relation(fields: [reviewerId], references: [id])
 }
 
 model cancellation {
-  id             String  @id
+  id             String   @id
   canceledSlotId String?
   cancelerId     String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
   user           users    @relation(fields: [cancelerId], references: [id])
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
 }
 
 model bookedSlot {
@@ -94,30 +126,30 @@ model bookedSlot {
   date      DateTime
   slotId    String
   checkedIn String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   slot      slot     @relation(fields: [slotId], references: [id])
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
 }
 
 model booking {
-  id     String   @id
-  userId String
-  billId String
-  date   DateTime
-  status Boolean
-  user   users     @relation(fields: [userId], references: [id])
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
+  id        String   @id
+  userId    String
+  billId    String
+  date      DateTime
+  status    Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      users    @relation(fields: [userId], references: [id])
 }
 
 model bill {
-  id     String   @id
-  method String
-  total  Float
-  date   DateTime
-  type   String   @db.VarChar
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
+  id        String   @id
+  method    String
+  total     Float
+  date      DateTime
+  type      String   @db.VarChar
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model club {
@@ -129,53 +161,55 @@ model club {
   cityOfProvince     String               @db.VarChar
   logoUrl            String?              @db.VarChar
   description        String?              @db.VarChar
-  user               users                 @relation(fields: [courtOwnerId], references: [id])
-  apiKey String @unique @default(uuid())
+  apiKey             String               @unique @default(uuid())
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  user               users                @relation(fields: [courtOwnerId], references: [id])
   clubImage          clubImage[]
   court              court[]
   pricing            pricing[]
   review             review[]
   slot               slot[]
+  subOptionMonth     subOptionMonth?
+  subOptionTime      subOptionTime?
   subscriptionOption subscriptionOption[]
-  subOptionMonth    subOptionMonth?
-  subOptionTime     subOptionTime?
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
+  staffProfile       staffProfile[]
+  clubRole           clubRole[]
 }
 
 model pricing {
-  id       String @id
-  clubId   String
-  type     String @db.VarChar
-  duration String @db.VarChar
-  price    Float
-  club     club   @relation(fields: [clubId], references: [id])
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
+  id        String   @id @default(uuid())
+  clubId    String
+  type      String   @db.VarChar
+  duration  String   @db.VarChar
+  price     Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  club      club     @relation(fields: [clubId], references: [id])
 }
 
 model clubImage {
-  id     String @id
-  clubId String
-  name   String @db.VarChar
-  url    String @db.VarChar
-  club   club   @relation(fields: [clubId], references: [id])
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
+  id        String   @id @default(uuid())
+  clubId    String
+  name      String   @db.VarChar
+  url       String   @db.VarChar
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  club      club     @relation(fields: [clubId], references: [id])
 }
 
 model court {
-  id         String   @id @default(uuid())
-  clubId     String
-  status     CourtStatus @default(active)
-  number Int
-  club       club     @relation(fields: [clubId], references: [id])
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
+  id        String      @id @default(uuid())
+  clubId    String
+  status    CourtStatus @default(active)
+  number    Int
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  club      club        @relation(fields: [clubId], references: [id])
 }
 
 model subscriptionOption {
-  id                 String                   @id 
+  id                 String                   @id
   clubId             String
   name               String                   @db.VarChar
   price              Float
@@ -184,42 +218,41 @@ model subscriptionOption {
   type               SubscriptionType
   status             SubscriptionOptionStatus
   detail             Json
+  createdAt          DateTime                 @default(now())
+  updatedAt          DateTime                 @updatedAt
   memberSubscription memberSubscription[]
   club               club                     @relation(fields: [clubId], references: [id])
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
 }
 
 model subOptionSlot {
-  id                 String             @id
-  slotId             String
-  slot               slot               @relation(fields: [slotId], references: [id])
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
+  id        String   @id
+  slotId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  slot      slot     @relation(fields: [slotId], references: [id])
 }
 
 model subOptionMonth {
-  id                 String             @id @default(uuid())
-  clubId      String @unique
-  club club @relation(fields: [clubId], references: [id])
-  usesPerDay Int
-  playTime Int
-  usesHistory DateTime[] @default([])
-  status SubscriptionOptionStatus
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  
+  id          String                   @id @default(uuid())
+  usesPerDay  Int
+  playTime    Int
+  usesHistory DateTime[]               @default(dbgenerated("(ARRAY[]::timestamp without time zone[])::timestamp(3) without time zone[]"))
+  createdAt   DateTime                 @default(now())
+  updatedAt   DateTime                 @updatedAt
+  clubId      String                   @unique
+  status      SubscriptionOptionStatus
+  club        club                     @relation(fields: [clubId], references: [id])
 }
 
 model subOptionTime {
-  id                 String             @id @default(uuid())
-  clubId      String @unique
-  club club @relation(fields: [clubId], references: [id])
-  totalTime Int
-  timeRemain Int @default(0)
-  status SubscriptionOptionStatus
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
+  id         String                   @id @default(uuid())
+  totalTime  Int
+  timeRemain Int                      @default(0)
+  createdAt  DateTime                 @default(now())
+  updatedAt  DateTime                 @updatedAt
+  clubId     String                   @unique
+  status     SubscriptionOptionStatus
+  club       club                     @relation(fields: [clubId], references: [id])
 }
 
 model slot {
@@ -228,11 +261,11 @@ model slot {
   startTime     DateTime
   endTime       DateTime
   dateOfWeek    DateTime
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
   bookedSlot    bookedSlot[]
   club          club            @relation(fields: [clubId], references: [id])
   subOptionSlot subOptionSlot[]
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
 }
 
 model memberSubscription {
@@ -240,16 +273,18 @@ model memberSubscription {
   subscriptionId     String
   memberId           String
   billId             String
-  user               users               @relation(fields: [memberId], references: [id])
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  user               users              @relation(fields: [memberId], references: [id])
   subscriptionOption subscriptionOption @relation(fields: [subscriptionId], references: [id])
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
 }
+
 enum SubscriptionType {
   Month
   Slot
   Time
 }
+
 enum Sex {
   female
   male
@@ -264,10 +299,9 @@ enum Role {
 }
 
 enum SubscriptionOptionStatus {
-  disable
   active
   block
-  
+  disable
 }
 
 enum OtpStatus {
@@ -295,5 +329,4 @@ enum BillType {
 
 enum BillStatus {
   pending
-  
 }

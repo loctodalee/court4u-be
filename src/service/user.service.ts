@@ -1,4 +1,4 @@
-import { $Enums, users } from '@prisma/client';
+import { users } from '@prisma/client';
 import { UserRepository } from '../repository/user.repository';
 import { IUserService } from './iUser.service';
 
@@ -145,5 +145,38 @@ export class UserService implements IUserService {
     };
     const user = await UserRepository.getInstance().upsertUser({ options });
     return user;
+  }
+
+  public async createStaff({
+    username,
+    password,
+    email,
+    phone,
+    status,
+    role,
+    otp,
+    clubId,
+  }: {
+    username: string;
+    password: string;
+    email: string;
+    phone: string;
+    status: string;
+    role: string[];
+    otp: string;
+    clubId: string;
+  }): Promise<users> {
+    const options = {
+      data: {
+        username,
+        password,
+        email,
+        phone,
+        status,
+        role,
+        otp,
+      },
+    };
+    return await UserRepository.getInstance().createNewUser({ options });
   }
 }
