@@ -4,6 +4,7 @@ import { IErrorResponse } from './handleResponse/iError.response';
 import session from 'express-session';
 import googlePassport from './lib/init.googleOAuth';
 import facebookPassport from './lib/init.facebookOAuth';
+import compression from 'compression';
 const { ErrorResponse } = require('./handleResponse/error.response');
 const morgan = require('morgan');
 const app = express();
@@ -14,6 +15,8 @@ app.use(
     extended: true,
   })
 );
+
+app.use(compression());
 
 const prisma = new PrismaClient();
 //init middleware

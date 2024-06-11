@@ -223,7 +223,7 @@ model subOptionTime {
 }
 
 model slot {
-  id            String          @id
+  id            String          @id @default(uuid())
   clubId        String
   startTime     DateTime
   endTime       DateTime
