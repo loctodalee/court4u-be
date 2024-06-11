@@ -13,7 +13,7 @@ export class SubscriptionController {
   }
 
   /**
-   * @description tạo ra subciption khi court owner mua
+   * @description court owner tạo ra subcription để user mua
    * @param req {clubId(req.headers.api-key), name, price, startDate, endDate, status, type, detail:json}
    * @param res {subscription}
    */

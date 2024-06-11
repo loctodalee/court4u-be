@@ -177,13 +177,9 @@ class SubscriptionOptionTime extends Subscription {
     const newSubscription = await super.createSubscription(
       newSubsOptionTime.id
     );
-    const payment = await this._paymentService.momoPayment({
-      price: newSubscription.price,
-      orderId: newSubscription.id,
-    });
+
     return {
       newSubscription,
-      payment,
     };
   }
 }

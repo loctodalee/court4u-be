@@ -55,4 +55,24 @@ export interface IUserService {
     username: string;
     avatarUrl: string;
   }): Promise<users>;
+
+  createStaff({
+    username,
+    password,
+    email,
+    phone,
+    status,
+    role,
+    otp,
+    clubId,
+  }: {
+    username: string;
+    password: string;
+    email: string;
+    phone: string;
+    status: string;
+    role: string[];
+    otp: string;
+    clubId: string;
+  }): Promise<users>;
 }
