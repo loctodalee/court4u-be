@@ -28,14 +28,7 @@ export class PricingRepository implements IPricingRepository {
     duration: string;
     price: number;
   }): Promise<pricing> {
-    return prisma.pricing.create({
-      data: {
-        clubId: data.clubId,
-        type: data.type,
-        duration: data.duration,
-        price: data.price,
-      },
-    });
+    return prisma.pricing.create({ data });
   }
 
   public async updatePricing(
