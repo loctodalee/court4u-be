@@ -157,6 +157,9 @@ model bill {
 model club {
   id                 String               @id @default(uuid())
   courtOwnerId       String
+  clubSubscriptionId String?
+  subscriptionStartDate DateTime?
+  subscriptionEndDate DateTime?
   name               String               @db.VarChar
   address            String               @db.VarChar
   district           String               @db.VarChar
@@ -167,6 +170,7 @@ model club {
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt
   user               users                @relation(fields: [courtOwnerId], references: [id])
+  clubSubscription  clubSubscription? @relation(fields: [clubSubscriptionId], references: [id])
   clubImage          clubImage[]
   clubRole           clubRole[]
   court              court[]
@@ -284,10 +288,28 @@ model memberSubscription {
   subscriptionOption subscriptionOption @relation(fields: [subscriptionId], references: [id])
 }
 
+model clubSubscription{
+  id String @id @default(uuid())
+  name String
+  price Float
+  totalDate Int
+  type ClubSubsciptionType
+  status ClubSubcriptionStatus
+  clubs club[]
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+}
+
 enum SubscriptionType {
   Month
   Slot
   Time
+}
+
+enum ClubSubsciptionType {
+  Day
+  Month
+  Year
 }
 
 enum Sex {
@@ -339,6 +361,12 @@ enum BillStatus {
 }
 
 enum memberSubscriptionStatus {
+  pending
+  active
+  disable
+}
+
+enum ClubSubcriptionStatus {
   pending
   active
   disable

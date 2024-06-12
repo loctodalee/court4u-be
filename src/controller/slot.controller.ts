@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { ISlotService } from '../service/iSlot.service';
+import { ISlotService } from '../service/interface/iSlot.service';
 import { SlotService } from '../service/slot.service';
 const { SuccessResponse } = require('../handleResponse/success.response');
 

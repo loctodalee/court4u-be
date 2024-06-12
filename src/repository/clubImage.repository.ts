@@ -1,6 +1,6 @@
 import { PrismaClient, clubImage } from '@prisma/client';
 import { List } from 'lodash';
-import { IClubImageRepository } from './iClubImage.repository';
+import { IClubImageRepository } from './interface/iClubImage.repository';
 
 const prisma = new PrismaClient();
 

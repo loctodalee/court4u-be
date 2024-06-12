@@ -1,13 +1,13 @@
 import { review } from '@prisma/client';
-import { iReviewService } from './iReview.service';
-import { IReviewRepository } from '../repository/iReview.repository';
+import { iReviewService } from './interface/iReview.service';
+import { IReviewRepository } from '../repository/interface/iReview.repository';
 import { ReviewRepository } from '../repository/review.repository';
 import {
   BadRequestError,
   NotFoundError,
 } from '../handleResponse/error.response';
 import prisma from '../lib/prisma';
-import { IClubService } from './iClub.service';
+import { IClubService } from './interface/iClub.service';
 import { ClubService } from './club.service';
 
 export class ReviewService implements iReviewService {

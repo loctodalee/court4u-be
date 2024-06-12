@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { IAuthService } from '../service/iAuth.service';
+import { IAuthService } from '../service/interface/iAuth.service';
 
 import { AuthService } from '../service/auth.service';
 const { SuccessResponse } = require('../handleResponse/success.response');

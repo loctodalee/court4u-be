@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { ISubscriptionService } from '../service/iSubscription.service';
+import { ISubscriptionService } from '../service/interface/iSubscription.service';
 import { SubscriptionFactory } from '../service/subscription.service';
 const { SuccessResponse } = require('../handleResponse/success.response');
 

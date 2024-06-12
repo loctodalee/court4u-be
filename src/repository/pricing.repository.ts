@@ -1,6 +1,6 @@
 import { PrismaClient, pricing } from '@prisma/client';
 import { List } from 'lodash';
-import { IPricingRepository } from './iPricing.repository';
+import { IPricingRepository } from './interface/iPricing.repository';
 
 const prisma = new PrismaClient();
 

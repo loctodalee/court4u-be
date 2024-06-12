@@ -1,5 +1,5 @@
 import { club } from '@prisma/client';
-import { IClubRepository } from './iClub.repository';
+import { IClubRepository } from './interface/iClub.repository';
 import prisma from '../lib/prisma';
 
 export class ClubRepository implements IClubRepository {

@@ -1,6 +1,6 @@
-import { template } from "@prisma/client";
-import { ITemplateRepository } from "./iTemplate.repository";
-import prisma from "../lib/prisma";
+import { template } from '@prisma/client';
+import { ITemplateRepository } from './interface/iTemplate.repository';
+import prisma from '../lib/prisma';
 
 export class TemplateRepostory implements ITemplateRepository {
   private static Instance: TemplateRepostory;

@@ -1,4 +1,4 @@
-import { IUserService } from '../service/iUser.service';
+import { IUserService } from '../service/interface/iUser.service';
 import { UserService } from './../service/user.service';
 import { Request, Response } from 'express';
 const { SuccessResponse } = require('../handleResponse/success.response');

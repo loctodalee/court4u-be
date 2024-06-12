@@ -1,6 +1,6 @@
 import { BillStatus, BillType, PrismaClient, bill } from '@prisma/client';
 import { List } from 'lodash';
-import { IBillRepository } from './iBill.repository';
+import { IBillRepository } from './interface/iBill.repository';
 
 const prisma = new PrismaClient();
 

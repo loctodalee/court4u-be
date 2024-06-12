@@ -1,8 +1,8 @@
 import { club } from '@prisma/client';
-import { IClubService } from './iClub.service';
-import { IClubRepository } from '../repository/iClub.repository';
+import { IClubService } from './interface/iClub.service';
+import { IClubRepository } from '../repository/interface/iClub.repository';
 import { ClubRepository } from '../repository/club.repository';
-import { IUserService } from './iUser.service';
+import { IUserService } from './interface/iUser.service';
 import { UserService } from './user.service';
 import prisma from '../lib/prisma';
 export class ClubService implements IClubService {

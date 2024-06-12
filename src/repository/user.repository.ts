@@ -1,6 +1,6 @@
 import { $Enums, users } from '@prisma/client';
 import prisma from '../lib/prisma';
-import { IUserRepository } from './iUser.repository';
+import { IUserRepository } from './interface/iUser.repository';
 import { AuthFailure } from '../handleResponse/error.response';
 
 export class UserRepository implements IUserRepository {

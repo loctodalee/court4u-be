@@ -1,5 +1,5 @@
 import { $Enums, court, CourtStatus } from '@prisma/client';
-import { ICourtRepositorty } from './iCourt.repository';
+import { ICourtRepositorty } from './interface/iCourt.repository';
 import prisma from '../lib/prisma';
 
 export class CourtRepository implements ICourtRepositorty {

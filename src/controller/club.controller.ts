@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { IClubService } from '../service/iClub.service';
+import { IClubService } from '../service/interface/iClub.service';
 import { ClubService } from '../service/club.service';
 const { SuccessResponse } = require('../handleResponse/success.response');
 

@@ -1,17 +1,17 @@
-import { IMemberSubscriptionService } from './iMemberSubscription.service';
-import { ISubscriptionService } from './iSubscription.service';
+import { IMemberSubscriptionService } from './interface/iMemberSubscription.service';
+import { ISubscriptionService } from './interface/iSubscription.service';
 import { SubscriptionFactory } from './subscription.service';
 import {
   BadRequestError,
   NotFoundError,
 } from '../handleResponse/error.response';
-import { IUserService } from './iUser.service';
+import { IUserService } from './interface/iUser.service';
 import { UserService } from './user.service';
-import { IPayementService } from './iPayment.service';
+import { IPayementService } from './interface/iPayment.service';
 import { PaymentService } from './payment.service';
-import { IBillService } from './iBill.service';
+import { IBillService } from './interface/iBill.service';
 import { BillService } from './bill.service';
-import { IMemberSubscriptionRepository } from '../repository/iMemberSubscription.repository';
+import { IMemberSubscriptionRepository } from '../repository/interface/iMemberSubscription.repository';
 import { MemberSubscriptionRepository } from '../repository/memberSubscription.repository';
 import prisma from '../lib/prisma';
 
@@ -66,8 +66,7 @@ export class MemberSubscriptionService implements IMemberSubscriptionService {
     const payment = await this._paymentService.momoPayment({
       price: foundSubs.price,
       orderId: memberSubs.id,
-      returnUrl:
-        'http://localhost:3000/v1/api/memberSubscription/momo/PaymentCallBack',
+      returnUrl: '/memberSubscription/momo/PaymentCallBack',
     });
 
     return payment;

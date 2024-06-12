@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { IMemberSubscriptionService } from '../service/iMemberSubscription.service';
+import { IMemberSubscriptionService } from '../service/interface/iMemberSubscription.service';
 import { MemberSubscriptionService } from '../service/memberSubscription.service';
 const { SuccessResponse } = require('../handleResponse/success.response');
 

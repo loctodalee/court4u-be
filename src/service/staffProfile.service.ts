@@ -1,7 +1,7 @@
 import { Sex, staffProfile } from '@prisma/client';
 import { List } from 'lodash';
 import { StaffProfileRepository } from '../repository/staffProfile.repository';
-import { IStaffProfileService } from './iStaffProfile.service';
+import { IStaffProfileService } from './interface/iStaffProfile.service';
 
 export class StaffProfileService implements IStaffProfileService {
   private static Instance: StaffProfileService;

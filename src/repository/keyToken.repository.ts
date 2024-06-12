@@ -1,4 +1,4 @@
-import { IKeyTokenRepository } from './iKeyToken.repository';
+import { IKeyTokenRepository } from './interface/iKeyToken.repository';
 import prisma from '../lib/prisma';
 import { keyTokens } from '@prisma/client';
 

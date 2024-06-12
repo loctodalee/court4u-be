@@ -1,6 +1,6 @@
 import passport from 'passport';
 import prisma from './prisma';
-import { IUserService } from '../service/iUser.service';
+import { IUserService } from '../service/interface/iUser.service';
 import { UserService } from '../service/user.service';
 
 const FacebookStrategy = require('passport-facebook').Strategy;

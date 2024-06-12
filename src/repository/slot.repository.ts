@@ -1,5 +1,5 @@
 import { slot } from '@prisma/client';
-import { ISlotRepository } from './iSlot.repository';
+import { ISlotRepository } from './interface/iSlot.repository';
 import prisma from '../lib/prisma';
 
 export class SlotRepository implements ISlotRepository {

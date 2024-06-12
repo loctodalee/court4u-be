@@ -1,7 +1,7 @@
 import { pricing } from '@prisma/client';
 import { List } from 'lodash';
 import { PricingRepository } from '../repository/pricing.repository';
-import { IPricingService } from './iPricing.service';
+import { IPricingService } from './interface/iPricing.service';
 
 export class PricingService implements IPricingService {
   private pricingRepository: PricingRepository;

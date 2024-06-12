@@ -2,7 +2,7 @@ import Jwt, { JwtPayload } from 'jsonwebtoken';
 import { asyncHandler } from '../helper/asyncHandler';
 import { NextFunction, Request, Response } from 'express';
 import { AuthFailure, BadRequestError } from '../handleResponse/error.response';
-import { IKeyTokenService } from '../service/iKeyToken.service';
+import { IKeyTokenService } from '../service/interface/iKeyToken.service';
 import { KeyTokenService } from '../service/keyToken.service';
 import { keyTokens, users, club } from '@prisma/client';
 import prisma from '../lib/prisma';

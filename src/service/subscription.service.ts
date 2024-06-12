@@ -9,10 +9,10 @@ import {
   BadRequestError,
   NotImplementError,
 } from '../handleResponse/error.response';
-import { ISubscriptionRepository } from '../repository/iSubscription.repository';
+import { ISubscriptionRepository } from '../repository/interface/iSubscription.repository';
 import { SubscriptionRepository } from '../repository/subscription.repository';
-import { ISubscriptionService } from './iSubscription.service';
-import { IPayementService } from './iPayment.service';
+import { ISubscriptionService } from './interface/iSubscription.service';
+import { IPayementService } from './interface/iPayment.service';
 import { PaymentService } from './payment.service';
 
 type SubscriptionConstructor = new (...args: any[]) => any;

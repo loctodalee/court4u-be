@@ -1,8 +1,8 @@
 import { slot } from '@prisma/client';
-import { ISlotService } from './iSlot.service';
-import { ISlotRepository } from '../repository/iSlot.repository';
+import { ISlotService } from './interface/iSlot.service';
+import { ISlotRepository } from '../repository/interface/iSlot.repository';
 import { SlotRepository } from '../repository/slot.repository';
-import { IClubService } from './iClub.service';
+import { IClubService } from './interface/iClub.service';
 import { ClubService } from './club.service';
 import {
   NotFoundError,

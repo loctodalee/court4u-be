@@ -4,9 +4,9 @@ import {
 } from '../handleResponse/error.response';
 import { transport } from '../lib/init.nodemailer';
 import { replacePlaceholder } from '../util/replaceHtml';
-import { IEmailService } from './iEmail.service';
+import { IEmailService } from './interface/iEmail.service';
 // import { IOtpService } from './iOtp.service';
-import { ITemplateService } from './iTemplate.service';
+import { ITemplateService } from './interface/iTemplate.service';
 // import { OtpSerivce } from './otp.service';
 import { TemplateService } from './template.service';
 import crypto from 'crypto';

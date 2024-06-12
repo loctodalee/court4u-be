@@ -1,7 +1,7 @@
 import { clubImage } from '@prisma/client';
 import { List } from 'lodash';
 import { ClubImageRepository } from '../repository/clubImage.repository';
-import { IClubImageService } from './iClubImage.service';
+import { IClubImageService } from './interface/iClubImage.service';
 
 export class ClubImageService implements IClubImageService {
   private clubImageRepository: ClubImageRepository;

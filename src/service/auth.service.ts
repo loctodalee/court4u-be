@@ -6,16 +6,16 @@ import {
   NotFoundError,
   NotImplementError,
 } from '../handleResponse/error.response';
-import { IAuthService } from './iAuth.service';
+import { IAuthService } from './interface/iAuth.service';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
-import { IKeyTokenService } from './iKeyToken.service';
+import { IKeyTokenService } from './interface/iKeyToken.service';
 import { KeyTokenService } from './keyToken.service';
 import { filterData } from '../util/filterData';
-import { IEmailService } from './iEmail.service';
+import { IEmailService } from './interface/iEmail.service';
 import { EmailService } from './email.service';
 import { keyTokens, users } from '@prisma/client';
-import { IUserService } from './iUser.service';
+import { IUserService } from './interface/iUser.service';
 import { UserService } from './user.service';
 export class AuthService implements IAuthService {
   private readonly _keyTokenService: IKeyTokenService;

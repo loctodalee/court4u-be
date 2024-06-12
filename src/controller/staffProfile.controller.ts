@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { IStaffProfileService } from '../service/iStaffProfile.service';
+import { IStaffProfileService } from '../service/interface/iStaffProfile.service';
 import { StaffProfileService } from './../service/staffProfile.service';
 const { SuccessResponse } = require('../handleResponse/success.response');
 const { ErrorResponse } = require('../handleResponse/error.response');

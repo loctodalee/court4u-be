@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { ReviewService } from '../service/review.service';
-import { iReviewService } from '../service/iReview.service';
+import { iReviewService } from '../service/interface/iReview.service';
 const { SuccessResponse } = require('../handleResponse/success.response');
 
 export class ReviewController {

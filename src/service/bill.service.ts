@@ -1,7 +1,7 @@
 import { BillStatus, BillType, bill } from '@prisma/client';
 import { List } from 'lodash';
 import { BillRepository } from '../repository/bill.repository';
-import { IBillService } from './iBill.service';
+import { IBillService } from './interface/iBill.service';
 
 export class BillService implements IBillService {
   private billRepository: BillRepository;

@@ -1,5 +1,5 @@
-import { IKeyTokenService } from './iKeyToken.service';
-import { IKeyTokenRepository } from '../repository/iKeyToken.repository';
+import { IKeyTokenService } from './interface/iKeyToken.service';
+import { IKeyTokenRepository } from '../repository/interface/iKeyToken.repository';
 import { KeyTokenRepository } from '../repository/keyToken.repository';
 import { keyTokens } from '@prisma/client';
 

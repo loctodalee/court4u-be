@@ -1,4 +1,4 @@
-import { IPayementService } from './iPayment.service';
+import { IPayementService } from './interface/iPayment.service';
 import crypto from 'crypto';
 import https from 'https';
 export class PaymentService implements IPayementService {
@@ -14,7 +14,8 @@ export class PaymentService implements IPayementService {
     const requestId =
       process.env.MOMO_PARTNER_CODE! + new Date().getTime() + 'id';
     const orderInfo = 'Thanh toán qua ví momo';
-    const rawSignature = `partnerCode=${process.env.MOMO_PARTNER_CODE}&accessKey=${process.env.MOMO_ACCESS_KEY}&requestId=${requestId}&amount=${price}&orderId=${orderId}&orderInfo=${orderInfo}&returnUrl=${returnUrl}&notifyUrl=${process.env.MOMO_NOTIFY_URL}&extraData=`;
+    const payUrl = process.env.MOMO_RETURN_URL + returnUrl;
+    const rawSignature = `partnerCode=${process.env.MOMO_PARTNER_CODE}&accessKey=${process.env.MOMO_ACCESS_KEY}&requestId=${requestId}&amount=${price}&orderId=${orderId}&orderInfo=${orderInfo}&returnUrl=${payUrl}&notifyUrl=${process.env.MOMO_NOTIFY_URL}&extraData=`;
     const signature = crypto
       .createHmac('sha256', process.env.MOMO_SERECT_KEY!)
       .update(rawSignature)
@@ -27,7 +28,7 @@ export class PaymentService implements IPayementService {
       amount: price.toString(),
       orderId,
       orderInfo,
-      returnUrl: returnUrl,
+      returnUrl: payUrl,
       notifyUrl: process.env.MOMO_NOTIFY_URL,
       extraData: '',
       requestType: process.env.MOMO_REQUEST_TYPE,

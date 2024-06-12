@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { ICourtService } from '../service/iCourt.service';
+import { ICourtService } from '../service/interface/iCourt.service';
 import { CourtService } from '../service/court.service';
 
 const { SuccessResponse } = require('../handleResponse/success.response');

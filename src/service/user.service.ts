@@ -1,6 +1,6 @@
 import { users } from '@prisma/client';
 import { UserRepository } from '../repository/user.repository';
-import { IUserService } from './iUser.service';
+import { IUserService } from './interface/iUser.service';
 
 export class UserService implements IUserService {
   public async getUserByEmail({

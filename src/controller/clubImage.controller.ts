@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { ClubImageService } from '../service/clubImage.service';
-import { IClubImageService } from '../service/iClubImage.service';
+import { IClubImageService } from '../service/interface/iClubImage.service';
 const { SuccessResponse } = require('../handleResponse/success.response');
 const { ErrorResponse } = require('../handleResponse/error.response');
 

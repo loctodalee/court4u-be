@@ -5,7 +5,7 @@ import {
   SubscriptionOptionStatus,
   SubscriptionType,
 } from '@prisma/client';
-import { ISubscriptionRepository } from './iSubscription.repository';
+import { ISubscriptionRepository } from './interface/iSubscription.repository';
 import prisma from '../lib/prisma';
 
 export class SubscriptionRepository implements ISubscriptionRepository {

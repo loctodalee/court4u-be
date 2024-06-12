@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { IPricingService } from '../service/iPricing.service';
+import { IPricingService } from '../service/interface/iPricing.service';
 import { PricingService } from '../service/pricing.service';
 const { SuccessResponse } = require('../handleResponse/success.response');
 const { ErrorResponse } = require('../handleResponse/error.response');

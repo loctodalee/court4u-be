@@ -1,5 +1,5 @@
 import { review } from '@prisma/client';
-import { IReviewRepository } from './iReview.repository';
+import { IReviewRepository } from './interface/iReview.repository';
 import prisma from '../lib/prisma';
 
 export class ReviewRepository implements IReviewRepository {

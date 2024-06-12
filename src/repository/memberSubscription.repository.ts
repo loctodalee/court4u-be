@@ -1,5 +1,5 @@
 import { $Enums, memberSubscription, Prisma } from '@prisma/client';
-import { IMemberSubscriptionRepository } from './iMemberSubscription.repository';
+import { IMemberSubscriptionRepository } from './interface/iMemberSubscription.repository';
 import prisma from '../lib/prisma';
 
 export class MemberSubscriptionRepository
