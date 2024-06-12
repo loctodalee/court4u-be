@@ -215,8 +215,7 @@ model subscriptionOption {
   clubId             String
   name               String                   @db.VarChar
   price              Float
-  startDate          DateTime
-  endDate            DateTime
+  totalDate          Int
   type               SubscriptionType
   status             SubscriptionOptionStatus
   detail             Json
@@ -271,12 +270,16 @@ model slot {
 }
 
 model memberSubscription {
-  id                 String             @id
+  id                 String             @id @default(uuid())
   subscriptionId     String
   memberId           String
   billId             String
+  startDate          DateTime
+  endDate            DateTime
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
+  detail            Json
+  status             memberSubscriptionStatus
   user               users              @relation(fields: [memberId], references: [id])
   subscriptionOption subscriptionOption @relation(fields: [subscriptionId], references: [id])
 }
@@ -333,4 +336,10 @@ enum BillStatus {
   pending
   success
   fail
+}
+
+enum memberSubscriptionStatus {
+  pending
+  active
+  disable
 }

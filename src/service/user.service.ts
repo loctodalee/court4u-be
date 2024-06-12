@@ -15,6 +15,15 @@ export class UserService implements IUserService {
     };
     return await UserRepository.getInstance().getUser({ options });
   }
+
+  public async getUserById({ id }: { id: string }): Promise<users | null> {
+    const options = {
+      where: {
+        id,
+      },
+    };
+    return await UserRepository.getInstance().getUser({ options });
+  }
   public async createNewUser({
     username,
     password,

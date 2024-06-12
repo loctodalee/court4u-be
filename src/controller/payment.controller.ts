@@ -18,6 +18,7 @@ export class PaymentController {
       metaData: await paymentService.momoPayment({
         price: 1200,
         orderId: 'testtesttest123123123',
+        returnUrl: '',
       }),
     }).send(res);
   }

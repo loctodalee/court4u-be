@@ -16,4 +16,10 @@ export interface ISubscriptionService {
   }: {
     keySearch: string;
   }): Promise<subscriptionOption[] | null>;
+
+  searchSubscriptionById({
+    keySearch,
+  }: {
+    keySearch: string;
+  }): Promise<subscriptionOption | null>;
 }

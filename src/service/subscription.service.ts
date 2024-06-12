@@ -60,14 +60,28 @@ export class SubscriptionFactory implements ISubscriptionService {
     };
     return await this._subscriptionRepository.searchSubscriptions({ options });
   }
+
+  public async searchSubscriptionById({
+    keySearch,
+  }: {
+    keySearch: string;
+  }): Promise<subscriptionOption | null> {
+    const options = {
+      where: {
+        id: keySearch,
+      },
+    };
+    return await this._subscriptionRepository.foundSubscriptionOption({
+      options,
+    });
+  }
 }
 
 class Subscription {
   clubId: string;
   name: string;
   price: number;
-  startDate: Date;
-  endDate: Date;
+  totalDate: number;
   status: SubscriptionOptionStatus;
   type: SubscriptionType;
   detail: any;
@@ -77,8 +91,7 @@ class Subscription {
     clubId,
     name,
     price,
-    startDate,
-    endDate,
+    totalDate,
     type,
     status = 'disable',
     detail,
@@ -86,8 +99,7 @@ class Subscription {
     clubId: string;
     name: string;
     price: number;
-    startDate: Date;
-    endDate: Date;
+    totalDate: number;
     type: SubscriptionType;
     status: SubscriptionOptionStatus;
     detail: any;
@@ -95,8 +107,7 @@ class Subscription {
     this.clubId = clubId;
     this.name = name;
     this.price = price;
-    this.startDate = startDate;
-    this.endDate = endDate;
+    this.totalDate = totalDate;
     this.status = status;
     this.type = type;
     this._subscriptionRepository = SubscriptionRepository.getInstance();
@@ -110,8 +121,7 @@ class Subscription {
         id: subscriptionId,
         clubId: this.clubId,
         name: this.name,
-        endDate: this.endDate,
-        startDate: this.startDate,
+        totalDate: this.totalDate,
         price: this.price,
         status: this.status,
         type: this.type,
@@ -144,13 +154,9 @@ class SubscriptionOptionMonth extends Subscription {
     const newSubscription = await super.createSubscription(
       newSubsOptionMonth.id
     );
-    const payment = await this._paymentService.momoPayment({
-      price: newSubscription.price,
-      orderId: newSubscription.id,
-    });
+
     return {
       newSubscription,
-      payment,
     };
   }
 }

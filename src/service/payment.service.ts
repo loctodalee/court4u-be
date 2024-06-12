@@ -5,14 +5,16 @@ export class PaymentService implements IPayementService {
   public async momoPayment({
     price,
     orderId,
+    returnUrl,
   }: {
     price: number;
     orderId: string;
+    returnUrl: string;
   }): Promise<any> {
     const requestId =
       process.env.MOMO_PARTNER_CODE! + new Date().getTime() + 'id';
     const orderInfo = 'Thanh toán qua ví momo';
-    const rawSignature = `partnerCode=${process.env.MOMO_PARTNER_CODE}&accessKey=${process.env.MOMO_ACCESS_KEY}&requestId=${requestId}&amount=${price}&orderId=${orderId}&orderInfo=${orderInfo}&returnUrl=${process.env.MOMO_RETURN_URL}&notifyUrl=${process.env.MOMO_NOTIFY_URL}&extraData=`;
+    const rawSignature = `partnerCode=${process.env.MOMO_PARTNER_CODE}&accessKey=${process.env.MOMO_ACCESS_KEY}&requestId=${requestId}&amount=${price}&orderId=${orderId}&orderInfo=${orderInfo}&returnUrl=${returnUrl}&notifyUrl=${process.env.MOMO_NOTIFY_URL}&extraData=`;
     const signature = crypto
       .createHmac('sha256', process.env.MOMO_SERECT_KEY!)
       .update(rawSignature)
@@ -25,7 +27,7 @@ export class PaymentService implements IPayementService {
       amount: price.toString(),
       orderId,
       orderInfo,
-      returnUrl: process.env.MOMO_RETURN_URL,
+      returnUrl: returnUrl,
       notifyUrl: process.env.MOMO_NOTIFY_URL,
       extraData: '',
       requestType: process.env.MOMO_REQUEST_TYPE,

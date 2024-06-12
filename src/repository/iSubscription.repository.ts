@@ -13,6 +13,12 @@ export interface ISubscriptionRepository {
     options: any;
   }): Promise<subscriptionOption[] | null>;
 
+  foundSubscriptionOption({
+    options,
+  }: {
+    options: any;
+  }): Promise<subscriptionOption | null>;
+
   findSubscriptionOptionMonth({
     options,
   }: {
@@ -30,8 +36,7 @@ export interface ISubscriptionRepository {
     clubId,
     name,
     price,
-    startDate,
-    endDate,
+    totalDate,
     status,
     type,
     detail,
@@ -40,8 +45,7 @@ export interface ISubscriptionRepository {
     clubId: string;
     name: string;
     price: number;
-    startDate: Date;
-    endDate: Date;
+    totalDate: number;
     status: SubscriptionOptionStatus;
     type: SubscriptionType;
     detail: Record<string, any>;

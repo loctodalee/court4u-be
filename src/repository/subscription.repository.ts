@@ -24,6 +24,14 @@ export class SubscriptionRepository implements ISubscriptionRepository {
     return await prisma.subscriptionOption.findMany(options);
   }
 
+  public async foundSubscriptionOption({
+    options,
+  }: {
+    options: any;
+  }): Promise<subscriptionOption | null> {
+    return await prisma.subscriptionOption.findFirst(options);
+  }
+
   public async findSubscriptionOptionMonth({
     options,
   }: {
@@ -36,8 +44,7 @@ export class SubscriptionRepository implements ISubscriptionRepository {
     clubId,
     name,
     price,
-    startDate,
-    endDate,
+    totalDate,
     status,
     type,
     detail,
@@ -46,8 +53,7 @@ export class SubscriptionRepository implements ISubscriptionRepository {
     clubId: string;
     name: string;
     price: number;
-    startDate: Date;
-    endDate: Date;
+    totalDate: number;
     status: SubscriptionOptionStatus;
     type: SubscriptionType;
     detail: Record<string, any>;
@@ -58,8 +64,7 @@ export class SubscriptionRepository implements ISubscriptionRepository {
         clubId,
         name,
         price,
-        endDate,
-        startDate,
+        totalDate,
         status,
         type,
         detail,

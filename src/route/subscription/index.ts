@@ -6,7 +6,7 @@ const router = express.Router();
 router.use(authentication);
 router.use(CheckApiKey);
 router.post(
-  '/owner/buy',
+  '/owner/create',
   asyncHandler(SubscriptionController.getInstance().createSubscription)
 );
 
