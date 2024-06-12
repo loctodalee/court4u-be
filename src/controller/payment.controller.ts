@@ -17,7 +17,7 @@ export class PaymentController {
       message: 'Direct to momo payment',
       metaData: await paymentService.momoPayment({
         price: 1200,
-        orderId: 'testtesttest1234567892222212231312',
+        orderId: 'testtesttest123123123',
       }),
     }).send(res);
   }

@@ -66,17 +66,17 @@ model userRole {
 }
 
 model staffProfile {
-  id        Int        @id @default(autoincrement())
+  id        String        @id @default(uuid())
   userId    String     @unique
   clubId    String     @unique
   club      club       @relation(fields: [clubId], references: [id])
   user      users      @relation(fields: [userId], references: [id])
-  staffRole staffRole?
+  staffRole staffRole[]
 }
 
 model staffRole {
   id           String       @id
-  staffId      Int          @unique
+  staffId      String          @unique
   clubRoleId   String       @unique
   clubRole     clubRole     @relation(fields: [clubRoleId], references: [id])
   staffProfile staffProfile @relation(fields: [staffId], references: [id])
@@ -144,14 +144,14 @@ model booking {
 }
 
 model bill {
-  id        String   @id @default(uuid())
+  id        String     @id @default(uuid())
   method    String
   total     Float
   date      DateTime
-  type      BillType  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
   status    BillStatus
+  type      BillType
 }
 
 model club {
