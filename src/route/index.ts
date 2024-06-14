@@ -5,6 +5,8 @@ router.use('/v1/api/user', require('./user'));
 router.use('/v1/api/auth', require('./auth'));
 router.use('/v1/api/club', require('./club'));
 router.use('/v1/api/court', require('./court'));
+router.use('/v1/api/subscriptionForClub', require('./subscriptionForClub'));
+router.use('/v1/api/clubSubscription', require('./clubSubscription'));
 router.use('/v1/api/subscription', require('./subscription'));
 router.use('/v1/api/memberSubscription', require('./memberSubscription'));
 router.use('/v1/api/payment', require('./payment'));

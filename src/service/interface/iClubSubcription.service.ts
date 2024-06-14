@@ -1,21 +1,24 @@
-import {
-  ClubSubcriptionStatus,
-  ClubSubsciptionType,
-  clubSubscription,
-} from '@prisma/client';
-
+import { $Enums, clubSubscription } from '@prisma/client';
 export interface IClubSubscriptionService {
-  createClubSubCription({
+  buySubscription({
+    clubId,
+    subscriptionForClubId,
     name,
     price,
     totalDate,
-    type,
+    startDate,
+    endDate,
     status,
   }: {
-    name: String;
+    clubId: string;
+    subscriptionForClubId: string;
+    name: string;
     price: number;
     totalDate: number;
-    type: ClubSubsciptionType;
-    status: ClubSubcriptionStatus;
-  }): Promise<clubSubscription>;
+    startDate: Date;
+    endDate: Date;
+    status: $Enums.clubSubscriptionStatus;
+  }): Promise<any>;
+
+  paymentCallBack(args: any): Promise<any>;
 }

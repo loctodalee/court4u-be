@@ -45,7 +45,7 @@ export class MemberSubscriptionService implements IMemberSubscriptionService {
     if (!foundUser) throw new BadRequestError('User not found');
 
     const bill = await this._billService.createBill({
-      method: 'payment',
+      method: 'momo',
       date: new Date(Date.now()),
       status: 'pending',
       total: foundSubs.price,

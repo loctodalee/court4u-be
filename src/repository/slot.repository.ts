@@ -20,7 +20,7 @@ export class SlotRepository implements ISlotRepository {
     clubId: string;
     startTime: Date;
     endTime: Date;
-    dateOfWeek: Date;
+    dateOfWeek: number;
   }): Promise<slot> {
     return await prisma.slot.create({
       data: {
