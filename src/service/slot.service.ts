@@ -21,11 +21,13 @@ export class SlotService implements ISlotService {
     startTime,
     endTime,
     dateOfWeek,
+    price,
   }: {
     clubId: string;
     startTime: Date;
     endTime: Date;
-    dateOfWeek: Date;
+    dateOfWeek: number;
+    price: number;
   }): Promise<slot> {
     const foundClub = await this._clubService.foundClubById({ clubId });
     if (!foundClub) throw new NotFoundError('Club not found');
@@ -37,6 +39,7 @@ export class SlotService implements ISlotService {
       startTime,
       endTime,
       dateOfWeek,
+      price,
     });
   }
 }

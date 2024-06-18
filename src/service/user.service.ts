@@ -25,7 +25,7 @@ export class UserService implements IUserService {
     return await UserRepository.getInstance().getUser({ options });
   }
   public async createNewUser({
-    username,
+    fullname,
     password,
     email,
     phone,
@@ -33,7 +33,7 @@ export class UserService implements IUserService {
     role,
     otp,
   }: {
-    username: string;
+    fullname: string;
     password: string;
     email: string;
     phone: string;
@@ -43,7 +43,7 @@ export class UserService implements IUserService {
   }): Promise<users> {
     const options = {
       data: {
-        username,
+        fullname,
         password,
         email,
         phone,

@@ -20,7 +20,7 @@ export class StaffProfileService implements IStaffProfileService {
   }
 
   public async createStaffProfile(data: {
-    username: string;
+    fullname: string;
     password: string | null;
     email: string;
     phone: string | null;
@@ -31,7 +31,7 @@ export class StaffProfileService implements IStaffProfileService {
     staffRoles: { id: string; roleId: string }[];
   }): Promise<staffProfile> {
     const newUser = await StaffProfileRepository.getInstance().createUser({
-      username: data.username,
+      fullname: data.fullname,
       password: data.password,
       email: data.email,
       phone: data.phone,

@@ -74,7 +74,7 @@ export class AuthService implements IAuthService {
 
     return {
       user: filterData({
-        fields: ['id', 'username', 'phone', 'avatarUrl', 'email', 'apiKey'],
+        fields: ['id', 'fullname', 'phone', 'avatarUrl', 'email', 'apiKey'],
         object: foundUser,
       }),
       tokens,
@@ -83,12 +83,12 @@ export class AuthService implements IAuthService {
   //end login
   // -------- new court owner
   public async newCourtOwner({
-    username,
+    fullname,
     password,
     phone,
     email,
   }: {
-    username: string;
+    fullname: string;
     password: string;
     phone: string;
     email: string;
@@ -110,7 +110,7 @@ export class AuthService implements IAuthService {
       otp: result.toString(),
       phone,
       status: 'disable',
-      username,
+      fullname,
       role: ['owner'],
     });
 
@@ -121,12 +121,12 @@ export class AuthService implements IAuthService {
 
   // ---------new customer
   public async newUser({
-    username,
+    fullname,
     password,
     phone,
     email,
   }: {
-    username: string;
+    fullname: string;
     password: string;
     phone: string;
     email: string;
@@ -148,7 +148,7 @@ export class AuthService implements IAuthService {
       otp: result.toString(),
       phone,
       status: 'disable',
-      username,
+      fullname,
       role: ['member'],
     });
 
@@ -184,7 +184,7 @@ export class AuthService implements IAuthService {
     });
     return {
       user: filterData({
-        fields: ['id', 'username', 'phone', 'avatarUrl', 'email', 'apiKey'],
+        fields: ['id', 'fullname', 'phone', 'avatarUrl', 'email', 'apiKey'],
         object: foundUser,
       }),
       tokens: tokens,
@@ -227,7 +227,7 @@ export class AuthService implements IAuthService {
 
     return {
       user: filterData({
-        fields: ['id', 'username', 'phone', 'avatarUrl', 'email'],
+        fields: ['id', 'fullname', 'phone', 'avatarUrl', 'email'],
         object: user,
       }),
       tokens,

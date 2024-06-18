@@ -16,11 +16,13 @@ export class SlotRepository implements ISlotRepository {
     startTime,
     endTime,
     dateOfWeek,
+    price,
   }: {
     clubId: string;
     startTime: Date;
     endTime: Date;
     dateOfWeek: number;
+    price: number;
   }): Promise<slot> {
     return await prisma.slot.create({
       data: {
@@ -28,7 +30,12 @@ export class SlotRepository implements ISlotRepository {
         startTime,
         endTime,
         dateOfWeek,
+        price,
       },
     });
+  }
+
+  public async findManySlot({ options }: { options: any }): Promise<slot[]> {
+    return await prisma.slot.findMany(options);
   }
 }

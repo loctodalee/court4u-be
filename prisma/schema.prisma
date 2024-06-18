@@ -10,7 +10,7 @@ datasource db {
 
 model users {
   id                  String               @id @default(uuid())
-  username            String               @db.VarChar
+  fullname            String               @db.VarChar
   password            String?              @db.VarChar
   email               String               @unique @db.VarChar
   phone               String?              @db.VarChar
@@ -122,22 +122,26 @@ model cancellation {
 }
 
 model bookedSlot {
-  id        String   @id
+  id        String   @id @default(uuid())
   bookingId String
   date      DateTime
   slotId    String
   checkedIn String
+  price Float
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  booking booking @relation(fields: [bookingId], references: [id])
   slot      slot     @relation(fields: [slotId], references: [id])
 }
 
 model booking {
-  id        String   @id
+  id        String   @id @default(uuid())
   userId    String
   billId    String
   date      DateTime
-  status    Boolean
+  status    BookingStatus
+  totalPrice Float @default(0)
+  bookedSlot bookedSlot[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   user      users    @relation(fields: [userId], references: [id])
@@ -171,7 +175,7 @@ model club {
   user               users                @relation(fields: [courtOwnerId], references: [id])
   clubImage          clubImage[]
   clubRole           clubRole[]
-  pricing            pricing[]
+  // pricing            pricing[]
   review             review[]
   slot               slot[]
   clubSubscription  clubSubscription?
@@ -182,16 +186,16 @@ model club {
   court court[]
 }
 
-model pricing {
-  id        String   @id @default(uuid())
-  clubId    String
-  type      String   @db.VarChar
-  duration  String   @db.VarChar
-  price     Float
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  club      club     @relation(fields: [clubId], references: [id])
-}
+// model pricing {
+//   id        String   @id @default(uuid())
+//   clubId    String
+//   type      String   @db.VarChar
+//   duration  String   @db.VarChar
+//   price     Float
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+//   club      club     @relation(fields: [clubId], references: [id])
+// }
 
 model clubImage {
   id        String   @id @default(uuid())
@@ -253,6 +257,7 @@ model slot {
   dateOfWeek    Int 
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
+  price Float
   bookedSlot    bookedSlot[]
   club          club            @relation(fields: [clubId], references: [id])
   subOptionSlot subOptionSlot[]
@@ -381,6 +386,7 @@ enum CourtStatus {
 }
 
 enum BillType {
+  booking
   memberSubscription
   ownerSubscription
 }
@@ -412,4 +418,10 @@ enum CourtSlotStatus {
   available
   disable 
   booked
+}
+
+enum BookingStatus {
+  pending
+  active
+  canceled
 }

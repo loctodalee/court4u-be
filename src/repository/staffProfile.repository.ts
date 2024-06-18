@@ -38,7 +38,7 @@ export class StaffProfileRepository implements IStaffProfileRepository {
   }
 
   public async createUser(data: {
-    username: string;
+    fullname: string;
     password: string | null;
     email: string;
     phone: string | null;
@@ -48,7 +48,7 @@ export class StaffProfileRepository implements IStaffProfileRepository {
   }) {
     return prisma.users.create({
       data: {
-        username: data.username,
+        fullname: data.fullname,
         password: data.password,
         email: data.email,
         phone: data.phone,

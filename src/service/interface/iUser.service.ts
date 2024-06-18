@@ -4,7 +4,7 @@ export interface IUserService {
   getUserByEmail({ email }: { email: string }): Promise<users | null>;
   getUserById({ id }: { id: string }): Promise<users | null>;
   createNewUser({
-    username,
+    fullname,
     password,
     email,
     phone,
@@ -12,7 +12,7 @@ export interface IUserService {
     role,
     otp,
   }: {
-    username: string;
+    fullname: string;
     password: string;
     email: string;
     phone: string;

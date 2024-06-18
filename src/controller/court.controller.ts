@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { ICourtService } from '../service/interface/iCourt.service';
 import { CourtService } from '../service/court.service';
+import { club } from '@prisma/client';
 
 const { SuccessResponse } = require('../handleResponse/success.response');
 
@@ -21,7 +22,10 @@ export class CourtController {
     var courtService: ICourtService = new CourtService();
     new SuccessResponse({
       message: 'Create new court',
-      metaData: await courtService.createCourt({ ...req.body }),
+      metaData: await courtService.createCourt({
+        clubId: req.clubId,
+        ...req.body,
+      }),
     }).send(res);
   }
 }

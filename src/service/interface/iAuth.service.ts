@@ -4,22 +4,22 @@ export interface IAuthService {
   login({ email, password }: { email: string; password: string }): Promise<any>;
   newUser({
     email,
-    username,
+    fullname,
     password,
     phone,
   }: {
-    username: string;
+    fullname: string;
     password: string;
     phone: string;
     email: string;
   }): Promise<any>;
   newCourtOwner({
     email,
-    username,
+    fullname,
     password,
     phone,
   }: {
-    username: string;
+    fullname: string;
     password: string;
     phone: string;
     email: string;

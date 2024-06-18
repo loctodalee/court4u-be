@@ -8,13 +8,24 @@ import compression from 'compression';
 const { ErrorResponse } = require('./handleResponse/error.response');
 const morgan = require('morgan');
 const app = express();
-
+const cors = require('cors');
 app.use(express.json());
 app.use(
   express.urlencoded({
     extended: true,
   })
 );
+
+// Add headers before the routes are defined
+// Configure CORS
+const corsOptions = {
+  origin: 'http://localhost:3000', // Allow this origin
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow these methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Allow these headers
+  credentials: true, // Allow credentials
+};
+
+app.use(cors(corsOptions));
 
 app.use(compression());
 

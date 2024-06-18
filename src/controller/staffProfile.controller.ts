@@ -34,7 +34,7 @@ export class StaffProfileController {
   //
   async createStaffProfile(req: Request, res: Response) {
     const {
-      username,
+      fullname,
       password,
       email,
       phone,
@@ -48,7 +48,7 @@ export class StaffProfileController {
     try {
       const newProfile =
         await StaffProfileService.getInstance().createStaffProfile({
-          username,
+          fullname,
           password,
           email,
           phone,

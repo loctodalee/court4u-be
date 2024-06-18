@@ -9,7 +9,7 @@ export interface IStaffProfileRepository {
     staffRoles: { id: string; roleId: string }[];
   }): Promise<staffProfile>;
   createUser(data: {
-    username: string;
+    fullname: string;
     password: string | null;
     email: string;
     phone: string | null;

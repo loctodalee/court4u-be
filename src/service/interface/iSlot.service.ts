@@ -10,6 +10,6 @@ export interface ISlotService {
     clubId: string;
     startTime: Date;
     endTime: Date;
-    dateOfWeek: Date;
+    dateOfWeek: number;
   }): Promise<slot>;
 }
