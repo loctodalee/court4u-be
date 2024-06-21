@@ -10,4 +10,5 @@ export interface IMemberSubscriptionService {
   }): Promise<any>;
 
   paymentCallBack(args: any): Promise<any>;
+  searchSubscription(id: string): Promise<memberSubscription | null>;
 }

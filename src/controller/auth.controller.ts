@@ -19,10 +19,11 @@ export class AuthController {
    */
   async Login(req: Request, res: Response) {
     var authService: IAuthService = new AuthService();
+    const data = await authService.login({ ...req.body });
     new SuccessResponse({
       message: 'Login success',
-      metaData: await authService.login({ ...req.body }),
-    }).send(res);
+      metaData: data,
+    }).send(res, data.tokens.accessToken, data.tokens.refreshToken);
   }
 
   /**

@@ -25,7 +25,7 @@ export const createTokenPair = async ({
   privateKey: string;
 }): Promise<any> => {
   try {
-    const accsessToken = await Jwt.sign(payload, publicKey, {
+    const accessToken = await Jwt.sign(payload, publicKey, {
       expiresIn: '1 days',
     });
 
@@ -33,7 +33,7 @@ export const createTokenPair = async ({
       expiresIn: '3 days',
     });
 
-    return { accsessToken, refreshToken };
+    return { accessToken, refreshToken };
   } catch (error) {
     throw error;
   }

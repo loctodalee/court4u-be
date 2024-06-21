@@ -14,6 +14,7 @@ import { BillService } from './bill.service';
 import { IMemberSubscriptionRepository } from '../repository/interface/iMemberSubscription.repository';
 import { MemberSubscriptionRepository } from '../repository/memberSubscription.repository';
 import prisma from '../lib/prisma';
+import { memberSubscription } from '@prisma/client';
 
 export class MemberSubscriptionService implements IMemberSubscriptionService {
   private _memberSubscriptionRepository: IMemberSubscriptionRepository;
@@ -124,5 +125,17 @@ export class MemberSubscriptionService implements IMemberSubscriptionService {
       });
       throw new Error('fail at payment');
     }
+  }
+
+  public async searchSubscription(
+    id: string
+  ): Promise<memberSubscription | null> {
+    return await this._memberSubscriptionRepository.foundMemberSubscription({
+      options: {
+        where: {
+          id,
+        },
+      },
+    });
   }
 }
