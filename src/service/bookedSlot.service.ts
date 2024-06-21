@@ -1,5 +1,5 @@
 import { bookedSlot, booking, Prisma } from '@prisma/client';
-import { IBookedSlotService } from './interface/iBookedSlot.service';
+import { bookSlot, IBookedSlotService } from './interface/iBookedSlot.service';
 import prisma from '../lib/prisma';
 import { forEach } from 'lodash';
 import { ISlotRepository } from '../repository/interface/iSlot.repository';
@@ -10,6 +10,14 @@ import { IBillService } from './interface/iBill.service';
 import { BillService } from './bill.service';
 import { IBookedSlotRepository } from '../repository/interface/iBookedSlot.repository';
 import { BookedSlotRepository } from '../repository/bookedSlot.repository';
+
+export type bookSlotInfo = {
+  date: Date;
+  slotId: string;
+  bookingId: string;
+  checkedIn: string;
+  price: number;
+};
 export class BookedSlotService implements IBookedSlotService {
   private _slotRepository: ISlotRepository;
   private _bookingService: IBookingSerivce;
@@ -21,17 +29,15 @@ export class BookedSlotService implements IBookedSlotService {
     this._bookingService = new BookingService();
     this._billService = new BillService();
   }
-  public async createBookedSlot(
-    userId: string,
-    datas: {
-      date: Date;
-      slotId: string;
-      checkedIn: string;
-      price: number;
-      bookingId: string;
-    }[]
-  ): Promise<Prisma.BatchPayload> {
-    const slotIds = datas.map((entry) => entry.slotId);
+
+  public async createBookedSlot({
+    userId,
+    slotList,
+  }: {
+    userId: string;
+    slotList: bookSlot[];
+  }): Promise<Prisma.BatchPayload> {
+    const slotIds = slotList.map((entry) => entry.slotId);
     const slots = await this._slotRepository.findManySlot({
       options: {
         where: {
@@ -40,14 +46,23 @@ export class BookedSlotService implements IBookedSlotService {
         select: { id: true, price: true },
       },
     });
+    var bookedSlotInfoList: bookSlotInfo[] = [];
+
     slots.forEach((slot) => {
-      datas.forEach((data) => {
+      slotList.forEach((data) => {
         if (slot.id === data.slotId) {
-          data.price = slot.price;
+          bookedSlotInfoList.push({
+            checkedIn: 'false',
+            date: new Date(Date.now()),
+            price: slot.price,
+            bookingId: '0',
+            slotId: data.slotId,
+          });
         }
       });
     });
     const totalPrice = slots.reduce((sum, slot) => sum + slot.price, 0);
+    console.log(totalPrice);
     const bill = await this._billService.createBill({
       date: new Date(Date.now()),
       method: 'momo',
@@ -55,18 +70,21 @@ export class BookedSlotService implements IBookedSlotService {
       total: totalPrice,
       type: 'booking',
     });
-
     const booking = await this._bookingService.createBooking({
       userId,
       billId: bill.id,
       date: new Date(Date.now()),
+      totalPrice: totalPrice,
       status: 'pending',
     });
-    datas.forEach((item) => {
+
+    bookedSlotInfoList.forEach((item) => {
       item.bookingId = booking.id;
     });
 
-    return await this._bookedSlotRepository.createBookedSlot(datas);
+    return await this._bookedSlotRepository.createBookedSlot(
+      bookedSlotInfoList
+    );
   }
 
   public async getAllBookedSlot(): Promise<bookedSlot[]> {

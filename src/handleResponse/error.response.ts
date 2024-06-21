@@ -63,6 +63,15 @@ class ForbiddenError extends ErrorResponse {
     super(message, status);
   }
 }
+
+class InternalServerError extends ErrorResponse {
+  constructor(
+    message: string = ReasonPhrases.INTERNAL_SERVER_ERROR,
+    status: number = StatusCodes.INTERNAL_SERVER_ERROR
+  ) {
+    super(message, status);
+  }
+}
 export {
   ForbiddenError,
   AuthFailure,
@@ -71,4 +80,5 @@ export {
   BadRequestError,
   NotImplementError,
   NotFoundError,
+  InternalServerError,
 };

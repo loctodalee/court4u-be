@@ -140,7 +140,7 @@ model booking {
   billId    String
   date      DateTime
   status    BookingStatus
-  totalPrice Float @default(0)
+  totalPrice Float
   bookedSlot bookedSlot[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

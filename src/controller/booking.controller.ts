@@ -22,13 +22,19 @@ export class BookingController {
     }).send(res);
   }
 
+  /**
+   *
+   * @param req {slotList: [{date: Date; slotId: string;}, {date: Date; slotId: string;}, {date: Date; slotId: string;}]}
+   * @param res
+   */
   public async bookedSlot(req: Request, res: Response) {
     var bookedSlotService: IBookedSlotService = new BookedSlotService();
     new SuccessResponse({
       message: 'Book success',
-      metaData: await bookedSlotService.createBookedSlot(req.user.userId, {
+      metaData: await bookedSlotService.createBookedSlot({
+        userId: req.user.userId,
         ...req.body,
       }),
-    });
+    }).send(res);
   }
 }

@@ -46,6 +46,7 @@ export class AuthService implements IAuthService {
       throw new BadRequestError('Login fail');
     }
     if (foundUser.password == null) throw new BadRequestError('Login fail');
+    if (foundUser.status == 'disable') throw new BadRequestError('Login fail');
     const match = await bcrypt.compare(password, foundUser.password);
 
     if (!match) {

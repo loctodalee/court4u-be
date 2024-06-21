@@ -15,5 +15,5 @@ router.use('/v1/api/slot', require('./slot'));
 router.use('/v1/api/staffs', require('./staffProfile'));
 // router.use('/v1/api/pricing', require('./pricing'));
 router.use('/v1/api/clubImage', require('./clubImage'));
-
+router.use('/v1/api/bookSlot', require('./bookSlot'));
 module.exports = router;

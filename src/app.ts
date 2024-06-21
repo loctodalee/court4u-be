@@ -5,6 +5,7 @@ import session from 'express-session';
 import googlePassport from './lib/init.googleOAuth';
 import facebookPassport from './lib/init.facebookOAuth';
 import compression from 'compression';
+import { initRedis } from './lib/init.redis';
 const { ErrorResponse } = require('./handleResponse/error.response');
 const morgan = require('morgan');
 const app = express();
@@ -40,6 +41,8 @@ app.use(
     cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }, // 30 days
   })
 );
+//init redis
+initRedis();
 //login with google
 app.use(googlePassport.initialize());
 app.use(googlePassport.session());
