@@ -27,4 +27,14 @@ export class ClubController {
       }),
     }).send(res);
   }
+
+  async findClub(req: Request, res: Response) {
+    var clubService: IClubService = new ClubService();
+    new SuccessResponse({
+      message: 'create club success',
+      metaData: await clubService.foundClubById({
+        clubId: req.query.clubId as string,
+      }),
+    }).send(res);
+  }
 }
