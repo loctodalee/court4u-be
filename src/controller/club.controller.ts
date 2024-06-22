@@ -33,7 +33,7 @@ export class ClubController {
     new SuccessResponse({
       message: 'create club success',
       metaData: await clubService.foundClubById({
-        clubId: req.query.clubId as string,
+        clubId: req.params.clubId as string,
       }),
     }).send(res);
   }

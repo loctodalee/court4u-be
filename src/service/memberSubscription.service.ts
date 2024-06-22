@@ -15,6 +15,7 @@ import { IMemberSubscriptionRepository } from '../repository/interface/iMemberSu
 import { MemberSubscriptionRepository } from '../repository/memberSubscription.repository';
 import prisma from '../lib/prisma';
 import { memberSubscription } from '@prisma/client';
+import { time } from 'console';
 
 export class MemberSubscriptionService implements IMemberSubscriptionService {
   private _memberSubscriptionRepository: IMemberSubscriptionRepository;
@@ -37,7 +38,7 @@ export class MemberSubscriptionService implements IMemberSubscriptionService {
     subscriptionId: string;
     memberId: string;
   }): Promise<any> {
-    const foundSubs = await this._subscriptionService.searchSubscriptionById({
+    const foundSubs = await this._subscriptionService.findSubscriptionById({
       keySearch: subscriptionId,
     });
     if (!foundSubs) throw new BadRequestError('Subscription not found');
@@ -55,18 +56,41 @@ export class MemberSubscriptionService implements IMemberSubscriptionService {
     const currentDate = new Date(Date.now());
     const endDate = new Date();
     endDate.setDate(currentDate.getDate() + foundSubs.totalDate);
-    const memberSubs =
-      await this._memberSubscriptionRepository.createMemberSubscription({
-        memberId,
-        billId: bill.id,
-        subscriptionId,
-        startDate: new Date(Date.now()),
-        endDate,
-        detail: foundSubs.detail,
-      });
+    const subscriptionDetail = await this._subscriptionService.findDetailById({
+      keySearch: foundSubs.id,
+    });
+    let memberSubs: memberSubscription;
+
+    switch (foundSubs.type) {
+      case 'Month': {
+        memberSubs =
+          await this._memberSubscriptionRepository.createMemberSubscription({
+            memberId,
+            billId: bill.id,
+            subscriptionId,
+            usesHistory: [],
+            startDate: new Date(Date.now()),
+            endDate,
+          });
+        break;
+      }
+      case 'Time': {
+        memberSubs =
+          await this._memberSubscriptionRepository.createMemberSubscription({
+            memberId,
+            billId: bill.id,
+            subscriptionId,
+            timeRemain: subscriptionDetail?.totalTime!,
+            startDate: new Date(Date.now()),
+            endDate,
+          });
+        break;
+      }
+    }
+
     const payment = await this._paymentService.momoPayment({
       price: foundSubs.price,
-      orderId: memberSubs.id,
+      orderId: memberSubs!.id,
       returnUrl: '/memberSubscription/momo/PaymentCallBack',
     });
 
@@ -136,6 +160,58 @@ export class MemberSubscriptionService implements IMemberSubscriptionService {
           id,
         },
       },
+    });
+  }
+
+  public async updateMonthSubscription(
+    id: string
+  ): Promise<memberSubscription> {
+    const today = new Date(Date.now()).toISOString().split('T')[0];
+    const subscription =
+      await this._memberSubscriptionRepository.foundMemberSubscription({
+        options: {
+          where: {
+            id,
+          },
+        },
+      });
+    if (!subscription) {
+      throw new NotFoundError('Subscription not found');
+    }
+    if (!subscription.usesHistory.includes(today)) {
+      const updatedSubscription =
+        await this._memberSubscriptionRepository.updateMemberSubscription({
+          options: {
+            where: { id },
+            data: {
+              usesHistory: {
+                push: today,
+              },
+            },
+          },
+        });
+      return updatedSubscription;
+    } else {
+      return subscription;
+    }
+  }
+
+  public async updateTimeSubscription(
+    id: string,
+    time: number
+  ): Promise<memberSubscription> {
+    const options = {
+      where: {
+        id,
+      },
+      data: {
+        timeRemain: {
+          decrement: time,
+        },
+      },
+    };
+    return await this._memberSubscriptionRepository.updateMemberSubscription({
+      options,
     });
   }
 }

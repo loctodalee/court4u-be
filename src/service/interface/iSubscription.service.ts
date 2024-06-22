@@ -1,4 +1,4 @@
-import { subscriptionOption } from '@prisma/client';
+import { subscriptionDetail, subscriptionOption } from '@prisma/client';
 
 export interface ISubscriptionService {
   createSubscription(type: string, payload: any): Promise<any>;
@@ -17,9 +17,15 @@ export interface ISubscriptionService {
     keySearch: string;
   }): Promise<subscriptionOption[] | null>;
 
-  searchSubscriptionById({
+  findSubscriptionById({
     keySearch,
   }: {
     keySearch: string;
   }): Promise<subscriptionOption | null>;
+
+  findDetailById({
+    keySearch,
+  }: {
+    keySearch: string;
+  }): Promise<subscriptionDetail | null>;
 }

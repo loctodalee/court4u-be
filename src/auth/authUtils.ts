@@ -6,6 +6,7 @@ import { IKeyTokenService } from '../service/interface/iKeyToken.service';
 import { KeyTokenService } from '../service/keyToken.service';
 import { keyTokens, users, club } from '@prisma/client';
 import prisma from '../lib/prisma';
+import { jwtDecode } from 'jwt-decode';
 
 declare module 'express-serve-static-core' {
   interface Request {
@@ -41,12 +42,18 @@ export const createTokenPair = async ({
 
 export const authentication = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const userId = req.headers['client-id'];
-    if (!userId) throw new AuthFailure('Not found client id');
+    const decoded: { userId: string; email: string } = jwtDecode(
+      req.headers['authorization']!
+    );
+
+    const userId = decoded.userId;
+
     const _keyTokenService: IKeyTokenService = new KeyTokenService();
     if (typeof userId !== 'string')
       throw new AuthFailure('Not found client id');
-    const keyStore = await _keyTokenService.foundKey({ userId });
+    const keyStore = await _keyTokenService.foundKey({
+      userId: userId,
+    });
 
     if (!keyStore) throw new AuthFailure('Key Store not found');
 

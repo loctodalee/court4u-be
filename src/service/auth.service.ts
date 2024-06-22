@@ -74,10 +74,6 @@ export class AuthService implements IAuthService {
     });
 
     return {
-      user: filterData({
-        fields: ['id', 'fullname', 'phone', 'avatarUrl', 'email', 'apiKey'],
-        object: foundUser,
-      }),
       tokens,
     };
   }

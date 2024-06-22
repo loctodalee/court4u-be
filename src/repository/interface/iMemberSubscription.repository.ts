@@ -5,16 +5,18 @@ export interface IMemberSubscriptionRepository {
     memberId,
     subscriptionId,
     billId,
-    detail,
     startDate,
     endDate,
+    timeRemain,
+    usesHistory,
   }: {
     memberId: string;
     subscriptionId: string;
     billId: string;
-    detail: any;
     startDate: Date;
     endDate: Date;
+    timeRemain?: number;
+    usesHistory?: [];
   }): Promise<memberSubscription>;
 
   foundMemberSubscription({

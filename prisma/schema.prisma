@@ -180,8 +180,7 @@ model club {
   slot               slot[]
   clubSubscription  clubSubscription?
   staffProfile       staffProfile?
-  subOptionMonth     subOptionMonth?
-  subOptionTime      subOptionTime?
+  subscriptionDetail subscriptionDetail?
   subscriptionOption subscriptionOption[]
   court court[]
 }
@@ -217,20 +216,34 @@ model subscriptionOption {
   totalDate          Int
   type               SubscriptionType
   status             SubscriptionOptionStatus
-  detail             Json
   createdAt          DateTime                 @default(now())
   updatedAt          DateTime                 @updatedAt
   memberSubscription memberSubscription[]
   club               club                     @relation(fields: [clubId], references: [id])
 }
 
+model memberSubscription {
+  id                 String             @id @default(uuid())
+  subscriptionId     String
+  memberId           String
+  billId             String @unique
+  startDate          DateTime
+  endDate            DateTime
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  usesHistory String[]               @default([])
+  timeRemain Float?                      
+  status             memberSubscriptionStatus
+  bill bill @relation(fields: [billId], references: [id])
+  user               users              @relation(fields: [memberId], references: [id])
+  subscriptionOption subscriptionOption @relation(fields: [subscriptionId], references: [id])
+}
 
-
-model subOptionMonth {
-  id          String                   @id @default(uuid())
-  usesPerDay  Int
-  playTime    Int
-  usesHistory DateTime[]               @default(dbgenerated("(ARRAY[]::timestamp without time zone[])::timestamp(3) without time zone[]"))
+model subscriptionDetail {
+   id          String                   @id @default(uuid())
+  usesPerDay  Int?
+  playTime    Int?
+  totalTime  Int?
   createdAt   DateTime                 @default(now())
   updatedAt   DateTime                 @updatedAt
   clubId      String                   @unique
@@ -238,16 +251,6 @@ model subOptionMonth {
   club        club                     @relation(fields: [clubId], references: [id])
 }
 
-model subOptionTime {
-  id         String                   @id @default(uuid())
-  totalTime  Int
-  timeRemain Int                      @default(0)
-  createdAt  DateTime                 @default(now())
-  updatedAt  DateTime                 @updatedAt
-  clubId     String                   @unique
-  status     SubscriptionOptionStatus
-  club       club                     @relation(fields: [clubId], references: [id])
-}
 
 model slot {
   id            String          @id @default(uuid())
@@ -290,21 +293,7 @@ model subOptionSlot {
   slot      slot     @relation(fields: [slotId], references: [id])
 }
 
-model memberSubscription {
-  id                 String             @id @default(uuid())
-  subscriptionId     String
-  memberId           String
-  billId             String @unique
-  startDate          DateTime
-  endDate            DateTime
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime           @updatedAt
-  detail            Json
-  status             memberSubscriptionStatus
-  bill bill @relation(fields: [billId], references: [id])
-  user               users              @relation(fields: [memberId], references: [id])
-  subscriptionOption subscriptionOption @relation(fields: [subscriptionId], references: [id])
-}
+
 
 model subscriptionForClub{
   id String @id @default(uuid())

@@ -29,14 +29,14 @@ export class BookedSlotService implements IBookedSlotService {
   private _bookingService: IBookingSerivce;
   private _billService: IBillService;
   private _bookedSlotRepository: IBookedSlotRepository;
-  private _memberSubscription: IMemberSubscriptionService;
+  private _memberSubscriptionService: IMemberSubscriptionService;
   constructor() {
     this._subscriptionService = new SubscriptionFactory();
     this._slotRepository = SlotRepository.getInstance();
     this._bookedSlotRepository = BookedSlotRepository.getInstance();
     this._bookingService = new BookingService();
     this._billService = new BillService();
-    this._memberSubscription = new MemberSubscriptionService();
+    this._memberSubscriptionService = new MemberSubscriptionService();
   }
 
   public async createBookedSlot({
@@ -48,17 +48,21 @@ export class BookedSlotService implements IBookedSlotService {
     subscriptionId: string;
     slotList: bookSlot[];
   }): Promise<Prisma.BatchPayload> {
+    // sort để lấy toàn bộ id trong list slotList nhận tự request
     const slotIds = slotList.map((entry) => entry.slotId);
+
+    // sort để lấy ra price của từng slot trong slotList
     const slots = await this._slotRepository.findManySlot({
       options: {
         where: {
           id: { in: slotIds },
         },
-        select: { id: true, price: true },
       },
     });
+    //tạo ra nơi để lưu lại full thông tin của 1 bookedSlot
     var bookedSlotInfoList: bookSlotInfo[] = [];
 
+    // sort để gán giá của vào từng slot và push vào bookedSlotInfoList
     slots.forEach((slot) => {
       slotList.forEach((data) => {
         if (slot.id === data.slotId) {
@@ -72,9 +76,16 @@ export class BookedSlotService implements IBookedSlotService {
         }
       });
     });
+
+    // tính total price để tạo bill
     const totalPrice = slots.reduce((sum, slot) => sum + slot.price, 0);
+    const totalTime = slots.reduce(
+      (sum, slot) => sum + (slot.endTime.getTime() - slot.endTime.getTime()),
+      0
+    );
     console.log(totalPrice);
     if (!subscriptionId) {
+      // nếu không có sử dụng gói để book slot
       const bill = await this._billService.createBill({
         date: new Date(Date.now()),
         method: 'momo',
@@ -90,16 +101,21 @@ export class BookedSlotService implements IBookedSlotService {
         status: 'pending',
       });
 
+      // redirect qua payment
+
       bookedSlotInfoList.forEach((item) => {
         item.bookingId = booking.id;
       });
     } else {
-      const memberSubs = await this._memberSubscription.searchSubscription(
-        subscriptionId
-      );
-      if (!memberSubs) throw new NotFoundError('Not found error');
+      // có sử dụng subscription để book slot
+      // kiểm tra coi subscription có tồn tại không
+      const memberSubs =
+        await this._memberSubscriptionService.searchSubscription(
+          subscriptionId
+        );
+      if (!memberSubs) throw new NotFoundError('Not found subscription');
       const memberSubsType = await this._subscriptionService
-        .searchSubscriptionById({
+        .findSubscriptionById({
           keySearch: memberSubs.subscriptionId,
         })
         .then((x) => x?.type);
@@ -118,7 +134,19 @@ export class BookedSlotService implements IBookedSlotService {
         status: 'active',
       });
       switch (memberSubsType) {
-        case 'Month':
+        case 'Month': {
+          await this._memberSubscriptionService.updateMonthSubscription(
+            memberSubs.id
+          );
+          break;
+        }
+
+        case 'Time': {
+          await this._memberSubscriptionService.updateTimeSubscription(
+            memberSubs.id,
+            totalTime
+          );
+        }
       }
       bookedSlotInfoList.forEach((item) => {
         item.bookingId = booking.id;

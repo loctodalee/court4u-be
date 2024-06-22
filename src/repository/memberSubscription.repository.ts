@@ -18,22 +18,25 @@ export class MemberSubscriptionRepository
     billId,
     startDate,
     endDate,
-    detail,
+    timeRemain,
+    usesHistory,
   }: {
     memberId: string;
     subscriptionId: string;
     billId: string;
     startDate: Date;
     endDate: Date;
-    detail: any;
+    timeRemain?: number;
+    usesHistory?: [];
   }): Promise<memberSubscription> {
     return await prisma.memberSubscription.create({
       data: {
         billId,
         subscriptionId,
         memberId,
-        detail,
         status: 'pending',
+        timeRemain,
+        usesHistory,
         startDate,
         endDate,
       },

@@ -1,6 +1,5 @@
 import {
-  subOptionMonth,
-  subOptionTime,
+  subscriptionDetail,
   subscriptionOption,
   SubscriptionOptionStatus,
   SubscriptionType,
@@ -13,23 +12,17 @@ export interface ISubscriptionRepository {
     options: any;
   }): Promise<subscriptionOption[] | null>;
 
-  foundSubscriptionOption({
+  findSubscriptionOption({
     options,
   }: {
     options: any;
   }): Promise<subscriptionOption | null>;
 
-  findSubscriptionOptionMonth({
+  findSubscriptionDetail({
     options,
   }: {
     options: any;
-  }): Promise<subOptionMonth | null>;
-
-  findSubscriptionOptionTime({
-    options,
-  }: {
-    options: any;
-  }): Promise<subOptionTime | null>;
+  }): Promise<subscriptionDetail | null>;
 
   createSubscription({
     id,
@@ -39,7 +32,6 @@ export interface ISubscriptionRepository {
     totalDate,
     status,
     type,
-    detail,
   }: {
     id: string;
     clubId: string;
@@ -48,7 +40,6 @@ export interface ISubscriptionRepository {
     totalDate: number;
     status: SubscriptionOptionStatus;
     type: SubscriptionType;
-    detail: Record<string, any>;
   }): Promise<subscriptionOption>;
 
   createSubscriptionMonth({
@@ -59,7 +50,7 @@ export interface ISubscriptionRepository {
     clubId: string;
     usesPerDay: number;
     playTime: number;
-  }): Promise<subOptionMonth>;
+  }): Promise<subscriptionDetail>;
 
   createSubscriptionTime({
     clubId,
@@ -67,5 +58,5 @@ export interface ISubscriptionRepository {
   }: {
     clubId: string;
     totalTime: number;
-  }): Promise<subOptionTime>;
+  }): Promise<subscriptionDetail>;
 }

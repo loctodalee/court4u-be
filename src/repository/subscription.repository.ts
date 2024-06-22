@@ -1,6 +1,5 @@
 import {
-  subOptionMonth,
-  subOptionTime,
+  subscriptionDetail,
   subscriptionOption,
   SubscriptionOptionStatus,
   SubscriptionType,
@@ -24,7 +23,7 @@ export class SubscriptionRepository implements ISubscriptionRepository {
     return await prisma.subscriptionOption.findMany(options);
   }
 
-  public async foundSubscriptionOption({
+  public async findSubscriptionOption({
     options,
   }: {
     options: any;
@@ -32,12 +31,12 @@ export class SubscriptionRepository implements ISubscriptionRepository {
     return await prisma.subscriptionOption.findFirst(options);
   }
 
-  public async findSubscriptionOptionMonth({
+  public async findSubscriptionDetail({
     options,
   }: {
     options: any;
-  }): Promise<subOptionMonth | null> {
-    return await prisma.subOptionMonth.findFirst(options);
+  }): Promise<subscriptionDetail | null> {
+    return await prisma.subscriptionDetail.findFirst(options);
   }
   public async createSubscription({
     id,
@@ -47,7 +46,6 @@ export class SubscriptionRepository implements ISubscriptionRepository {
     totalDate,
     status,
     type,
-    detail,
   }: {
     id: string;
     clubId: string;
@@ -56,7 +54,6 @@ export class SubscriptionRepository implements ISubscriptionRepository {
     totalDate: number;
     status: SubscriptionOptionStatus;
     type: SubscriptionType;
-    detail: Record<string, any>;
   }): Promise<subscriptionOption> {
     return await prisma.subscriptionOption.create({
       data: {
@@ -67,7 +64,6 @@ export class SubscriptionRepository implements ISubscriptionRepository {
         totalDate,
         status,
         type,
-        detail,
       },
     });
   }
@@ -80,13 +76,13 @@ export class SubscriptionRepository implements ISubscriptionRepository {
     clubId: string;
     usesPerDay: number;
     playTime: number;
-  }): Promise<subOptionMonth> {
-    return await prisma.subOptionMonth.create({
+  }): Promise<subscriptionDetail> {
+    return await prisma.subscriptionDetail.create({
       data: {
         clubId,
         playTime,
         usesPerDay,
-        status: 'disable',
+        status: 'active',
       },
     });
   }
@@ -96,22 +92,13 @@ export class SubscriptionRepository implements ISubscriptionRepository {
   }: {
     clubId: string;
     totalTime: number;
-  }): Promise<subOptionTime> {
-    return await prisma.subOptionTime.create({
+  }): Promise<subscriptionDetail> {
+    return await prisma.subscriptionDetail.create({
       data: {
         clubId,
         totalTime,
-        timeRemain: totalTime,
-        status: 'disable',
+        status: 'active',
       },
     });
-  }
-
-  public async findSubscriptionOptionTime({
-    options,
-  }: {
-    options: any;
-  }): Promise<subOptionTime | null> {
-    return await prisma.subOptionTime.findFirst(options);
   }
 }

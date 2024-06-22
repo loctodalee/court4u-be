@@ -1,6 +1,7 @@
 import {
   $Enums,
   Prisma,
+  subscriptionDetail,
   subscriptionOption,
   SubscriptionOptionStatus,
   SubscriptionType,
@@ -61,7 +62,7 @@ export class SubscriptionFactory implements ISubscriptionService {
     return await this._subscriptionRepository.searchSubscriptions({ options });
   }
 
-  public async searchSubscriptionById({
+  public async findSubscriptionById({
     keySearch,
   }: {
     keySearch: string;
@@ -71,8 +72,22 @@ export class SubscriptionFactory implements ISubscriptionService {
         id: keySearch,
       },
     };
-    return await this._subscriptionRepository.foundSubscriptionOption({
+    return await this._subscriptionRepository.findSubscriptionOption({
       options,
+    });
+  }
+
+  public async findDetailById({
+    keySearch,
+  }: {
+    keySearch: string;
+  }): Promise<subscriptionDetail | null> {
+    return await this._subscriptionRepository.findSubscriptionDetail({
+      options: {
+        where: {
+          id: keySearch,
+        },
+      },
     });
   }
 }
@@ -125,7 +140,6 @@ class Subscription {
         price: this.price,
         status: this.status,
         type: this.type,
-        detail: this.detail,
       });
     return newSubscription;
   }
@@ -138,12 +152,6 @@ class SubscriptionOptionMonth extends Subscription {
         clubId: this.clubId,
       },
     };
-    const found =
-      await this._subscriptionRepository.findSubscriptionOptionMonth({
-        options,
-      });
-    if (found)
-      throw new NotImplementError('Club already buy this subscription');
     const newSubsOptionMonth =
       await this._subscriptionRepository.createSubscriptionMonth({
         clubId: this.clubId,
@@ -168,11 +176,6 @@ class SubscriptionOptionTime extends Subscription {
         clubId: this.clubId,
       },
     };
-    const found = await this._subscriptionRepository.findSubscriptionOptionTime(
-      { options }
-    );
-    if (found)
-      throw new NotImplementError('Club already buy this subscription');
     const newSubsOptionTime =
       await this._subscriptionRepository.createSubscriptionTime({
         clubId: this.clubId,
