@@ -175,7 +175,6 @@ model club {
   user               users                @relation(fields: [courtOwnerId], references: [id])
   clubImage          clubImage[]
   clubRole           clubRole[]
-  // pricing            pricing[]
   review             review[]
   slot               slot[]
   clubSubscription  clubSubscription?
@@ -184,17 +183,6 @@ model club {
   subscriptionOption subscriptionOption[]
   court court[]
 }
-
-// model pricing {
-//   id        String   @id @default(uuid())
-//   clubId    String
-//   type      String   @db.VarChar
-//   duration  String   @db.VarChar
-//   price     Float
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-//   club      club     @relation(fields: [clubId], references: [id])
-// }
 
 model clubImage {
   id        String   @id @default(uuid())
@@ -205,8 +193,6 @@ model clubImage {
   updatedAt DateTime @updatedAt
   club      club     @relation(fields: [clubId], references: [id])
 }
-
-
 
 model subscriptionOption {
   id                 String                   @id

@@ -2,20 +2,26 @@ import { BillStatus, BillType, bill } from '@prisma/client';
 import { List } from 'lodash';
 import { BillRepository } from '../repository/bill.repository';
 import { IBillService } from './interface/iBill.service';
+import { IBillRepository } from '../repository/interface/iBill.repository';
 
 export class BillService implements IBillService {
-  private billRepository: BillRepository;
-
-  constructor() {
-    this.billRepository = BillRepository.getInstance();
+  private static Instance: BillService;
+  public static getInstance(): BillService {
+    if (!this.Instance) {
+      this.Instance = new BillService();
+    }
+    return this.Instance;
   }
+  private static billRepository: IBillRepository = BillRepository.getInstance();
+
+  constructor() {}
 
   public async getBillById(id: string): Promise<bill | null> {
-    return this.billRepository.getBillById(id);
+    return BillService.billRepository.getBillById(id);
   }
 
   public async getAllBills(): Promise<List<bill>> {
-    return this.billRepository.getAllBills();
+    return BillService.billRepository.getAllBills();
   }
 
   public async createBill(data: {
@@ -25,7 +31,7 @@ export class BillService implements IBillService {
     type: BillType;
     status: BillStatus;
   }): Promise<bill> {
-    return this.billRepository.createBill(data);
+    return BillService.billRepository.createBill(data);
   }
 
   public async updateBill(
@@ -38,10 +44,10 @@ export class BillService implements IBillService {
       status?: BillStatus;
     }
   ): Promise<bill | null> {
-    return this.billRepository.updateBill(id, data);
+    return BillService.billRepository.updateBill(id, data);
   }
 
   public async deleteBill(id: string): Promise<bill | null> {
-    return this.billRepository.deleteBill(id);
+    return BillService.billRepository.deleteBill(id);
   }
 }

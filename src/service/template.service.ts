@@ -4,17 +4,23 @@ import { TemplateRepostory } from '../repository/template.repository';
 import { NotFoundError } from '../handleResponse/error.response';
 import { ITemplateService } from './interface/iTemplate.service';
 export class TemplateService implements ITemplateService {
-  private readonly _templateRepository: ITemplateRepository;
-  constructor() {
-    this._templateRepository = TemplateRepostory.getInstance();
+  private static Instance: TemplateService;
+  public static getInstance(): TemplateService {
+    if (!this.Instance) {
+      this.Instance = new TemplateService();
+    }
+    return this.Instance;
   }
+  private static readonly _templateRepository: ITemplateRepository =
+    TemplateRepostory.getInstance();
+  constructor() {}
 
   public async getTemplate({
     name,
   }: {
     name: string;
   }): Promise<template | null> {
-    const foundTemp = await this._templateRepository.getTemplate({
+    const foundTemp = await TemplateService._templateRepository.getTemplate({
       temName: name,
     });
 

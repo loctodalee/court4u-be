@@ -16,17 +16,24 @@ import { IBillService } from './interface/iBill.service';
 import { BillService } from './bill.service';
 
 export class ClubSubscriptionService implements IClubSubscriptionService {
-  private _clubSubsriptionRepo: IClubSubscriptionRepository;
-  private _clubService: IClubService;
-  private _subscriptionForClubService: ISubscriptionForClubService;
-  private _paymentService: IPayementService;
-  private _billService: IBillService;
-  constructor() {
+  private static Instance: ClubSubscriptionService;
+  public static getInstance(): ClubSubscriptionService {
+    if (!this.Instance) {
+      this.Instance = new ClubSubscriptionService();
+    }
+    return this.Instance;
+  }
+  private static _clubSubsriptionRepo: IClubSubscriptionRepository;
+  private static _clubService: IClubService;
+  private static _subscriptionForClubService: ISubscriptionForClubService;
+  private static _paymentService: IPayementService;
+  private static _billService: IBillService;
+  static {
     this._clubSubsriptionRepo = ClubSubscriptionRepository.getInstance();
-    this._clubService = new ClubService();
-    this._subscriptionForClubService = new SubScriptionForClubService();
-    this._paymentService = new PaymentService();
-    this._billService = new BillService();
+    this._clubService = ClubService.getInstance();
+    this._subscriptionForClubService = SubScriptionForClubService.getInstance();
+    this._paymentService = PaymentService.getInstance();
+    this._billService = BillService.getInstance();
   }
 
   public async buySubscription({
@@ -38,11 +45,14 @@ export class ClubSubscriptionService implements IClubSubscriptionService {
     subscriptionForClubId: string;
     status: $Enums.clubSubscriptionStatus;
   }): Promise<any> {
-    const foundClub = await this._clubService.foundClubById({ clubId });
+    const foundClub = await ClubSubscriptionService._clubService.foundClubById({
+      clubId,
+    });
     if (!foundClub) throw new NotFoundError('Club not found');
-    const foundSub = await this._subscriptionForClubService.searchById(
-      subscriptionForClubId
-    );
+    const foundSub =
+      await ClubSubscriptionService._subscriptionForClubService.searchById(
+        subscriptionForClubId
+      );
     if (!foundSub) throw new NotFoundError('Subscription not found');
     const currentDate = new Date();
     const endDate = new Date(currentDate);
@@ -57,7 +67,7 @@ export class ClubSubscriptionService implements IClubSubscriptionService {
         endDate.setFullYear(currentDate.getFullYear() + foundSub.totalDate);
     }
     const curretDate = Date.now();
-    const bill = await this._billService.createBill({
+    const bill = await ClubSubscriptionService._billService.createBill({
       method: 'momo',
       total: foundSub.price,
       date: new Date(Date.now()),
@@ -66,20 +76,21 @@ export class ClubSubscriptionService implements IClubSubscriptionService {
     });
     if (!bill) throw new BadRequestError('Create bill fail');
 
-    const result = await this._clubSubsriptionRepo.clubBuySubscription({
-      clubId,
-      subscriptionForClubId,
-      billId: bill.id,
-      name: foundSub.name,
-      price: foundSub.price,
-      totalDate: foundSub.totalDate,
-      startDate: new Date(curretDate),
-      endDate,
-      status,
-    });
+    const result =
+      await ClubSubscriptionService._clubSubsriptionRepo.clubBuySubscription({
+        clubId,
+        subscriptionForClubId,
+        billId: bill.id,
+        name: foundSub.name,
+        price: foundSub.price,
+        totalDate: foundSub.totalDate,
+        startDate: new Date(curretDate),
+        endDate,
+        status,
+      });
 
     if (!result) throw new BadRequestError();
-    const payment = await this._paymentService.momoPayment({
+    const payment = await ClubSubscriptionService._paymentService.momoPayment({
       price: result.price,
       orderId: result.id,
       returnUrl: '/clubSubscription/momo/PaymentCallBack',
@@ -89,25 +100,36 @@ export class ClubSubscriptionService implements IClubSubscriptionService {
 
   public async paymentCallBack(args: any): Promise<any> {
     const { orderId, message } = args;
-    const clubSubscription = await this._clubSubsriptionRepo.foundClubSubById(
-      orderId
-    );
+    const clubSubscription =
+      await ClubSubscriptionService._clubSubsriptionRepo.foundClubSubById(
+        orderId
+      );
     if (!clubSubscription)
       throw new BadRequestError('Not found club subcription');
-    const bill = await this._billService.getBillById(clubSubscription.billId);
+    const bill = await ClubSubscriptionService._billService.getBillById(
+      clubSubscription.billId
+    );
     if (!bill) throw new BadRequestError('Not found bill');
     if (message === 'Success') {
-      const updateClubSub = await this._clubSubsriptionRepo.updateClubSubs(
-        clubSubscription.id,
-        { status: 'active' }
-      );
-      await this._billService.updateBill(bill.id, { status: 'success' });
+      const updateClubSub =
+        await ClubSubscriptionService._clubSubsriptionRepo.updateClubSubs(
+          clubSubscription.id,
+          { status: 'active' }
+        );
+      await ClubSubscriptionService._billService.updateBill(bill.id, {
+        status: 'success',
+      });
       return updateClubSub;
     } else {
-      await this._clubSubsriptionRepo.updateClubSubs(clubSubscription.id, {
-        status: 'disable',
+      await ClubSubscriptionService._clubSubsriptionRepo.updateClubSubs(
+        clubSubscription.id,
+        {
+          status: 'disable',
+        }
+      );
+      await ClubSubscriptionService._billService.updateBill(bill.id, {
+        status: 'fail',
       });
-      await this._billService.updateBill(bill.id, { status: 'fail' });
       throw new BadRequestError('Payment fail');
     }
   }

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { ReviewService } from '../service/review.service';
-import { iReviewService } from '../service/interface/iReview.service';
+import { IReviewService } from '../service/interface/iReview.service';
 const { SuccessResponse } = require('../handleResponse/success.response');
 
 export class ReviewController {
@@ -33,7 +33,7 @@ export class ReviewController {
    * @param res {review}
    */
   async getReviewByParentId(req: Request, res: Response) {
-    var reviewService: iReviewService = new ReviewService();
+    var reviewService: IReviewService = new ReviewService();
     new SuccessResponse({
       message: 'create new review',
       metaData: await reviewService.getCommentByParentId({
@@ -49,7 +49,7 @@ export class ReviewController {
    * @param res {void}
    */
   async deleteReview(req: Request, res: Response) {
-    var reviewService: iReviewService = new ReviewService();
+    var reviewService: IReviewService = new ReviewService();
     new SuccessResponse({
       message: 'delete success',
       metaData: await reviewService.deleteReviews({ ...req.body }),

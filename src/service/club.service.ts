@@ -4,12 +4,18 @@ import { IClubRepository } from '../repository/interface/iClub.repository';
 import { ClubRepository } from '../repository/club.repository';
 import { IUserService } from './interface/iUser.service';
 import { UserService } from './user.service';
-import prisma from '../lib/prisma';
 export class ClubService implements IClubService {
-  private readonly _clubRepository: IClubRepository;
-  private readonly _userService: IUserService;
-  constructor() {
-    this._userService = new UserService();
+  private static Instance: ClubService;
+  public static getInstance(): ClubService {
+    if (!this.Instance) {
+      this.Instance = new ClubService();
+    }
+    return this.Instance;
+  }
+  private static _clubRepository: IClubRepository;
+  private static _userService: IUserService;
+  static {
+    this._userService = UserService.getInstance();
     this._clubRepository = ClubRepository.getInstance();
   }
 
@@ -30,7 +36,7 @@ export class ClubService implements IClubService {
     logoUrl: string | null;
     description: string;
   }): Promise<club> {
-    const newClub = await this._clubRepository.createClub({
+    const newClub = await ClubService._clubRepository.createClub({
       name,
       address,
       cityOfProvince,
@@ -39,7 +45,7 @@ export class ClubService implements IClubService {
       district,
       logoUrl,
     });
-    await this._userService.updateApiKey({
+    await ClubService._userService.updateApiKey({
       apiKey: newClub.apiKey,
       userId: courtOwnerId,
     });
@@ -51,7 +57,7 @@ export class ClubService implements IClubService {
   }: {
     clubId: string;
   }): Promise<club | null> {
-    return this._clubRepository.foundClub({
+    return ClubService._clubRepository.foundClub({
       options: {
         where: {
           id: clubId,

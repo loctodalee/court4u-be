@@ -24,19 +24,26 @@ export type bookSlotInfo = {
   price: number;
 };
 export class BookedSlotService implements IBookedSlotService {
-  private _subscriptionService: ISubscriptionService;
-  private _slotRepository: ISlotRepository;
-  private _bookingService: IBookingSerivce;
-  private _billService: IBillService;
-  private _bookedSlotRepository: IBookedSlotRepository;
-  private _memberSubscriptionService: IMemberSubscriptionService;
-  constructor() {
-    this._subscriptionService = new SubscriptionFactory();
-    this._slotRepository = SlotRepository.getInstance();
+  private static Instance: BookedSlotService;
+  public static getInstance(): BookedSlotService {
+    if (!this.Instance) {
+      this.Instance = new BookedSlotService();
+    }
+    return this.Instance;
+  }
+  private static _subscriptionService: ISubscriptionService;
+  private static _slotRepository: ISlotRepository;
+  private static _bookingService: IBookingSerivce;
+  private static _billService: IBillService;
+  private static _bookedSlotRepository: IBookedSlotRepository;
+  private static _memberSubscriptionService: IMemberSubscriptionService;
+  static {
+    this._memberSubscriptionService = MemberSubscriptionService.getInstance();
     this._bookedSlotRepository = BookedSlotRepository.getInstance();
-    this._bookingService = new BookingService();
-    this._billService = new BillService();
-    this._memberSubscriptionService = new MemberSubscriptionService();
+    this._billService = BillService.getInstance();
+    this._bookingService = BookingService.getInstance();
+    this._slotRepository = SlotRepository.getInstance();
+    this._subscriptionService = SubscriptionFactory.getInstance();
   }
 
   public async createBookedSlot({
@@ -52,7 +59,7 @@ export class BookedSlotService implements IBookedSlotService {
     const slotIds = slotList.map((entry) => entry.slotId);
 
     // sort để lấy ra price của từng slot trong slotList
-    const slots = await this._slotRepository.findManySlot({
+    const slots = await BookedSlotService._slotRepository.findManySlot({
       options: {
         where: {
           id: { in: slotIds },
@@ -86,14 +93,14 @@ export class BookedSlotService implements IBookedSlotService {
     console.log(totalPrice);
     if (!subscriptionId) {
       // nếu không có sử dụng gói để book slot
-      const bill = await this._billService.createBill({
+      const bill = await BookedSlotService._billService.createBill({
         date: new Date(Date.now()),
         method: 'momo',
         status: 'pending',
         total: totalPrice,
         type: 'booking',
       });
-      const booking = await this._bookingService.createBooking({
+      const booking = await BookedSlotService._bookingService.createBooking({
         userId,
         billId: bill.id,
         date: new Date(Date.now()),
@@ -110,23 +117,23 @@ export class BookedSlotService implements IBookedSlotService {
       // có sử dụng subscription để book slot
       // kiểm tra coi subscription có tồn tại không
       const memberSubs =
-        await this._memberSubscriptionService.searchSubscription(
+        await BookedSlotService._memberSubscriptionService.searchSubscription(
           subscriptionId
         );
       if (!memberSubs) throw new NotFoundError('Not found subscription');
-      const memberSubsType = await this._subscriptionService
+      const memberSubsType = await BookedSlotService._subscriptionService
         .findSubscriptionById({
           keySearch: memberSubs.subscriptionId,
         })
         .then((x) => x?.type);
-      const bill = await this._billService.createBill({
+      const bill = await BookedSlotService._billService.createBill({
         date: new Date(Date.now()),
         method: 'subscription',
         status: 'success',
         total: totalPrice,
         type: 'booking',
       });
-      const booking = await this._bookingService.createBooking({
+      const booking = await BookedSlotService._bookingService.createBooking({
         userId,
         billId: bill.id,
         date: new Date(Date.now()),
@@ -135,14 +142,14 @@ export class BookedSlotService implements IBookedSlotService {
       });
       switch (memberSubsType) {
         case 'Month': {
-          await this._memberSubscriptionService.updateMonthSubscription(
+          await BookedSlotService._memberSubscriptionService.updateMonthSubscription(
             memberSubs.id
           );
           break;
         }
 
         case 'Time': {
-          await this._memberSubscriptionService.updateTimeSubscription(
+          await BookedSlotService._memberSubscriptionService.updateTimeSubscription(
             memberSubs.id,
             totalTime
           );
@@ -153,16 +160,16 @@ export class BookedSlotService implements IBookedSlotService {
       });
     }
 
-    return await this._bookedSlotRepository.createBookedSlot(
+    return await BookedSlotService._bookedSlotRepository.createBookedSlot(
       bookedSlotInfoList
     );
   }
 
   public async getAllBookedSlot(): Promise<bookedSlot[]> {
-    return await this._bookedSlotRepository.getAllBookedSlot();
+    return await BookedSlotService._bookedSlotRepository.getAllBookedSlot();
   }
 
   public async foundBookedSlot(id: string): Promise<bookedSlot | null> {
-    return await this._bookedSlotRepository.foundBookedSlot(id);
+    return await BookedSlotService._bookedSlotRepository.foundBookedSlot(id);
   }
 }

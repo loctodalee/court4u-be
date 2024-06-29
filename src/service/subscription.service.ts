@@ -19,11 +19,17 @@ import { PaymentService } from './payment.service';
 type SubscriptionConstructor = new (...args: any[]) => any;
 
 export class SubscriptionFactory implements ISubscriptionService {
-  private readonly _subscriptionRepository: ISubscriptionRepository;
-  private static subsRegistry: { [type: string]: SubscriptionConstructor } = {};
-  constructor() {
-    this._subscriptionRepository = SubscriptionRepository.getInstance();
+  private static Instance: SubscriptionFactory;
+  public static getInstance(): SubscriptionFactory {
+    if (!this.Instance) {
+      this.Instance = new SubscriptionFactory();
+    }
+    return this.Instance;
   }
+  private static readonly _subscriptionRepository: ISubscriptionRepository =
+    SubscriptionRepository.getInstance();
+  private static subsRegistry: { [type: string]: SubscriptionConstructor } = {};
+  constructor() {}
   public registerSubscriptionType(type: string, classRef: any): void {
     SubscriptionFactory.subsRegistry[type] = classRef;
   }
@@ -59,7 +65,9 @@ export class SubscriptionFactory implements ISubscriptionService {
         clubId: keySearch,
       },
     };
-    return await this._subscriptionRepository.searchSubscriptions({ options });
+    return await SubscriptionFactory._subscriptionRepository.searchSubscriptions(
+      { options }
+    );
   }
 
   public async findSubscriptionById({
@@ -72,9 +80,11 @@ export class SubscriptionFactory implements ISubscriptionService {
         id: keySearch,
       },
     };
-    return await this._subscriptionRepository.findSubscriptionOption({
-      options,
-    });
+    return await SubscriptionFactory._subscriptionRepository.findSubscriptionOption(
+      {
+        options,
+      }
+    );
   }
 
   public async findDetailById({
@@ -82,13 +92,15 @@ export class SubscriptionFactory implements ISubscriptionService {
   }: {
     keySearch: string;
   }): Promise<subscriptionDetail | null> {
-    return await this._subscriptionRepository.findSubscriptionDetail({
-      options: {
-        where: {
-          id: keySearch,
+    return await SubscriptionFactory._subscriptionRepository.findSubscriptionDetail(
+      {
+        options: {
+          where: {
+            id: keySearch,
+          },
         },
-      },
-    });
+      }
+    );
   }
 }
 

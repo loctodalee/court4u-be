@@ -5,6 +5,7 @@ import { AuthService } from '../service/auth.service';
 const { SuccessResponse } = require('../handleResponse/success.response');
 
 export class AuthController {
+  private static readonly authService: IAuthService = AuthService.getInstance();
   private static Instance: AuthController;
   public static getInstance(): AuthController {
     if (!this.Instance) {
@@ -18,8 +19,7 @@ export class AuthController {
    * @param res : {user info, tokens}
    */
   async Login(req: Request, res: Response) {
-    var authService: IAuthService = new AuthService();
-    const data = await authService.login({ ...req.body });
+    const data = await AuthController.authService.login({ ...req.body });
     new SuccessResponse({
       message: 'Login success',
       metaData: data,
@@ -32,10 +32,9 @@ export class AuthController {
    * @param res {message}
    */
   async sendMailVerify(req: Request, res: Response) {
-    var authService: IAuthService = new AuthService();
     new SuccessResponse({
       message: 'Send mail success',
-      metaData: await authService.newUser({
+      metaData: await AuthController.authService.newUser({
         ...req.body,
       }),
     }).send(res);
@@ -47,10 +46,9 @@ export class AuthController {
    * @param res {user: {id, username, phone, avatarUrl, email}, tokens: {accessToken, refreshToken} }
    */
   async checkLoginEmailToken(req: Request, res: Response) {
-    var authService: IAuthService = new AuthService();
     new SuccessResponse({
       message: 'Verify success',
-      metaData: await authService.checkLoginEmailToken({
+      metaData: await AuthController.authService.checkLoginEmailToken({
         token: req.query.token,
       }),
     }).send(res);
@@ -66,7 +64,7 @@ export class AuthController {
     var authService: IAuthService = new AuthService();
     new SuccessResponse({
       message: 'Login success',
-      metaData: await authService.loginWithThirdParty(req.user),
+      metaData: await AuthController.authService.loginWithThirdParty(req.user),
     }).send(res);
   }
 
@@ -79,7 +77,7 @@ export class AuthController {
     var authService: IAuthService = new AuthService();
     new SuccessResponse({
       message: 'Login with refresh token',
-      metaData: await authService.handleRefreshToken({
+      metaData: await AuthController.authService.handleRefreshToken({
         keyStore: req.keyStores,
         refreshToken: req.refreshToken,
         user: req.user,
@@ -95,7 +93,7 @@ export class AuthController {
     var authService: IAuthService = new AuthService();
     new SuccessResponse({
       mesage: 'Send mail success',
-      metaData: await authService.newCourtOwner({ ...req.body }),
+      metaData: await AuthController.authService.newCourtOwner({ ...req.body }),
     }).send(res);
   }
 }

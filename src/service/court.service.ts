@@ -3,8 +3,15 @@ import { ICourtService } from './interface/iCourt.service';
 import { ICourtRepositorty } from '../repository/interface/iCourt.repository';
 import { CourtRepository } from '../repository/court.repositoty';
 export class CourtService implements ICourtService {
-  private readonly _courtRepository: ICourtRepositorty;
-  constructor() {
+  private static Instance: CourtService;
+  public static getInstance(): CourtService {
+    if (!this.Instance) {
+      this.Instance = new CourtService();
+    }
+    return this.Instance;
+  }
+  private static _courtRepository: ICourtRepositorty;
+  static {
     this._courtRepository = CourtRepository.getInstance();
   }
   public async createCourt({
@@ -16,7 +23,7 @@ export class CourtService implements ICourtService {
     status: CourtStatus;
     number: number;
   }): Promise<court> {
-    return this._courtRepository.createCourt({
+    return CourtService._courtRepository.createCourt({
       clubId,
       number,
       status,

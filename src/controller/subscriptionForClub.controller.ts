@@ -4,6 +4,8 @@ import { SubScriptionForClubService } from '../service/subscriptionForClub.servi
 const { SuccessResponse } = require('../handleResponse/success.response');
 
 export class SubscriptionForClubController {
+  private static readonly subscriptionForClubService: ISubscriptionForClubService =
+    SubScriptionForClubService.getInstance();
   private static Instance: SubscriptionForClubController;
   public static getInstance(): SubscriptionForClubController {
     if (!this.Instance) {
@@ -13,13 +15,14 @@ export class SubscriptionForClubController {
   }
 
   public async createSubscription(req: Request, res: Response) {
-    var subscriptionForClubService: ISubscriptionForClubService =
-      new SubScriptionForClubService();
     new SuccessResponse({
       message: 'Create subscription for clubs',
-      metaData: await subscriptionForClubService.createSubscription({
-        ...req.body,
-      }),
+      metaData:
+        await SubscriptionForClubController.subscriptionForClubService.createSubscription(
+          {
+            ...req.body,
+          }
+        ),
     }).send(res);
   }
 }

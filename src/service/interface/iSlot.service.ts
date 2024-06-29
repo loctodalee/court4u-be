@@ -1,4 +1,4 @@
-import { slot } from '@prisma/client';
+import { CourtSlotStatus, slot, slotOnCourt } from '@prisma/client';
 
 export interface ISlotService {
   createNewSlot({
@@ -12,4 +12,16 @@ export interface ISlotService {
     endTime: Date;
     dateOfWeek: number;
   }): Promise<slot>;
+
+  assignNewSlotOnCourt({
+    status,
+    slotId,
+    courtId,
+  }: {
+    slotId: string;
+    courtId: string;
+    status: CourtSlotStatus;
+  }): Promise<slotOnCourt>;
+
+  searchSlotOnCourt(id: string): Promise<slotOnCourt | null>;
 }

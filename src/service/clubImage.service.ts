@@ -4,18 +4,25 @@ import { ClubImageRepository } from '../repository/clubImage.repository';
 import { IClubImageService } from './interface/iClubImage.service';
 
 export class ClubImageService implements IClubImageService {
-  private clubImageRepository: ClubImageRepository;
+  private static Instance: ClubImageService;
+  public static getInstance(): ClubImageService {
+    if (!this.Instance) {
+      this.Instance = new ClubImageService();
+    }
+    return this.Instance;
+  }
+  private static clubImageRepository: ClubImageRepository;
 
-  constructor() {
+  static {
     this.clubImageRepository = ClubImageRepository.getInstance();
   }
 
   public async getClubImageById(id: string): Promise<clubImage | null> {
-    return this.clubImageRepository.getClubImageById(id);
+    return ClubImageService.clubImageRepository.getClubImageById(id);
   }
 
   public async getAllClubImages(): Promise<List<clubImage>> {
-    return this.clubImageRepository.getAllClubImages();
+    return ClubImageService.clubImageRepository.getAllClubImages();
   }
 
   public async createClubImage(data: {
@@ -23,7 +30,7 @@ export class ClubImageService implements IClubImageService {
     name: string;
     url: string;
   }): Promise<clubImage> {
-    return this.clubImageRepository.createClubImage(data);
+    return ClubImageService.clubImageRepository.createClubImage(data);
   }
 
   public async updateClubImage(
@@ -34,10 +41,10 @@ export class ClubImageService implements IClubImageService {
       url?: string;
     }
   ): Promise<clubImage | null> {
-    return this.clubImageRepository.updateClubImage(id, data);
+    return ClubImageService.clubImageRepository.updateClubImage(id, data);
   }
 
   public async deleteClubImage(id: string): Promise<clubImage | null> {
-    return this.clubImageRepository.deleteClubImage(id);
+    return ClubImageService.clubImageRepository.deleteClubImage(id);
   }
 }

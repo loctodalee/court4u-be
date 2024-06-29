@@ -1,11 +1,11 @@
 import { CourtSlotStatus, slotOnCourt } from '@prisma/client';
 import { ISlotOnCourtRepository } from './interface/iSlotOnCourt.repository';
 import prisma from '../lib/prisma';
-export class slotOnCourtRepository implements ISlotOnCourtRepository {
-  private static Instance: slotOnCourtRepository;
-  public static getInstance(): slotOnCourtRepository {
+export class SlotOnCourtRepository implements ISlotOnCourtRepository {
+  private static Instance: SlotOnCourtRepository;
+  public static getInstance(): SlotOnCourtRepository {
     if (!this.Instance) {
-      this.Instance = new slotOnCourtRepository();
+      this.Instance = new SlotOnCourtRepository();
     }
     return this.Instance;
   }

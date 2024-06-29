@@ -3,6 +3,13 @@ import { UserRepository } from '../repository/user.repository';
 import { IUserService } from './interface/iUser.service';
 
 export class UserService implements IUserService {
+  private static Instance: UserService;
+  public static getInstance(): UserService {
+    if (!this.Instance) {
+      this.Instance = new UserService();
+    }
+    return this.Instance;
+  }
   public async getUserByEmail({
     email,
   }: {

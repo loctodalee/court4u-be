@@ -4,10 +4,16 @@ import { IBookingRepository } from '../repository/interface/iBookingRepository';
 import { BookingRepository } from '../repository/booking.repository';
 
 export class BookingService implements IBookingSerivce {
-  private _bookingRepository: IBookingRepository;
-  constructor() {
-    this._bookingRepository = BookingRepository.getInstance();
+  private static Instance: BookingService;
+  public static getInstance(): BookingService {
+    if (!this.Instance) {
+      this.Instance = new BookingService();
+    }
+    return this.Instance;
   }
+  private static _bookingRepository: IBookingRepository =
+    BookingRepository.getInstance();
+  constructor() {}
   public async createBooking(data: {
     userId: string;
     billId: string;
@@ -15,14 +21,14 @@ export class BookingService implements IBookingSerivce {
     date: Date;
     status: BookingStatus;
   }): Promise<booking> {
-    return await this._bookingRepository.createBooking(data);
+    return await BookingService._bookingRepository.createBooking(data);
   }
 
   public async getAllBooking(): Promise<booking[]> {
-    return await this._bookingRepository.getAllBooking();
+    return await BookingService._bookingRepository.getAllBooking();
   }
 
   public async foundBooking(id: string): Promise<booking | null> {
-    return await this._bookingRepository.foundBooking(id);
+    return await BookingService._bookingRepository.foundBooking(id);
   }
 }

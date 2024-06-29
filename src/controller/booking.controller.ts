@@ -6,6 +6,10 @@ import { BookedSlotService } from '../service/bookedSlot.service';
 const { SuccessResponse } = require('../handleResponse/success.response');
 
 export class BookingController {
+  private static readonly bookingService: IBookingSerivce =
+    BookingService.getInstance();
+  private static readonly bookedSlotService: IBookedSlotService =
+    BookedSlotService.getInstance();
   private static Instance: BookingController;
   public static getInstance(): BookingController {
     if (!this.Instance) {
@@ -15,10 +19,11 @@ export class BookingController {
   }
 
   public async createBooking(req: Request, res: Response) {
-    var bookingService: IBookingSerivce = new BookingService();
     new SuccessResponse({
       message: 'Create new booking',
-      metaData: await bookingService.createBooking({ ...req.body }),
+      metaData: await BookingController.bookingService.createBooking({
+        ...req.body,
+      }),
     }).send(res);
   }
 
@@ -28,10 +33,9 @@ export class BookingController {
    * @param res
    */
   public async bookedSlot(req: Request, res: Response) {
-    var bookedSlotService: IBookedSlotService = new BookedSlotService();
     new SuccessResponse({
       message: 'Book success',
-      metaData: await bookedSlotService.createBookedSlot({
+      metaData: await BookingController.bookedSlotService.createBookedSlot({
         userId: req.user.userId,
         ...req.body,
       }),

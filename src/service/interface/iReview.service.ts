@@ -1,6 +1,6 @@
 import { review } from '@prisma/client';
 
-export interface iReviewService {
+export interface IReviewService {
   createReview({
     clubId,
     userId,

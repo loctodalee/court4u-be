@@ -11,11 +11,16 @@ import { ITemplateService } from './interface/iTemplate.service';
 import { TemplateService } from './template.service';
 import crypto from 'crypto';
 export class EmailService implements IEmailService {
-  // private _otpService: IOtpService;
-  private _templateService: ITemplateService;
-  constructor() {
-    // this._otpService = new OtpSerivce();
-    this._templateService = new TemplateService();
+  private static Instance: EmailService;
+  public static getInstance(): EmailService {
+    if (!this.Instance) {
+      this.Instance = new EmailService();
+    }
+    return this.Instance;
+  }
+  private static _templateService: ITemplateService;
+  static {
+    this._templateService = TemplateService.getInstance();
   }
   private generateRandomToken(): number {
     const token = crypto.randomInt(0, Math.pow(2, 32));
@@ -61,7 +66,7 @@ export class EmailService implements IEmailService {
 
       const token = this.generateRandomToken();
       //2. get template
-      const template = await this._templateService.getTemplate({
+      const template = await EmailService._templateService.getTemplate({
         name: 'HTML EMAIL TOKEN',
       });
       if (!template) {

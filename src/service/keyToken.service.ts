@@ -4,10 +4,16 @@ import { KeyTokenRepository } from '../repository/keyToken.repository';
 import { keyTokens } from '@prisma/client';
 
 export class KeyTokenService implements IKeyTokenService {
-  private readonly _tokenRepository: IKeyTokenRepository;
-  constructor() {
-    this._tokenRepository = KeyTokenRepository.getInstance();
+  private static Instance: KeyTokenService;
+  public static getInstance(): KeyTokenService {
+    if (!this.Instance) {
+      this.Instance = new KeyTokenService();
+    }
+    return this.Instance;
   }
+  private static readonly _tokenRepository: IKeyTokenRepository =
+    KeyTokenRepository.getInstance();
+  constructor() {}
   async upsertKey({
     userId,
     publicKey,
@@ -35,7 +41,7 @@ export class KeyTokenService implements IKeyTokenService {
         refreshToken,
       },
     };
-    const token = await this._tokenRepository.upsertKey({ options });
+    const token = await KeyTokenService._tokenRepository.upsertKey({ options });
     return token ? token.publicKey : null;
   }
 
@@ -44,12 +50,14 @@ export class KeyTokenService implements IKeyTokenService {
   }: {
     userId: string;
   }): Promise<keyTokens | null> {
-    const found = await this._tokenRepository.foundKey({ userId });
+    const found = await KeyTokenService._tokenRepository.foundKey({ userId });
     return found;
   }
 
   public async deleteKeyByUserId({ userId }: { userId: string }): Promise<any> {
-    const result = await this._tokenRepository.deleteKeyByUserId({ userId });
+    const result = await KeyTokenService._tokenRepository.deleteKeyByUserId({
+      userId,
+    });
     return result;
   }
   public async updateKeyToken({
@@ -61,7 +69,7 @@ export class KeyTokenService implements IKeyTokenService {
     refreshToken: string;
     currentToken: keyTokens;
   }): Promise<any> {
-    const result = await this._tokenRepository.updateKeyToken({
+    const result = await KeyTokenService._tokenRepository.updateKeyToken({
       currentToken,
       refreshToken,
       userId,

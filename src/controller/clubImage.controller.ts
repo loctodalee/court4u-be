@@ -6,11 +6,8 @@ const { ErrorResponse } = require('../handleResponse/error.response');
 
 export class ClubImageController {
   private static instance: ClubImageController;
-  private clubImageService: IClubImageService;
-
-  private constructor() {
-    this.clubImageService = new ClubImageService();
-  }
+  private static clubImageService: IClubImageService =
+    ClubImageService.getInstance();
 
   public static getInstance(): ClubImageController {
     if (!this.instance) {
@@ -21,9 +18,10 @@ export class ClubImageController {
 
   async getClubImageById(req: Request, res: Response) {
     try {
-      const clubImage = await this.clubImageService.getClubImageById(
-        req.params.id
-      );
+      const clubImage =
+        await ClubImageController.clubImageService.getClubImageById(
+          req.params.id
+        );
       new SuccessResponse({
         message: 'Get Success',
         metaData: clubImage,
@@ -40,7 +38,8 @@ export class ClubImageController {
 
   async getAllClubImages(req: Request, res: Response) {
     try {
-      const clubImages = await this.clubImageService.getAllClubImages();
+      const clubImages =
+        await ClubImageController.clubImageService.getAllClubImages();
       new SuccessResponse({
         message: 'Get Success',
         metaData: clubImages,
@@ -59,11 +58,12 @@ export class ClubImageController {
     const { clubId, name, url } = req.body;
 
     try {
-      const newClubImage = await this.clubImageService.createClubImage({
-        clubId,
-        name,
-        url,
-      });
+      const newClubImage =
+        await ClubImageController.clubImageService.createClubImage({
+          clubId,
+          name,
+          url,
+        });
       new SuccessResponse({
         message: 'Create Success',
         metaData: newClubImage,
@@ -83,11 +83,12 @@ export class ClubImageController {
     const { id } = req.params;
 
     try {
-      const updatedClubImage = await this.clubImageService.updateClubImage(id, {
-        clubId,
-        name,
-        url,
-      });
+      const updatedClubImage =
+        await ClubImageController.clubImageService.updateClubImage(id, {
+          clubId,
+          name,
+          url,
+        });
       new SuccessResponse({
         message: 'Update Success',
         metaData: updatedClubImage,
@@ -106,7 +107,8 @@ export class ClubImageController {
     const { id } = req.params;
 
     try {
-      const deletedClubImage = await this.clubImageService.deleteClubImage(id);
+      const deletedClubImage =
+        await ClubImageController.clubImageService.deleteClubImage(id);
       new SuccessResponse({
         message: 'Delete Success',
         metaData: deletedClubImage,

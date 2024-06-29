@@ -4,6 +4,8 @@ import { SubscriptionFactory } from '../service/subscription.service';
 const { SuccessResponse } = require('../handleResponse/success.response');
 
 export class SubscriptionController {
+  private static readonly subscriptionService: ISubscriptionService =
+    SubscriptionFactory.getInstance();
   private static Instance: SubscriptionController;
   public static getInstance(): SubscriptionController {
     if (!this.Instance) {
@@ -18,13 +20,16 @@ export class SubscriptionController {
    * @param res {subscription}
    */
   async createSubscription(req: Request, res: Response) {
-    var subscriptionService: ISubscriptionService = new SubscriptionFactory();
     new SuccessResponse({
       message: 'Create new subscription',
-      metaData: await subscriptionService.createSubscription(req.body.type, {
-        ...req.body,
-        clubId: req.clubId,
-      }),
+      metaData:
+        await SubscriptionController.subscriptionService.createSubscription(
+          req.body.type,
+          {
+            ...req.body,
+            clubId: req.clubId,
+          }
+        ),
     }).send(res);
   }
 }

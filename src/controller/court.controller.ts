@@ -6,6 +6,8 @@ import { club } from '@prisma/client';
 const { SuccessResponse } = require('../handleResponse/success.response');
 
 export class CourtController {
+  private static readonly courtService: ICourtService =
+    CourtService.getInstance();
   private static Instance: CourtController;
   public static getInstance(): CourtController {
     if (!this.Instance) {
@@ -19,10 +21,9 @@ export class CourtController {
    * @param res {court}
    */
   async createCourt(req: Request, res: Response) {
-    var courtService: ICourtService = new CourtService();
     new SuccessResponse({
       message: 'Create new court',
-      metaData: await courtService.createCourt({
+      metaData: await CourtController.courtService.createCourt({
         clubId: req.clubId,
         ...req.body,
       }),

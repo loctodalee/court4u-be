@@ -9,8 +9,15 @@ import { ISubscriptionForClubRepository } from '../repository/interface/iSubscri
 import { SubscriptionForClubRepository } from '../repository/subscriptionForClub.repository';
 
 export class SubScriptionForClubService implements ISubscriptionForClubService {
-  private _subscriptionForClubRepo: ISubscriptionForClubRepository;
-  constructor() {
+  private static Instance: SubScriptionForClubService;
+  public static getInstance(): SubScriptionForClubService {
+    if (!this.Instance) {
+      this.Instance = new SubScriptionForClubService();
+    }
+    return this.Instance;
+  }
+  private static _subscriptionForClubRepo: ISubscriptionForClubRepository;
+  static {
     this._subscriptionForClubRepo = SubscriptionForClubRepository.getInstance();
   }
   public async createSubscription(data: {
@@ -20,10 +27,14 @@ export class SubScriptionForClubService implements ISubscriptionForClubService {
     type: SubsciptionForClubType;
     status: SubcriptionForClubStatus;
   }): Promise<subscriptionForClub> {
-    return await this._subscriptionForClubRepo.createNewSubscription(data);
+    return await SubScriptionForClubService._subscriptionForClubRepo.createNewSubscription(
+      data
+    );
   }
 
   public async searchById(id: string): Promise<subscriptionForClub | null> {
-    return await this._subscriptionForClubRepo.searchById(id);
+    return await SubScriptionForClubService._subscriptionForClubRepo.searchById(
+      id
+    );
   }
 }

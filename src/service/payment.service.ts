@@ -2,6 +2,13 @@ import { IPayementService } from './interface/iPayment.service';
 import crypto from 'crypto';
 import https from 'https';
 export class PaymentService implements IPayementService {
+  private static Instance: PaymentService;
+  public static getInstance(): PaymentService {
+    if (!this.Instance) {
+      this.Instance = new PaymentService();
+    }
+    return this.Instance;
+  }
   public async momoPayment({
     price,
     orderId,

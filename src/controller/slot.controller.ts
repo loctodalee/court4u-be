@@ -2,10 +2,10 @@ import { Request, Response } from 'express';
 import { ISlotService } from '../service/interface/iSlot.service';
 import { SlotService } from '../service/slot.service';
 import { ISlotOnCourtService } from '../service/interface/iSlotOnCourt.service';
-import { SlotOnCourtService } from '../service/slotOnCourt.service';
 const { SuccessResponse } = require('../handleResponse/success.response');
 
 export class SlotController {
+  private static readonly slotService: ISlotService = SlotService.getInstance();
   private static Instance: SlotController;
   public static getInstacnce(): SlotController {
     if (!this.Instance) {
@@ -19,10 +19,9 @@ export class SlotController {
    * @param res {slot}
    */
   public async createSlot(req: Request, res: Response) {
-    var slotService: ISlotService = new SlotService();
     new SuccessResponse({
       message: 'create new slot',
-      metaData: await slotService.createNewSlot({
+      metaData: await SlotController.slotService.createNewSlot({
         clubId: req.clubId,
         ...req.body,
       }),
@@ -35,10 +34,11 @@ export class SlotController {
    * @param res {slotOnCourt}
    */
   public async addCourtToSlot(req: Request, res: Response) {
-    var slotOncourtService: ISlotOnCourtService = new SlotOnCourtService();
     new SuccessResponse({
       message: 'Add slot to court',
-      metaData: await slotOncourtService.createNewSlotOnCourt({ ...req.body }),
+      metaData: await SlotController.slotService.assignNewSlotOnCourt({
+        ...req.body,
+      }),
     });
   }
 }

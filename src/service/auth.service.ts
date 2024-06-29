@@ -18,14 +18,21 @@ import { keyTokens, users } from '@prisma/client';
 import { IUserService } from './interface/iUser.service';
 import { UserService } from './user.service';
 export class AuthService implements IAuthService {
-  private readonly _keyTokenService: IKeyTokenService;
-  private readonly _userService: IUserService;
-  private _emailService: IEmailService;
+  private static Instance: AuthService;
+  public static getInstance(): AuthService {
+    if (!this.Instance) {
+      this.Instance = new AuthService();
+    }
+    return this.Instance;
+  }
+  private static _keyTokenService: IKeyTokenService;
+  private static _userService: IUserService;
+  private static _emailService: IEmailService;
 
-  constructor() {
-    this._keyTokenService = new KeyTokenService();
-    this._emailService = new EmailService();
-    this._userService = new UserService();
+  static {
+    this._keyTokenService = KeyTokenService.getInstance();
+    this._userService = UserService.getInstance();
+    this._emailService = EmailService.getInstance();
   }
   //create public key and private key
   createKeys = () => {
@@ -41,7 +48,7 @@ export class AuthService implements IAuthService {
     email: string;
     password: string;
   }): Promise<any> {
-    const foundUser = await this._userService.getUserByEmail({ email });
+    const foundUser = await AuthService._userService.getUserByEmail({ email });
     if (!foundUser) {
       throw new BadRequestError('Login fail');
     }
@@ -66,7 +73,7 @@ export class AuthService implements IAuthService {
       privateKey: keys.privateKey,
     });
 
-    await this._keyTokenService.upsertKey({
+    await AuthService._keyTokenService.upsertKey({
       userId: foundUser.id,
       publicKey: keys.publicKey,
       privateKey: keys.privateKey,
@@ -90,18 +97,18 @@ export class AuthService implements IAuthService {
     phone: string;
     email: string;
   }): Promise<any> {
-    const user = await this._userService.getUserByEmail({ email });
+    const user = await AuthService._userService.getUserByEmail({ email });
     if (user) {
       throw new NotImplementError('Email already existed');
     }
 
     // send mail
-    const result = await this._emailService.sendEmailToken({ email });
+    const result = await AuthService._emailService.sendEmailToken({ email });
     console.log(result);
     // create user with status = false
     const hashPassword = await bcrypt.hash(password, 10);
 
-    await this._userService.createNewUser({
+    await AuthService._userService.createNewUser({
       email,
       password: hashPassword,
       otp: result.toString(),
@@ -128,18 +135,18 @@ export class AuthService implements IAuthService {
     phone: string;
     email: string;
   }): Promise<any> {
-    const user = await this._userService.getUserByEmail({ email });
+    const user = await AuthService._userService.getUserByEmail({ email });
     if (user) {
       throw new NotImplementError('Email already existed');
     }
 
     // send mail
-    const result = await this._emailService.sendEmailToken({ email });
+    const result = await AuthService._emailService.sendEmailToken({ email });
     console.log(result);
     // create user with status = false
     const hashPassword = await bcrypt.hash(password, 10);
 
-    await this._userService.createNewUser({
+    await AuthService._userService.createNewUser({
       email,
       password: hashPassword,
       otp: result.toString(),
@@ -158,7 +165,7 @@ export class AuthService implements IAuthService {
   public async checkLoginEmailToken({ token }: { token: any }): Promise<any> {
     // search and update status, set otp user to null
 
-    const foundUser = await this._userService.updateUserAfterVerify({
+    const foundUser = await AuthService._userService.updateUserAfterVerify({
       otp: token,
     });
 
@@ -173,7 +180,7 @@ export class AuthService implements IAuthService {
       privateKey: keys.privateKey,
     });
 
-    await this._keyTokenService.upsertKey({
+    await AuthService._keyTokenService.upsertKey({
       userId: foundUser.id,
       publicKey: keys.publicKey,
       privateKey: keys.privateKey,
@@ -215,7 +222,7 @@ export class AuthService implements IAuthService {
         refreshToken: tokens.refreshToken,
       },
     };
-    await this._keyTokenService.upsertKey({
+    await AuthService._keyTokenService.upsertKey({
       userId: user.id,
       publicKey: keys.publicKey,
       privateKey: keys.privateKey,
@@ -242,7 +249,7 @@ export class AuthService implements IAuthService {
   }): Promise<any> {
     const { userId, email } = user;
     if (keyStore.refreshTokenUsed.includes(refreshToken)) {
-      this._keyTokenService.deleteKeyByUserId({ userId });
+      AuthService._keyTokenService.deleteKeyByUserId({ userId });
       throw new ForbiddenError('Something go wrong');
     }
     if (keyStore.refreshToken !== refreshToken)
@@ -253,12 +260,12 @@ export class AuthService implements IAuthService {
       privateKey: keyStore.privateKey,
       publicKey: keyStore.publicKey,
     });
-    const keyToken = await this._keyTokenService.foundKey({
+    const keyToken = await AuthService._keyTokenService.foundKey({
       userId,
     });
     if (!keyToken) throw new AuthFailure('Key token not found');
 
-    const result = await this._keyTokenService.updateKeyToken({
+    const result = await AuthService._keyTokenService.updateKeyToken({
       currentToken: keyToken,
       refreshToken: tokens.refreshToken,
       userId,

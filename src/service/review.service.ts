@@ -1,21 +1,27 @@
 import { review } from '@prisma/client';
-import { iReviewService } from './interface/iReview.service';
+import { IReviewService } from './interface/iReview.service';
 import { IReviewRepository } from '../repository/interface/iReview.repository';
 import { ReviewRepository } from '../repository/review.repository';
 import {
   BadRequestError,
   NotFoundError,
 } from '../handleResponse/error.response';
-import prisma from '../lib/prisma';
 import { IClubService } from './interface/iClub.service';
 import { ClubService } from './club.service';
 
-export class ReviewService implements iReviewService {
-  private _reviewRepository: IReviewRepository;
-  private _clubService: IClubService;
-  constructor() {
+export class ReviewService implements IReviewService {
+  private static Instance: ReviewService;
+  public static getInstance(): ReviewService {
+    if (!this.Instance) {
+      this.Instance = new ReviewService();
+    }
+    return this.Instance;
+  }
+  private static _reviewRepository: IReviewRepository;
+  private static _clubService: IClubService;
+  static {
     this._reviewRepository = ReviewRepository.getInstance();
-    this._clubService = new ClubService();
+    this._clubService = ClubService.getInstance();
   }
   public async createReview({
     clubId,
@@ -35,7 +41,7 @@ export class ReviewService implements iReviewService {
           id: parentId,
         },
       };
-      const parentComment = await this._reviewRepository.foundReview({
+      const parentComment = await ReviewService._reviewRepository.foundReview({
         options,
       });
       if (!parentComment) throw new BadRequestError('Parent comment not found');
@@ -68,11 +74,11 @@ export class ReviewService implements iReviewService {
           },
         },
       };
-      await this._reviewRepository.updateManyReview({
+      await ReviewService._reviewRepository.updateManyReview({
         options: optionsUpdateRight,
       });
 
-      await this._reviewRepository.updateManyReview({
+      await ReviewService._reviewRepository.updateManyReview({
         options: optionsUpdateLeft,
       });
     } else {
@@ -87,7 +93,7 @@ export class ReviewService implements iReviewService {
           commentRight: true,
         },
       };
-      const maxRightValue = await this._reviewRepository.foundReview({
+      const maxRightValue = await ReviewService._reviewRepository.foundReview({
         options: optionFindMaxRightValue,
       });
 
@@ -97,7 +103,7 @@ export class ReviewService implements iReviewService {
         rightValue = 1;
       }
     }
-    const newReview = await this._reviewRepository.createReview({
+    const newReview = await ReviewService._reviewRepository.createReview({
       clubId,
       reviewerId: userId,
       content,
@@ -122,7 +128,7 @@ export class ReviewService implements iReviewService {
           id: parentId,
         },
       };
-      const parentComment = await this._reviewRepository.foundReview({
+      const parentComment = await ReviewService._reviewRepository.foundReview({
         options: optionFoundParent,
       });
       if (!parentComment) throw new BadRequestError('Not found parent comment');
@@ -145,7 +151,7 @@ export class ReviewService implements iReviewService {
           commentLeft: 'asc',
         },
       };
-      const comments = await this._reviewRepository.foundManyReview({
+      const comments = await ReviewService._reviewRepository.foundManyReview({
         options: commentsOption,
       });
       return comments;
@@ -165,7 +171,9 @@ export class ReviewService implements iReviewService {
         commentLeft: 'asc',
       },
     };
-    const review = await this._reviewRepository.foundManyReview({ options });
+    const review = await ReviewService._reviewRepository.foundManyReview({
+      options,
+    });
     return review;
   }
 
@@ -176,10 +184,12 @@ export class ReviewService implements iReviewService {
     reviewId: string;
     clubId: string;
   }): Promise<void> {
-    const foundClub = await this._clubService.foundClubById({ clubId });
+    const foundClub = await ReviewService._clubService.foundClubById({
+      clubId,
+    });
     if (!foundClub) throw new NotFoundError('Club not found');
 
-    const review = await this._reviewRepository.foundReview({
+    const review = await ReviewService._reviewRepository.foundReview({
       options: {
         where: {
           id: reviewId,
@@ -203,7 +213,9 @@ export class ReviewService implements iReviewService {
         },
       },
     };
-    await this._reviewRepository.deleteMany({ options: deleteManyOption });
+    await ReviewService._reviewRepository.deleteMany({
+      options: deleteManyOption,
+    });
 
     const updateRight = {
       where: {
@@ -232,7 +244,11 @@ export class ReviewService implements iReviewService {
         },
       },
     };
-    await this._reviewRepository.updateManyReview({ options: updateRight });
-    await this._reviewRepository.updateManyReview({ options: updateLeft });
+    await ReviewService._reviewRepository.updateManyReview({
+      options: updateRight,
+    });
+    await ReviewService._reviewRepository.updateManyReview({
+      options: updateLeft,
+    });
   }
 }
