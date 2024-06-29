@@ -2,13 +2,13 @@ import { template } from '@prisma/client';
 import { ITemplateRepository } from './interface/iTemplate.repository';
 import prisma from '../lib/prisma';
 
-export class TemplateRepostory implements ITemplateRepository {
-  private static Instance: TemplateRepostory;
-  public static getInstance(): TemplateRepostory {
-    if (!TemplateRepostory.Instance) {
-      TemplateRepostory.Instance = new TemplateRepostory();
+export class TemplateRepository implements ITemplateRepository {
+  private static Instance: TemplateRepository;
+  public static getInstance(): ITemplateRepository {
+    if (!TemplateRepository.Instance) {
+      TemplateRepository.Instance = new TemplateRepository();
     }
-    return TemplateRepostory.Instance;
+    return TemplateRepository.Instance;
   }
   async getTemplate({
     temName,

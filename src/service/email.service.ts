@@ -12,7 +12,7 @@ import { TemplateService } from './template.service';
 import crypto from 'crypto';
 export class EmailService implements IEmailService {
   private static Instance: EmailService;
-  public static getInstance(): EmailService {
+  public static getInstance(): IEmailService {
     if (!this.Instance) {
       this.Instance = new EmailService();
     }

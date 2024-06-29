@@ -4,7 +4,7 @@ import prisma from '../lib/prisma';
 
 export class BookingRepository implements IBookingRepository {
   private static Instance: BookingRepository;
-  public static getInstance(): BookingRepository {
+  public static getInstance(): IBookingRepository {
     if (!this.Instance) {
       this.Instance = new BookingRepository();
     }

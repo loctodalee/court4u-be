@@ -10,7 +10,7 @@ export class SubscriptionForClubRepository
   implements ISubscriptionForClubRepository
 {
   private static Instance: SubscriptionForClubRepository;
-  public static getInstance(): SubscriptionForClubRepository {
+  public static getInstance(): ISubscriptionForClubRepository {
     if (!this.Instance) {
       this.Instance = new SubscriptionForClubRepository();
     }

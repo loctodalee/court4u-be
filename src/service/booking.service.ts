@@ -1,11 +1,11 @@
 import { BookingStatus, booking } from '@prisma/client';
-import { IBookingSerivce } from './interface/iBooking.service';
+import { IBookingService } from './interface/iBooking.service';
 import { IBookingRepository } from '../repository/interface/iBookingRepository';
 import { BookingRepository } from '../repository/booking.repository';
 
-export class BookingService implements IBookingSerivce {
+export class BookingService implements IBookingService {
   private static Instance: BookingService;
-  public static getInstance(): BookingService {
+  public static getInstance(): IBookingService {
     if (!this.Instance) {
       this.Instance = new BookingService();
     }

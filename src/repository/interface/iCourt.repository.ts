@@ -1,6 +1,6 @@
 import { court, CourtStatus } from '@prisma/client';
 
-export interface ICourtRepositorty {
+export interface ICourtRepository {
   createCourt({
     clubId,
     status,

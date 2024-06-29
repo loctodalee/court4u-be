@@ -5,7 +5,7 @@ import { keyTokens } from '@prisma/client';
 
 export class KeyTokenService implements IKeyTokenService {
   private static Instance: KeyTokenService;
-  public static getInstance(): KeyTokenService {
+  public static getInstance(): IKeyTokenService {
     if (!this.Instance) {
       this.Instance = new KeyTokenService();
     }

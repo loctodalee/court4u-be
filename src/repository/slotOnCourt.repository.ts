@@ -3,7 +3,7 @@ import { ISlotOnCourtRepository } from './interface/iSlotOnCourt.repository';
 import prisma from '../lib/prisma';
 export class SlotOnCourtRepository implements ISlotOnCourtRepository {
   private static Instance: SlotOnCourtRepository;
-  public static getInstance(): SlotOnCourtRepository {
+  public static getInstance(): ISlotOnCourtRepository {
     if (!this.Instance) {
       this.Instance = new SlotOnCourtRepository();
     }

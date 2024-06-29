@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
 import { ISubscriptionForClubService } from '../service/interface/iSubscriptionForClub.service';
-import { SubScriptionForClubService } from '../service/subscriptionForClub.service';
+import { SubscriptionForClubService } from '../service/subscriptionForClub.service';
 const { SuccessResponse } = require('../handleResponse/success.response');
 
 export class SubscriptionForClubController {
   private static readonly subscriptionForClubService: ISubscriptionForClubService =
-    SubScriptionForClubService.getInstance();
+    SubscriptionForClubService.getInstance();
   private static Instance: SubscriptionForClubController;
   public static getInstance(): SubscriptionForClubController {
     if (!this.Instance) {

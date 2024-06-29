@@ -19,7 +19,7 @@ import { IUserService } from './interface/iUser.service';
 import { UserService } from './user.service';
 export class AuthService implements IAuthService {
   private static Instance: AuthService;
-  public static getInstance(): AuthService {
+  public static getInstance(): IAuthService {
     if (!this.Instance) {
       this.Instance = new AuthService();
     }

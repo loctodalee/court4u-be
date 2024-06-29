@@ -3,7 +3,7 @@ import { IClubSubscriptionRepository } from './interface/iClubSubscription.repos
 import prisma from '../lib/prisma';
 export class ClubSubscriptionRepository implements IClubSubscriptionRepository {
   private static Instance: ClubSubscriptionRepository;
-  public static getInstance(): ClubSubscriptionRepository {
+  public static getInstance(): IClubSubscriptionRepository {
     if (!this.Instance) {
       this.Instance = new ClubSubscriptionRepository();
     }

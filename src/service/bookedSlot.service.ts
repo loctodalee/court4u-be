@@ -4,7 +4,7 @@ import prisma from '../lib/prisma';
 import { forEach } from 'lodash';
 import { ISlotRepository } from '../repository/interface/iSlot.repository';
 import { SlotRepository } from '../repository/slot.repository';
-import { IBookingSerivce } from './interface/iBooking.service';
+import { IBookingService } from './interface/iBooking.service';
 import { BookingService } from './booking.service';
 import { IBillService } from './interface/iBill.service';
 import { BillService } from './bill.service';
@@ -25,7 +25,7 @@ export type bookSlotInfo = {
 };
 export class BookedSlotService implements IBookedSlotService {
   private static Instance: BookedSlotService;
-  public static getInstance(): BookedSlotService {
+  public static getInstance(): IBookedSlotService {
     if (!this.Instance) {
       this.Instance = new BookedSlotService();
     }
@@ -33,7 +33,7 @@ export class BookedSlotService implements IBookedSlotService {
   }
   private static _subscriptionService: ISubscriptionService;
   private static _slotRepository: ISlotRepository;
-  private static _bookingService: IBookingSerivce;
+  private static _bookingService: IBookingService;
   private static _billService: IBillService;
   private static _bookedSlotRepository: IBookedSlotRepository;
   private static _memberSubscriptionService: IMemberSubscriptionService;

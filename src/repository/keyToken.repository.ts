@@ -4,7 +4,7 @@ import { keyTokens } from '@prisma/client';
 
 export class KeyTokenRepository implements IKeyTokenRepository {
   private static Instance: KeyTokenRepository;
-  public static getInstance(): KeyTokenRepository {
+  public static getInstance(): IKeyTokenRepository {
     if (!KeyTokenRepository.Instance) {
       KeyTokenRepository.Instance = new KeyTokenRepository();
     }

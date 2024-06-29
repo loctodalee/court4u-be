@@ -19,13 +19,13 @@ passport.use(
       done: any
     ) => {
       try {
-        var _userService: IUserService = new UserService();
+        var _userService: IUserService = UserService.getInstance();
         let user = await _userService.createOrUpdateGoogleUser({
           avatarUrl: profile.photos[0].value,
           email: profile.emails[0].value,
           googleAccessToken: accessToken,
           googleId: profile.id,
-          username: profile.displayName,
+          fullname: profile.displayName,
         });
 
         done(null, user);

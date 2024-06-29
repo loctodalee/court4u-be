@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import { IBookingSerivce } from '../service/interface/iBooking.service';
+import { IBookingService } from '../service/interface/iBooking.service';
 import { BookingService } from '../service/booking.service';
 import { IBookedSlotService } from '../service/interface/iBookedSlot.service';
 import { BookedSlotService } from '../service/bookedSlot.service';
 const { SuccessResponse } = require('../handleResponse/success.response');
 
 export class BookingController {
-  private static readonly bookingService: IBookingSerivce =
+  private static readonly bookingService: IBookingService =
     BookingService.getInstance();
   private static readonly bookedSlotService: IBookedSlotService =
     BookedSlotService.getInstance();

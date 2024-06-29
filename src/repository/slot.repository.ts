@@ -4,7 +4,7 @@ import prisma from '../lib/prisma';
 
 export class SlotRepository implements ISlotRepository {
   private static Instance: SlotRepository;
-  public static getInstance(): SlotRepository {
+  public static getInstance(): ISlotRepository {
     if (!this.Instance) {
       this.Instance = new SlotRepository();
     }

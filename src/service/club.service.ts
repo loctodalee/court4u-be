@@ -6,7 +6,7 @@ import { IUserService } from './interface/iUser.service';
 import { UserService } from './user.service';
 export class ClubService implements IClubService {
   private static Instance: ClubService;
-  public static getInstance(): ClubService {
+  public static getInstance(): IClubService {
     if (!this.Instance) {
       this.Instance = new ClubService();
     }

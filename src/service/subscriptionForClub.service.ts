@@ -8,11 +8,11 @@ import { ISubscriptionForClubService } from './interface/iSubscriptionForClub.se
 import { ISubscriptionForClubRepository } from '../repository/interface/iSubscriptionForClub.repository';
 import { SubscriptionForClubRepository } from '../repository/subscriptionForClub.repository';
 
-export class SubScriptionForClubService implements ISubscriptionForClubService {
-  private static Instance: SubScriptionForClubService;
-  public static getInstance(): SubScriptionForClubService {
+export class SubscriptionForClubService implements ISubscriptionForClubService {
+  private static Instance: SubscriptionForClubService;
+  public static getInstance(): ISubscriptionForClubService {
     if (!this.Instance) {
-      this.Instance = new SubScriptionForClubService();
+      this.Instance = new SubscriptionForClubService();
     }
     return this.Instance;
   }
@@ -27,13 +27,13 @@ export class SubScriptionForClubService implements ISubscriptionForClubService {
     type: SubsciptionForClubType;
     status: SubcriptionForClubStatus;
   }): Promise<subscriptionForClub> {
-    return await SubScriptionForClubService._subscriptionForClubRepo.createNewSubscription(
+    return await SubscriptionForClubService._subscriptionForClubRepo.createNewSubscription(
       data
     );
   }
 
   public async searchById(id: string): Promise<subscriptionForClub | null> {
-    return await SubScriptionForClubService._subscriptionForClubRepo.searchById(
+    return await SubscriptionForClubService._subscriptionForClubRepo.searchById(
       id
     );
   }

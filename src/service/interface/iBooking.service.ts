@@ -1,6 +1,6 @@
 import { booking, BookingStatus } from '@prisma/client';
 
-export interface IBookingSerivce {
+export interface IBookingService {
   createBooking(data: {
     userId: string;
     billId: string;

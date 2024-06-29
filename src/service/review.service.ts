@@ -11,7 +11,7 @@ import { ClubService } from './club.service';
 
 export class ReviewService implements IReviewService {
   private static Instance: ReviewService;
-  public static getInstance(): ReviewService {
+  public static getInstance(): IReviewService {
     if (!this.Instance) {
       this.Instance = new ReviewService();
     }

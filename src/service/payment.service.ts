@@ -1,9 +1,9 @@
-import { IPayementService } from './interface/iPayment.service';
+import { IPaymentService } from './interface/iPayment.service';
 import crypto from 'crypto';
 import https from 'https';
-export class PaymentService implements IPayementService {
+export class PaymentService implements IPaymentService {
   private static Instance: PaymentService;
-  public static getInstance(): PaymentService {
+  public static getInstance(): IPaymentService {
     if (!this.Instance) {
       this.Instance = new PaymentService();
     }

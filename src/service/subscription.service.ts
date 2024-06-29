@@ -13,14 +13,14 @@ import {
 import { ISubscriptionRepository } from '../repository/interface/iSubscription.repository';
 import { SubscriptionRepository } from '../repository/subscription.repository';
 import { ISubscriptionService } from './interface/iSubscription.service';
-import { IPayementService } from './interface/iPayment.service';
+import { IPaymentService } from './interface/iPayment.service';
 import { PaymentService } from './payment.service';
 
 type SubscriptionConstructor = new (...args: any[]) => any;
 
 export class SubscriptionFactory implements ISubscriptionService {
   private static Instance: SubscriptionFactory;
-  public static getInstance(): SubscriptionFactory {
+  public static getInstance(): ISubscriptionService {
     if (!this.Instance) {
       this.Instance = new SubscriptionFactory();
     }
@@ -113,7 +113,7 @@ class Subscription {
   type: SubscriptionType;
   detail: any;
   _subscriptionRepository!: ISubscriptionRepository;
-  _paymentService: IPayementService;
+  _paymentService: IPaymentService;
   constructor({
     clubId,
     name,

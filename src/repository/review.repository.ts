@@ -4,7 +4,7 @@ import prisma from '../lib/prisma';
 
 export class ReviewRepository implements IReviewRepository {
   private static Instance: ReviewRepository;
-  public static getInstance(): ReviewRepository {
+  public static getInstance(): IReviewRepository {
     if (!this.Instance) {
       this.Instance = new ReviewRepository();
     }

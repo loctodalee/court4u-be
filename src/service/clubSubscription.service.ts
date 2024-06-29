@@ -9,15 +9,15 @@ import {
   NotFoundError,
 } from '../handleResponse/error.response';
 import { ISubscriptionForClubService } from './interface/iSubscriptionForClub.service';
-import { SubScriptionForClubService } from './subscriptionForClub.service';
-import { IPayementService } from './interface/iPayment.service';
+import { SubscriptionForClubService } from './subscriptionForClub.service';
+import { IPaymentService } from './interface/iPayment.service';
 import { PaymentService } from './payment.service';
 import { IBillService } from './interface/iBill.service';
 import { BillService } from './bill.service';
 
 export class ClubSubscriptionService implements IClubSubscriptionService {
   private static Instance: ClubSubscriptionService;
-  public static getInstance(): ClubSubscriptionService {
+  public static getInstance(): IClubSubscriptionService {
     if (!this.Instance) {
       this.Instance = new ClubSubscriptionService();
     }
@@ -26,12 +26,12 @@ export class ClubSubscriptionService implements IClubSubscriptionService {
   private static _clubSubsriptionRepo: IClubSubscriptionRepository;
   private static _clubService: IClubService;
   private static _subscriptionForClubService: ISubscriptionForClubService;
-  private static _paymentService: IPayementService;
+  private static _paymentService: IPaymentService;
   private static _billService: IBillService;
   static {
     this._clubSubsriptionRepo = ClubSubscriptionRepository.getInstance();
     this._clubService = ClubService.getInstance();
-    this._subscriptionForClubService = SubScriptionForClubService.getInstance();
+    this._subscriptionForClubService = SubscriptionForClubService.getInstance();
     this._paymentService = PaymentService.getInstance();
     this._billService = BillService.getInstance();
   }

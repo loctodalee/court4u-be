@@ -6,7 +6,7 @@ import { IStaffProfileService } from './interface/iStaffProfile.service';
 export class StaffProfileService implements IStaffProfileService {
   private static Instance: StaffProfileService;
 
-  public static getInstance(): StaffProfileService {
+  public static getInstance(): IStaffProfileService {
     if (!StaffProfileService.Instance) {
       StaffProfileService.Instance = new StaffProfileService();
     }

@@ -26,7 +26,7 @@ passport.use(
           email: profile.emails[0].value,
           facebookAccessToken: accessToken,
           facebookId: profile.id,
-          username: profile.displayName,
+          fullname: profile.displayName,
         });
         done(null, user);
       } catch (err) {

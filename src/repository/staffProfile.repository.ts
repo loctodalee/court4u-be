@@ -5,7 +5,7 @@ import { IStaffProfileRepository } from './interface/iStaffProfile.repository';
 
 export class StaffProfileRepository implements IStaffProfileRepository {
   private static Instance: StaffProfileRepository;
-  public static getInstance(): StaffProfileRepository {
+  public static getInstance(): IStaffProfileRepository {
     if (!StaffProfileRepository.Instance) {
       StaffProfileRepository.Instance = new StaffProfileRepository();
     }

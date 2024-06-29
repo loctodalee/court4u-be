@@ -6,7 +6,7 @@ import { IBillRepository } from '../repository/interface/iBill.repository';
 
 export class BillService implements IBillService {
   private static Instance: BillService;
-  public static getInstance(): BillService {
+  public static getInstance(): IBillService {
     if (!this.Instance) {
       this.Instance = new BillService();
     }

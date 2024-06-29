@@ -33,13 +33,13 @@ export interface IUserService {
     email,
     googleId,
     googleAccessToken,
-    username,
+    fullname,
     avatarUrl,
   }: {
     email: string;
     googleId: string;
     googleAccessToken: string;
-    username: string;
+    fullname: string;
     avatarUrl: string;
   }): Promise<users>;
 
@@ -47,18 +47,18 @@ export interface IUserService {
     email,
     facebookId,
     facebookAccessToken,
-    username,
+    fullname,
     avatarUrl,
   }: {
     email: string;
     facebookId: string;
     facebookAccessToken: string;
-    username: string;
+    fullname: string;
     avatarUrl: string;
   }): Promise<users>;
 
   createStaff({
-    username,
+    fullname,
     password,
     email,
     phone,
@@ -67,7 +67,7 @@ export interface IUserService {
     otp,
     clubId,
   }: {
-    username: string;
+    fullname: string;
     password: string;
     email: string;
     phone: string;

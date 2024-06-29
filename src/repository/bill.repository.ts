@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 export class BillRepository implements IBillRepository {
   private static instance: BillRepository;
 
-  public static getInstance(): BillRepository {
+  public static getInstance(): IBillRepository {
     if (!BillRepository.instance) {
       BillRepository.instance = new BillRepository();
     }

@@ -1,18 +1,18 @@
 import { template } from '@prisma/client';
 import { ITemplateRepository } from '../repository/interface/iTemplate.repository';
-import { TemplateRepostory } from '../repository/template.repository';
+import { TemplateRepository } from '../repository/template.repository';
 import { NotFoundError } from '../handleResponse/error.response';
 import { ITemplateService } from './interface/iTemplate.service';
 export class TemplateService implements ITemplateService {
   private static Instance: TemplateService;
-  public static getInstance(): TemplateService {
+  public static getInstance(): ITemplateService {
     if (!this.Instance) {
       this.Instance = new TemplateService();
     }
     return this.Instance;
   }
   private static readonly _templateRepository: ITemplateRepository =
-    TemplateRepostory.getInstance();
+    TemplateRepository.getInstance();
   constructor() {}
 
   public async getTemplate({

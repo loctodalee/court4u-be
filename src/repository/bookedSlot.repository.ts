@@ -4,7 +4,7 @@ import prisma from '../lib/prisma';
 
 export class BookedSlotRepository implements IBookedSlotRepository {
   private static Instance: BookedSlotRepository;
-  public static getInstance(): BookedSlotRepository {
+  public static getInstance(): IBookedSlotRepository {
     if (!this.Instance) {
       this.Instance = new BookedSlotRepository();
     }

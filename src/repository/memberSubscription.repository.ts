@@ -6,7 +6,7 @@ export class MemberSubscriptionRepository
   implements IMemberSubscriptionRepository
 {
   private static Instance: MemberSubscriptionRepository;
-  public static getInstance(): MemberSubscriptionRepository {
+  public static getInstance(): IMemberSubscriptionRepository {
     if (!this.Instance) {
       this.Instance = new MemberSubscriptionRepository();
     }

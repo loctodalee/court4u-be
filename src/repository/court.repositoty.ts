@@ -1,10 +1,10 @@
 import { $Enums, court, CourtStatus } from '@prisma/client';
-import { ICourtRepositorty } from './interface/iCourt.repository';
+import { ICourtRepository } from './interface/iCourt.repository';
 import prisma from '../lib/prisma';
 
-export class CourtRepository implements ICourtRepositorty {
+export class CourtRepository implements ICourtRepository {
   private static Instance: CourtRepository;
-  public static getInstance(): CourtRepository {
+  public static getInstance(): ICourtRepository {
     if (!CourtRepository.Instance) {
       this.Instance = new CourtRepository();
     }

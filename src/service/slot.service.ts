@@ -13,7 +13,7 @@ import { SlotOnCourtRepository } from '../repository/slotOnCourt.repository';
 
 export class SlotService implements ISlotService {
   private static Instance: SlotService;
-  public static getInstance(): SlotService {
+  public static getInstance(): ISlotService {
     if (!this.Instance) {
       this.Instance = new SlotService();
     }

@@ -12,7 +12,7 @@ export class UserController {
     return this.Instance;
   }
 
-  async getUserById(req: Request, res: Response) {
+  async getUserByEmail(req: Request, res: Response) {
     new SuccessResponse({
       message: 'Get Success',
       metaData: await UserController.userService.getUserByEmail({

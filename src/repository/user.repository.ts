@@ -5,7 +5,7 @@ import { AuthFailure } from '../handleResponse/error.response';
 
 export class UserRepository implements IUserRepository {
   private static Instance: UserRepository;
-  public static getInstance(): UserRepository {
+  public static getInstance(): IUserRepository {
     if (!UserRepository.Instance) {
       UserRepository.Instance = new UserRepository();
     }

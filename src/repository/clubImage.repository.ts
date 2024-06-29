@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 export class ClubImageRepository implements IClubImageRepository {
   private static instance: ClubImageRepository;
 
-  public static getInstance(): ClubImageRepository {
+  public static getInstance(): IClubImageRepository {
     if (!ClubImageRepository.instance) {
       ClubImageRepository.instance = new ClubImageRepository();
     }

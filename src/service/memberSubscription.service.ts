@@ -7,7 +7,7 @@ import {
 } from '../handleResponse/error.response';
 import { IUserService } from './interface/iUser.service';
 import { UserService } from './user.service';
-import { IPayementService } from './interface/iPayment.service';
+import { IPaymentService } from './interface/iPayment.service';
 import { PaymentService } from './payment.service';
 import { IBillService } from './interface/iBill.service';
 import { BillService } from './bill.service';
@@ -19,7 +19,7 @@ import { time } from 'console';
 
 export class MemberSubscriptionService implements IMemberSubscriptionService {
   private static Instance: MemberSubscriptionService;
-  public static getInstance(): MemberSubscriptionService {
+  public static getInstance(): IMemberSubscriptionService {
     if (!this.Instance) {
       this.Instance = new MemberSubscriptionService();
     }
@@ -29,7 +29,7 @@ export class MemberSubscriptionService implements IMemberSubscriptionService {
   private static _memberSubscriptionRepository: IMemberSubscriptionRepository;
   private static _subscriptionService: ISubscriptionService;
   private static _userService: IUserService;
-  private static _paymentService: IPayementService;
+  private static _paymentService: IPaymentService;
   private static _billService: IBillService;
 
   static {

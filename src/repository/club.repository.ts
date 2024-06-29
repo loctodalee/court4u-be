@@ -4,7 +4,7 @@ import prisma from '../lib/prisma';
 
 export class ClubRepository implements IClubRepository {
   private static Instance: ClubRepository;
-  public static getInstance(): ClubRepository {
+  public static getInstance(): IClubRepository {
     if (!ClubRepository.Instance) {
       ClubRepository.Instance = new ClubRepository();
     }

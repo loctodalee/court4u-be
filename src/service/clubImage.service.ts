@@ -5,7 +5,7 @@ import { IClubImageService } from './interface/iClubImage.service';
 
 export class ClubImageService implements IClubImageService {
   private static Instance: ClubImageService;
-  public static getInstance(): ClubImageService {
+  public static getInstance(): IClubImageService {
     if (!this.Instance) {
       this.Instance = new ClubImageService();
     }

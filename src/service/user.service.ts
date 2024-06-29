@@ -4,7 +4,7 @@ import { IUserService } from './interface/iUser.service';
 
 export class UserService implements IUserService {
   private static Instance: UserService;
-  public static getInstance(): UserService {
+  public static getInstance(): IUserService {
     if (!this.Instance) {
       this.Instance = new UserService();
     }
@@ -101,13 +101,13 @@ export class UserService implements IUserService {
     email,
     googleId,
     googleAccessToken,
-    username,
+    fullname,
     avatarUrl,
   }: {
     email: string;
     googleId: string;
     googleAccessToken: string;
-    username: string;
+    fullname: string;
     avatarUrl: string;
   }): Promise<users> {
     const options = {
@@ -121,7 +121,7 @@ export class UserService implements IUserService {
         googleId,
         googleAccessToken,
         email,
-        username,
+        fullname,
         avatarUrl,
         status: 'active',
       },
@@ -134,13 +134,13 @@ export class UserService implements IUserService {
     email,
     facebookId,
     facebookAccessToken,
-    username,
+    fullname,
     avatarUrl,
   }: {
     email: string;
     facebookId: string;
     facebookAccessToken: string;
-    username: string;
+    fullname: string;
     avatarUrl: string;
   }): Promise<users> {
     const options = {
@@ -154,7 +154,7 @@ export class UserService implements IUserService {
         facebookId,
         facebookAccessToken,
         email,
-        username,
+        fullname,
         avatarUrl,
         status: 'active',
       },
@@ -164,7 +164,7 @@ export class UserService implements IUserService {
   }
 
   public async createStaff({
-    username,
+    fullname,
     password,
     email,
     phone,
@@ -173,7 +173,7 @@ export class UserService implements IUserService {
     otp,
     clubId,
   }: {
-    username: string;
+    fullname: string;
     password: string;
     email: string;
     phone: string;
@@ -184,7 +184,7 @@ export class UserService implements IUserService {
   }): Promise<users> {
     const options = {
       data: {
-        username,
+        fullname,
         password,
         email,
         phone,

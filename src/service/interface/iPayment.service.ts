@@ -1,4 +1,4 @@
-export interface IPayementService {
+export interface IPaymentService {
   momoPayment({
     price,
     orderId,

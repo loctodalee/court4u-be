@@ -9,7 +9,7 @@ import prisma from '../lib/prisma';
 
 export class SubscriptionRepository implements ISubscriptionRepository {
   private static Instance: SubscriptionRepository;
-  public static getInstance(): SubscriptionRepository {
+  public static getInstance(): ISubscriptionRepository {
     if (!this.Instance) {
       this.Instance = new SubscriptionRepository();
     }

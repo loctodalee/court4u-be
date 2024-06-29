@@ -1,6 +1,6 @@
 import { $Enums, court, CourtStatus } from '@prisma/client';
 import { ICourtService } from './interface/iCourt.service';
-import { ICourtRepositorty } from '../repository/interface/iCourt.repository';
+import { ICourtRepository } from '../repository/interface/iCourt.repository';
 import { CourtRepository } from '../repository/court.repositoty';
 export class CourtService implements ICourtService {
   private static Instance: CourtService;
@@ -10,7 +10,7 @@ export class CourtService implements ICourtService {
     }
     return this.Instance;
   }
-  private static _courtRepository: ICourtRepositorty;
+  private static _courtRepository: ICourtRepository;
   static {
     this._courtRepository = CourtRepository.getInstance();
   }
