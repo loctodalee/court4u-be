@@ -13,9 +13,7 @@ import { IBillService } from './interface/iBill.service';
 import { BillService } from './bill.service';
 import { IMemberSubscriptionRepository } from '../repository/interface/iMemberSubscription.repository';
 import { MemberSubscriptionRepository } from '../repository/memberSubscription.repository';
-import prisma from '../lib/prisma';
 import { memberSubscription } from '@prisma/client';
-import { time } from 'console';
 
 export class MemberSubscriptionService implements IMemberSubscriptionService {
   private static Instance: MemberSubscriptionService;

@@ -3,7 +3,7 @@ import { List } from 'lodash';
 
 export interface IStaffProfileRepository {
   getStaffProfiles(): Promise<List<staffProfile> | null>;
-  createStaffProfile(data: {
+  addStaffProfile(data: {
     userId: string;
     clubId: string;
     staffRoles: { id: string; roleId: string }[];

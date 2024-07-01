@@ -106,6 +106,7 @@ export const CheckApiKey = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const apikey = req.headers['api-key'];
+
       if (!apikey)
         throw new BadRequestError('Api key is require for this action');
       const club = await prisma.club.findFirst({

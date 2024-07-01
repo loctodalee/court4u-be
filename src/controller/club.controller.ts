@@ -21,7 +21,7 @@ export class ClubController {
     const courtOwnerId = req.user.userId;
     new SuccessResponse({
       message: 'create club success',
-      metaData: await ClubController.clubService.createClub({
+      metaData: await ClubController.clubService.addClub({
         courtOwnerId,
         ...req.body,
       }),
@@ -34,6 +34,28 @@ export class ClubController {
       metaData: await ClubController.clubService.foundClubById({
         clubId: req.params.clubId as string,
       }),
+    }).send(res);
+  }
+  async getClubs(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'get club success',
+      metaData: await ClubController.clubService.getClubs(),
+    }).send(res);
+  }
+  async updateClub(req: Request, res: Response) {
+    const clubId = req.clubId;
+    new SuccessResponse({
+      message: 'update club success',
+      metaData: await ClubController.clubService.updateClub(clubId, {
+        ...req.body,
+      }),
+    }).send(res);
+  }
+  async deleteClub(req: Request, res: Response) {
+    const clubId = req.clubId;
+    new SuccessResponse({
+      message: 'delete club success',
+      metaData: await ClubController.clubService.deleteClub({ id: clubId }),
     }).send(res);
   }
 }

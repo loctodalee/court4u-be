@@ -17,6 +17,7 @@ import { EmailService } from './email.service';
 import { keyTokens, users } from '@prisma/client';
 import { IUserService } from './interface/iUser.service';
 import { UserService } from './user.service';
+import passport from 'passport';
 export class AuthService implements IAuthService {
   private static Instance: AuthService;
   public static getInstance(): IAuthService {
@@ -79,9 +80,10 @@ export class AuthService implements IAuthService {
       privateKey: keys.privateKey,
       refreshToken: tokens.refreshToken,
     });
-
+    const apiKey = foundUser.apiKey;
     return {
       tokens,
+      apiKey,
     };
   }
   //end login
@@ -230,10 +232,6 @@ export class AuthService implements IAuthService {
     });
 
     return {
-      user: filterData({
-        fields: ['id', 'fullname', 'phone', 'avatarUrl', 'email'],
-        object: user,
-      }),
       tokens,
     };
   }

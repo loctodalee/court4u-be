@@ -15,7 +15,7 @@ export class StaffProfileRepository implements IStaffProfileRepository {
     const staffs = await prisma.staffProfile.findMany();
     return staffs;
   }
-  public async createStaffProfile(data: {
+  public async addStaffProfile(data: {
     userId: string;
     clubId: string;
     staffRoles: { id: string; roleId: string }[];

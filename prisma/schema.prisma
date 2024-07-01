@@ -170,6 +170,7 @@ model club {
   logoUrl            String?              @db.VarChar
   description        String?              @db.VarChar
   apiKey             String               @unique @default(uuid())
+  status ClubStatus @default(active)
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt
   user               users                @relation(fields: [courtOwnerId], references: [id])
@@ -259,6 +260,8 @@ model slotOnCourt {
   status CourtSlotStatus
   slot slot @relation(fields: [slotId], references: [id])
   court court @relation(fields: [courtId], references: [id])
+
+  @@unique([slotId,courtId])
 }
 model court {
   id        String      @id @default(uuid())
@@ -309,6 +312,11 @@ model clubSubscription{
   SubscriptionForClub subscriptionForClub @relation(fields: [subscriptionForClubId], references: [id])
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
+}
+
+enum ClubStatus {
+  active 
+  disable
 }
 
 enum SubscriptionType {

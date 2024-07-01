@@ -47,7 +47,7 @@ export class StaffProfileController {
 
     try {
       const newProfile =
-        await StaffProfileService.getInstance().createStaffProfile({
+        await StaffProfileService.getInstance().addStaffProfile({
           fullname,
           password,
           email,

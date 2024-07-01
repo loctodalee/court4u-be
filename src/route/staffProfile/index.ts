@@ -8,7 +8,7 @@ router.get(
   asyncHandler(StaffProfileController.getInstance().getStaffProfiles)
 );
 router.post(
-  '/create',
+  '/',
   asyncHandler(StaffProfileController.getInstance().createStaffProfile)
 );
 module.exports = router;

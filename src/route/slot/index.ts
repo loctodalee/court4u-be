@@ -5,10 +5,10 @@ import { SlotController } from '../../controller/slot.controller';
 const router = express.Router();
 router.use(authentication);
 router.use(CheckApiKey);
-router.post('/create', asyncHandler(SlotController.getInstacnce().createSlot));
+router.post('/', asyncHandler(SlotController.getInstacnce().addSlot));
 router.post(
-  '/addCourtToSlot',
-  asyncHandler(SlotController.getInstacnce().addCourtToSlot)
+  '/:id/courts',
+  asyncHandler(SlotController.getInstacnce().addCourtOnSlot)
 );
 
 module.exports = router;

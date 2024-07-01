@@ -1,6 +1,7 @@
 import { users } from '@prisma/client';
 import { UserRepository } from '../repository/user.repository';
 import { IUserService } from './interface/iUser.service';
+import { AuthFailure, BadRequestError } from '../handleResponse/error.response';
 
 export class UserService implements IUserService {
   private static Instance: UserService;
@@ -126,8 +127,12 @@ export class UserService implements IUserService {
         status: 'active',
       },
     };
-    const user = await UserRepository.getInstance().upsertUser({ options });
-    return user;
+    try {
+      const user = await UserRepository.getInstance().upsertUser({ options });
+      return user;
+    } catch (e) {
+      throw new BadRequestError();
+    }
   }
 
   public async createOrUpdateFacebookUser({

@@ -3,7 +3,7 @@ import { List } from 'lodash';
 
 export interface IStaffProfileService {
   getStaffProfiles(): Promise<List<staffProfile> | null>;
-  createStaffProfile(data: {
+  addStaffProfile(data: {
     fullname: string;
     password: string | null;
     email: string;

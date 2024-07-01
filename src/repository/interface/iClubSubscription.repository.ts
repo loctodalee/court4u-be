@@ -1,7 +1,7 @@
 import { clubSubscription, clubSubscriptionStatus } from '@prisma/client';
 
 export interface IClubSubscriptionRepository {
-  clubBuySubscription(data: {
+  createClubSubscription(data: {
     clubId: string;
     subscriptionForClubId: string;
     billId: string;

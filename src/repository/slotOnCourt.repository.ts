@@ -10,7 +10,7 @@ export class SlotOnCourtRepository implements ISlotOnCourtRepository {
     return this.Instance;
   }
 
-  public async createSlotOnCourt(data: {
+  public async addCourtOnSlot(data: {
     slotId: string;
     courtId: string;
     status: CourtSlotStatus;
@@ -30,5 +30,20 @@ export class SlotOnCourtRepository implements ISlotOnCourtRepository {
 
   public async getAllSlotOnCourt(): Promise<slotOnCourt[]> {
     return await prisma.slotOnCourt.findMany();
+  }
+
+  public async findUniqueSlotOnCourt({
+    slotId,
+    courtId,
+  }: {
+    slotId: string;
+    courtId: string;
+  }): Promise<slotOnCourt | null> {
+    return await prisma.slotOnCourt.findFirst({
+      where: {
+        slotId,
+        courtId,
+      },
+    });
   }
 }

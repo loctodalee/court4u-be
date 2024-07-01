@@ -1,7 +1,7 @@
 import { slot } from '@prisma/client';
 
 export interface ISlotRepository {
-  createSlot({
+  addSlot({
     clubId,
     startTime,
     endTime,

@@ -22,12 +22,13 @@ router.get(
   asyncHandler(AuthController.getInstance().checkLoginEmailToken)
 );
 
-router.get(
-  '/google',
-  passport.authenticate('google', {
-    scope: ['profile', 'email'],
-  })
-);
+// router.get(
+//   '/google',
+//   passport.authenticate('google', {
+//     scope: ['profile', 'email'],
+//   })
+// );
+router.get('/google', AuthController.getInstance().LoginGoogle);
 router.get(
   '/google/callback',
   passport.authenticate('google', { failureRedirect: '/login' }),

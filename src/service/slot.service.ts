@@ -20,14 +20,12 @@ export class SlotService implements ISlotService {
     return this.Instance;
   }
   private static _slotRepository: ISlotRepository;
-  private static _slotOnCourtRepository: ISlotOnCourtRepository;
   private static _clubService: IClubService;
   static {
     this._clubService = ClubService.getInstance();
     this._slotRepository = SlotRepository.getInstance();
-    this._slotOnCourtRepository = SlotOnCourtRepository.getInstance();
   }
-  public async createNewSlot({
+  public async addSlot({
     clubId,
     startTime,
     endTime,
@@ -45,32 +43,13 @@ export class SlotService implements ISlotService {
 
     if (startTime > endTime)
       throw new NotImplementError('Start time or end time wrong');
-    return await SlotService._slotRepository.createSlot({
+    var result = await SlotService._slotRepository.addSlot({
       clubId,
       startTime,
       endTime,
       dateOfWeek,
       price,
     });
-  }
-
-  public async assignNewSlotOnCourt({
-    status,
-    slotId,
-    courtId,
-  }: {
-    slotId: string;
-    courtId: string;
-    status: CourtSlotStatus;
-  }): Promise<slotOnCourt> {
-    return await SlotService._slotOnCourtRepository.createSlotOnCourt({
-      status: 'available',
-      slotId,
-      courtId,
-    });
-  }
-
-  public async searchSlotOnCourt(id: string): Promise<slotOnCourt | null> {
-    return await SlotService._slotOnCourtRepository.searchSlotOnCourt(id);
+    return result;
   }
 }

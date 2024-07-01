@@ -23,6 +23,10 @@ export class UserRepository implements IUserRepository {
     return await prisma.users.update(options);
   }
   public async upsertUser({ options }: { options: any }): Promise<users> {
-    return await prisma.users.upsert(options);
+    try {
+      return await prisma.users.upsert(options);
+    } catch (error: any) {
+      throw new Error(error);
+    }
   }
 }

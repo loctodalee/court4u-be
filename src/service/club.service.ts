@@ -4,6 +4,7 @@ import { IClubRepository } from '../repository/interface/iClub.repository';
 import { ClubRepository } from '../repository/club.repository';
 import { IUserService } from './interface/iUser.service';
 import { UserService } from './user.service';
+import { BadRequestError } from '../handleResponse/error.response';
 export class ClubService implements IClubService {
   private static Instance: ClubService;
   public static getInstance(): IClubService {
@@ -19,7 +20,7 @@ export class ClubService implements IClubService {
     this._clubRepository = ClubRepository.getInstance();
   }
 
-  public async createClub({
+  public async addClub({
     courtOwnerId,
     name,
     address,
@@ -36,7 +37,7 @@ export class ClubService implements IClubService {
     logoUrl: string | null;
     description: string;
   }): Promise<club> {
-    const newClub = await ClubService._clubRepository.createClub({
+    const newClub = await ClubService._clubRepository.addClub({
       name,
       address,
       cityOfProvince,
@@ -64,5 +65,33 @@ export class ClubService implements IClubService {
         },
       },
     });
+  }
+
+  public async getClubs(): Promise<club[]> {
+    var clubs = await ClubService._clubRepository.getClubs();
+    if (!clubs) {
+      throw new BadRequestError();
+    }
+    return clubs;
+  }
+
+  public async updateClub(
+    clubId: string,
+    data: {
+      name?: string;
+      address?: string;
+      district?: string;
+      cityOfProvince?: string;
+      logoUrl?: string;
+      description?: string;
+    }
+  ): Promise<club> {
+    var result = await ClubService._clubRepository.updateClub(clubId, data);
+    return result;
+  }
+
+  public async deleteClub({ id }: { id: string }): Promise<club> {
+    var result = await ClubService._clubRepository.deleteClub({ id });
+    return result;
   }
 }

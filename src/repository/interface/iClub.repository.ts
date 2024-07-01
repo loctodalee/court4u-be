@@ -1,7 +1,7 @@
 import { club } from '@prisma/client';
 
 export interface IClubRepository {
-  createClub({
+  addClub({
     courtOwnerId,
     name,
     address,
@@ -19,4 +19,17 @@ export interface IClubRepository {
     description: string;
   }): Promise<club>;
   foundClub({ options }: { options: any }): Promise<club | null>;
+  getClubs(): Promise<club[]>;
+  updateClub(
+    clubId: string,
+    data: {
+      name?: string;
+      address?: string;
+      district?: string;
+      cityOfProvince?: string;
+      logoUrl?: string;
+      description?: string;
+    }
+  ): Promise<club>;
+  deleteClub({ id }: { id: string }): Promise<club>;
 }

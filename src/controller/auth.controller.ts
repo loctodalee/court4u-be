@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { IAuthService } from '../service/interface/iAuth.service';
 
 import { AuthService } from '../service/auth.service';
+import passport from 'passport';
 const { SuccessResponse } = require('../handleResponse/success.response');
 
 export class AuthController {
@@ -61,20 +62,20 @@ export class AuthController {
    * @param res
    */
   async LoginThirdParty(req: Request, res: Response) {
-    var authService: IAuthService = new AuthService();
     new SuccessResponse({
       message: 'Login success',
       metaData: await AuthController.authService.loginWithThirdParty(req.user),
     }).send(res);
   }
-
+  async LoginGoogle(req: Request, res: Response) {
+    passport.authenticate('google', { scope: ['profile', 'email'] })(req, res);
+  }
   /**
    * @description tự động get access token lại khi hết hạn
    * @param req  gắn thêm refreshtoken và client-id vào header của request
    * @param res {user info, tokens}
    */
   async handleRefreshToken(req: Request, res: Response) {
-    var authService: IAuthService = new AuthService();
     new SuccessResponse({
       message: 'Login with refresh token',
       metaData: await AuthController.authService.handleRefreshToken({
@@ -90,7 +91,6 @@ export class AuthController {
    * @param res {message}
    */
   async signUpCourtOwner(req: Request, res: Response) {
-    var authService: IAuthService = new AuthService();
     new SuccessResponse({
       mesage: 'Send mail success',
       metaData: await AuthController.authService.newCourtOwner({ ...req.body }),

@@ -74,20 +74,21 @@ export class ClubSubscriptionService implements IClubSubscriptionService {
       status: 'pending',
       type: 'ownerSubscription',
     });
-    if (!bill) throw new BadRequestError('Create bill fail');
 
     const result =
-      await ClubSubscriptionService._clubSubsriptionRepo.clubBuySubscription({
-        clubId,
-        subscriptionForClubId,
-        billId: bill.id,
-        name: foundSub.name,
-        price: foundSub.price,
-        totalDate: foundSub.totalDate,
-        startDate: new Date(curretDate),
-        endDate,
-        status,
-      });
+      await ClubSubscriptionService._clubSubsriptionRepo.createClubSubscription(
+        {
+          clubId,
+          subscriptionForClubId,
+          billId: bill.id,
+          name: foundSub.name,
+          price: foundSub.price,
+          totalDate: foundSub.totalDate,
+          startDate: new Date(curretDate),
+          endDate,
+          status,
+        }
+      );
 
     if (!result) throw new BadRequestError();
     const payment = await ClubSubscriptionService._paymentService.momoPayment({

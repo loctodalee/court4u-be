@@ -11,7 +11,7 @@ export class SlotRepository implements ISlotRepository {
     return this.Instance;
   }
 
-  public async createSlot({
+  public async addSlot({
     clubId,
     startTime,
     endTime,
@@ -24,7 +24,7 @@ export class SlotRepository implements ISlotRepository {
     dateOfWeek: number;
     price: number;
   }): Promise<slot> {
-    return await prisma.slot.create({
+    var result = await prisma.slot.create({
       data: {
         clubId,
         startTime,
@@ -33,6 +33,7 @@ export class SlotRepository implements ISlotRepository {
         price,
       },
     });
+    return result;
   }
 
   public async findManySlot({ options }: { options: any }): Promise<slot[]> {

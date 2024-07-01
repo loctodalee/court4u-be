@@ -2,7 +2,7 @@ import passport from 'passport';
 import prisma from './prisma';
 import { IUserService } from '../service/interface/iUser.service';
 import { UserService } from '../service/user.service';
-import { users } from '@prisma/client';
+import { BadRequestError } from '../handleResponse/error.response';
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 passport.use(

@@ -10,7 +10,7 @@ export class ClubSubscriptionRepository implements IClubSubscriptionRepository {
     return this.Instance;
   }
 
-  public async clubBuySubscription(data: {
+  public async createClubSubscription(data: {
     clubId: string;
     subscriptionForClubId: string;
     billId: string;

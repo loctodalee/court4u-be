@@ -10,7 +10,7 @@ export class ClubRepository implements IClubRepository {
     }
     return ClubRepository.Instance;
   }
-  public async createClub({
+  public async addClub({
     courtOwnerId,
     name,
     address,
@@ -42,5 +42,39 @@ export class ClubRepository implements IClubRepository {
 
   public async foundClub({ options }: { options: any }): Promise<club | null> {
     return await prisma.club.findFirst(options);
+  }
+
+  public async getClubs(): Promise<club[]> {
+    return await prisma.club.findMany();
+  }
+
+  public async updateClub(
+    clubId: string,
+    data: {
+      name?: string;
+      address?: string;
+      district?: string;
+      cityOfProvince?: string;
+      logoUrl?: string;
+      description?: string;
+    }
+  ): Promise<club> {
+    return await prisma.club.update({
+      where: {
+        id: clubId,
+      },
+      data,
+    });
+  }
+
+  public async deleteClub({ id }: { id: string }): Promise<club> {
+    return await prisma.club.update({
+      where: {
+        id,
+      },
+      data: {
+        status: 'disable',
+      },
+    });
   }
 }

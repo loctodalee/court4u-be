@@ -19,7 +19,7 @@ export class StaffProfileService implements IStaffProfileService {
     return staffProfile;
   }
 
-  public async createStaffProfile(data: {
+  public async addStaffProfile(data: {
     fullname: string;
     password: string | null;
     email: string;
@@ -39,10 +39,11 @@ export class StaffProfileService implements IStaffProfileService {
       avatarUrl: data.avatarUrl,
       dateOfBirth: data.dateOfBirth,
     });
-    return await StaffProfileRepository.getInstance().createStaffProfile({
+    var result = await StaffProfileRepository.getInstance().addStaffProfile({
       userId: newUser.id,
       clubId: data.clubId,
       staffRoles: data.staffRoles,
     });
+    return result;
   }
 }

@@ -1,10 +1,14 @@
 import { Request, Response } from 'express';
 import { ISlotService } from '../service/interface/iSlot.service';
 import { SlotService } from '../service/slot.service';
+import { ISlotOnCourtService } from '../service/interface/ISlotOnCourt.service';
+import { SlotOnCourtService } from '../service/SlotOnCourt.service';
 const { SuccessResponse } = require('../handleResponse/success.response');
 
 export class SlotController {
   private static readonly slotService: ISlotService = SlotService.getInstance();
+  private static readonly slotOnCourtService: ISlotOnCourtService =
+    SlotOnCourtService.getInstance();
   private static Instance: SlotController;
   public static getInstacnce(): SlotController {
     if (!this.Instance) {
@@ -17,10 +21,10 @@ export class SlotController {
    * @param req {clubId, startTime, endTime, dateOfWeek}
    * @param res {slot}
    */
-  public async createSlot(req: Request, res: Response) {
+  public async addSlot(req: Request, res: Response) {
     new SuccessResponse({
       message: 'create new slot',
-      metaData: await SlotController.slotService.createNewSlot({
+      metaData: await SlotController.slotService.addSlot({
         clubId: req.clubId,
         ...req.body,
       }),
@@ -32,12 +36,13 @@ export class SlotController {
    * @param req {slotId, courtId, status?}
    * @param res {slotOnCourt}
    */
-  public async addCourtToSlot(req: Request, res: Response) {
+  public async addCourtOnSlot(req: Request, res: Response) {
     new SuccessResponse({
       message: 'Add slot to court',
-      metaData: await SlotController.slotService.assignNewSlotOnCourt({
+      metaData: await SlotController.slotOnCourtService.addCourtOnSlot({
+        slotId: req.params.id,
         ...req.body,
       }),
-    });
+    }).send(res);
   }
 }
