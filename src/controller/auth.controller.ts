@@ -71,7 +71,7 @@ export class AuthController {
     );
     console.log(tokens);
     res.redirect(
-      `http://localhost:3000/?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`
+      `http://localhost:3000/redirect?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`
     );
   }
   async LoginGoogle(req: Request, res: Response) {
