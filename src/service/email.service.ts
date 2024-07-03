@@ -64,7 +64,7 @@ export class EmailService implements IEmailService {
       const template = verifyTemplate;
       //3. replace content
       const params = {
-        link_verify: `http://localhost:3000/api/auth/welcome_back?token=${token}`,
+        link_verify: `http://localhost:8080/api/auth/welcome_back?token=${token}`,
       };
       const content = replacePlaceholder(template, params);
       console.log('send email link verify');

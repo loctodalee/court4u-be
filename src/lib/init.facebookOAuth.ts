@@ -10,7 +10,7 @@ passport.use(
     {
       clientID: process.env.FACEBOOK_CLIENT_ID,
       clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-      callbackURL: 'http://localhost:3000/v1/api/auth/facebook/callback',
+      callbackURL: 'http://localhost:8080/api/auth/facebook/callback',
       profileFields: ['id', 'email', 'name', 'displayName', 'photos'],
     },
     async (
@@ -20,6 +20,7 @@ passport.use(
       done: any
     ) => {
       try {
+        console.log(profile);
         var _userService: IUserService = new UserService();
         let user = await _userService.createOrUpdateFacebookUser({
           avatarUrl: profile.photos[0].value,
