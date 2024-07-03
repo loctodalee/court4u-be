@@ -62,10 +62,17 @@ export class AuthController {
    * @param res
    */
   async LoginThirdParty(req: Request, res: Response) {
-    new SuccessResponse({
-      message: 'Login success',
-      metaData: await AuthController.authService.loginWithThirdParty(req.user),
-    }).send(res);
+    // new SuccessResponse({
+    //   message: 'Login success',
+    //   metaData: await AuthController.authService.loginWithThirdParty(req.user),
+    // }).send(res);
+    const tokens = await AuthController.authService.loginWithThirdParty(
+      req.user
+    );
+    console.log(tokens);
+    res.redirect(
+      `http://localhost:3000/?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`
+    );
   }
   async LoginGoogle(req: Request, res: Response) {
     passport.authenticate('google', { scope: ['profile', 'email'] })(req, res);

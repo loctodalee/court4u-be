@@ -20,6 +20,7 @@ import { UserService } from './user.service';
 import passport from 'passport';
 import { IRoleService } from './interface/iRole.service';
 import { RoleService } from './role.service';
+import { response } from 'express';
 export class AuthService implements IAuthService {
   private static Instance: AuthService;
   public static getInstance(): IAuthService {
@@ -244,10 +245,8 @@ export class AuthService implements IAuthService {
       privateKey: keys.privateKey,
       refreshToken: tokens.refreshToken,
     });
-
-    return {
-      tokens,
-    };
+    // console.log(tokens);
+    return tokens;
   }
 
   public async handleRefreshToken({

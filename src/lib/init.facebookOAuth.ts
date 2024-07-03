@@ -20,7 +20,6 @@ passport.use(
       done: any
     ) => {
       try {
-        console.log(profile);
         var _userService: IUserService = new UserService();
         let user = await _userService.createOrUpdateFacebookUser({
           avatarUrl: profile.photos[0].value,
