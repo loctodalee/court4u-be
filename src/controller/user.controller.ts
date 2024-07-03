@@ -11,7 +11,12 @@ export class UserController {
     }
     return this.Instance;
   }
-
+  async getAllUser(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Get Success',
+      metaData: await UserController.userService.getAll(),
+    }).send(res);
+  }
   async getUserByEmail(req: Request, res: Response) {
     new SuccessResponse({
       message: 'Get Success',

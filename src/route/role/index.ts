@@ -7,6 +7,7 @@ import { grantAccess } from '../../middleware/rbac';
 const router = express.Router();
 // router.use(authentication);
 // router.use(CheckApiKey);
+router.use(grantAccess('readAny', 'role'));
 router.post('/', asyncHandler(RoleController.getInstance().addRole));
 router.get(
   '/name/:name',
@@ -21,10 +22,6 @@ router.get(
   asyncHandler(RoleController.getInstance().findUserRole)
 );
 router.get('/:id', asyncHandler(RoleController.getInstance().findRoleById));
-router.get(
-  '/',
-  grantAccess('readAny', 'role'),
-  asyncHandler(RoleController.getInstance().getAllRole)
-);
+router.get('/', asyncHandler(RoleController.getInstance().getAllRole));
 
 module.exports = router;

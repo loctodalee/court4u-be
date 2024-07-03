@@ -11,6 +11,9 @@ export class UserService implements IUserService {
     }
     return this.Instance;
   }
+  public async getAll(): Promise<user[]> {
+    return UserRepository.getInstance().getAll();
+  }
   public async getUserByEmail({
     email,
   }: {

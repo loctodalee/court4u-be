@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import { UserController } from '../../controller/user.controller';
 import { asyncHandler } from '../../helper/asyncHandler';
 const router = express.Router();
-
-router.get('/users', asyncHandler(UserController.getInstance().getUserByEmail));
+router.get('/', asyncHandler(UserController.getInstance().getAllUser));
+// router.get('/users', asyncHandler(UserController.getInstance().getUserByEmail));
 
 module.exports = router;
