@@ -17,6 +17,10 @@ export class SubscriptionForClubRepository
     return this.Instance;
   }
 
+  public async getAll(): Promise<subscriptionForClub[]> {
+    return await prisma.subscriptionForClub.findMany();
+  }
+
   public async searchById(id: string): Promise<subscriptionForClub | null> {
     return await prisma.subscriptionForClub.findFirst({
       where: {

@@ -14,4 +14,5 @@ export interface ISubscriptionForClubService {
   }): Promise<subscriptionForClub>;
 
   searchById(id: string): Promise<subscriptionForClub | null>;
+  getAllSubscription(): Promise<subscriptionForClub[]>;
 }

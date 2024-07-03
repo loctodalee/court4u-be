@@ -1,4 +1,4 @@
-import { $Enums, users } from '@prisma/client';
+import { $Enums, user } from '@prisma/client';
 import prisma from '../lib/prisma';
 import { IUserRepository } from './interface/iUser.repository';
 import { AuthFailure } from '../handleResponse/error.response';
@@ -11,20 +11,20 @@ export class UserRepository implements IUserRepository {
     }
     return UserRepository.Instance;
   }
-  public async getUser({ options }: { options: any }): Promise<users | null> {
-    return await prisma.users.findFirst(options);
+  public async getUser({ options }: { options: any }): Promise<user | null> {
+    return await prisma.user.findFirst(options);
   }
 
   // create new user
-  public async createNewUser({ options }: { options: any }): Promise<users> {
-    return await prisma.users.create(options);
+  public async createNewUser({ options }: { options: any }): Promise<user> {
+    return await prisma.user.create(options);
   }
-  public async updateUser({ options }: { options: any }): Promise<users> {
-    return await prisma.users.update(options);
+  public async updateUser({ options }: { options: any }): Promise<user> {
+    return await prisma.user.update(options);
   }
-  public async upsertUser({ options }: { options: any }): Promise<users> {
+  public async upsertUser({ options }: { options: any }): Promise<user> {
     try {
-      return await prisma.users.upsert(options);
+      return await prisma.user.upsert(options);
     } catch (error: any) {
       throw new Error(error);
     }

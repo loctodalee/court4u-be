@@ -1,15 +1,14 @@
-import { users } from '@prisma/client';
+import { user } from '@prisma/client';
 
 export interface IUserService {
-  getUserByEmail({ email }: { email: string }): Promise<users | null>;
-  getUserById({ id }: { id: string }): Promise<users | null>;
+  getUserByEmail({ email }: { email: string }): Promise<user | null>;
+  getUserById({ id }: { id: string }): Promise<user | null>;
   createNewUser({
     fullname,
     password,
     email,
     phone,
     status,
-    role,
     otp,
   }: {
     fullname: string;
@@ -17,18 +16,17 @@ export interface IUserService {
     email: string;
     phone: string;
     status: string;
-    role: string[];
     otp: string;
-  }): Promise<users>;
-  updateUser({ options }: { options: any }): Promise<users>;
-  updateUserAfterVerify({ otp }: { otp: string }): Promise<users>;
+  }): Promise<user>;
+  updateUser({ options }: { options: any }): Promise<user>;
+  updateUserAfterVerify({ otp }: { otp: string }): Promise<user>;
   updateApiKey({
     apiKey,
     userId,
   }: {
     apiKey: string;
     userId: string;
-  }): Promise<users>;
+  }): Promise<user>;
   createOrUpdateGoogleUser({
     email,
     googleId,
@@ -41,7 +39,7 @@ export interface IUserService {
     googleAccessToken: string;
     fullname: string;
     avatarUrl: string;
-  }): Promise<users>;
+  }): Promise<user>;
 
   createOrUpdateFacebookUser({
     email,
@@ -55,7 +53,7 @@ export interface IUserService {
     facebookAccessToken: string;
     fullname: string;
     avatarUrl: string;
-  }): Promise<users>;
+  }): Promise<user>;
 
   createStaff({
     fullname,
@@ -75,5 +73,5 @@ export interface IUserService {
     role: string[];
     otp: string;
     clubId: string;
-  }): Promise<users>;
+  }): Promise<user>;
 }

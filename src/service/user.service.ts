@@ -1,4 +1,4 @@
-import { users } from '@prisma/client';
+import { user } from '@prisma/client';
 import { UserRepository } from '../repository/user.repository';
 import { IUserService } from './interface/iUser.service';
 import { AuthFailure, BadRequestError } from '../handleResponse/error.response';
@@ -15,7 +15,7 @@ export class UserService implements IUserService {
     email,
   }: {
     email: string;
-  }): Promise<users | null> {
+  }): Promise<user | null> {
     const options = {
       where: {
         email,
@@ -24,7 +24,7 @@ export class UserService implements IUserService {
     return await UserRepository.getInstance().getUser({ options });
   }
 
-  public async getUserById({ id }: { id: string }): Promise<users | null> {
+  public async getUserById({ id }: { id: string }): Promise<user | null> {
     const options = {
       where: {
         id,
@@ -38,7 +38,6 @@ export class UserService implements IUserService {
     email,
     phone,
     status,
-    role,
     otp,
   }: {
     fullname: string;
@@ -46,9 +45,8 @@ export class UserService implements IUserService {
     email: string;
     phone: string;
     status: string;
-    role: string[];
     otp: string;
-  }): Promise<users> {
+  }): Promise<user> {
     const options = {
       data: {
         fullname,
@@ -56,14 +54,13 @@ export class UserService implements IUserService {
         email,
         phone,
         status,
-        role,
         otp,
       },
     };
     return await UserRepository.getInstance().createNewUser({ options });
   }
 
-  public async updateUser({ options }: { options: any }): Promise<users> {
+  public async updateUser({ options }: { options: any }): Promise<user> {
     return await UserRepository.getInstance().updateUser({ options });
   }
 
@@ -73,7 +70,7 @@ export class UserService implements IUserService {
   }: {
     apiKey: string;
     userId: string;
-  }): Promise<users> {
+  }): Promise<user> {
     const options = {
       where: {
         id: userId,
@@ -85,7 +82,7 @@ export class UserService implements IUserService {
     return await UserRepository.getInstance().updateUser({ options });
   }
 
-  public async updateUserAfterVerify({ otp }: { otp: string }): Promise<users> {
+  public async updateUserAfterVerify({ otp }: { otp: string }): Promise<user> {
     const options = {
       where: {
         otp,
@@ -110,7 +107,7 @@ export class UserService implements IUserService {
     googleAccessToken: string;
     fullname: string;
     avatarUrl: string;
-  }): Promise<users> {
+  }): Promise<user> {
     const options = {
       where: {
         googleId,
@@ -147,7 +144,7 @@ export class UserService implements IUserService {
     facebookAccessToken: string;
     fullname: string;
     avatarUrl: string;
-  }): Promise<users> {
+  }): Promise<user> {
     const options = {
       where: {
         facebookId,
@@ -186,7 +183,7 @@ export class UserService implements IUserService {
     role: string[];
     otp: string;
     clubId: string;
-  }): Promise<users> {
+  }): Promise<user> {
     const options = {
       data: {
         fullname,

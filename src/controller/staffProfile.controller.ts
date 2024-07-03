@@ -56,7 +56,6 @@ export class StaffProfileController {
           avatarUrl,
           dateOfBirth,
           clubId,
-          staffRoles,
         });
       new SuccessResponse({
         message: 'Create Success',

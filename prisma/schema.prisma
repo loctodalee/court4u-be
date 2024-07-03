@@ -8,7 +8,7 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
-model users {
+model user {
   id                  String               @id @default(uuid())
   fullname            String               @db.VarChar
   password            String?              @db.VarChar
@@ -17,7 +17,6 @@ model users {
   sex                 Sex                  @default(other)
   avatarUrl           String?              @db.VarChar
   dateOfBirth         DateTime?
-  role                Role[]
   status              UserStatus           @default(disable)
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
@@ -34,6 +33,7 @@ model users {
   memberSubscription  memberSubscription[]
   review              review[]
   staffProfile        staffProfile?
+  userRole userRole[]
 }
 
 model keyTokens {
@@ -45,24 +45,26 @@ model keyTokens {
   refreshToken     String
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
-  user             users    @relation(fields: [userId], references: [id])
+  user             user    @relation(fields: [userId], references: [id])
 }
+
+
+
 
 model role {
-  id   String @id
+  id   String @id @default(uuid())
   name Role
-}
-
-model template {
-  id       String @id @default(uuid())
-  name     String @db.VarChar
-  status   String @default("active")
-  tem_html String
+  userRole userRole[]
 }
 
 model userRole {
-  id     Int    @id @default(autoincrement())
+  id     String    @id @default(uuid())
   userId String
+  roleId String 
+  users user @relation(fields: [userId], references: [id])
+  role role @relation(fields: [roleId], references: [id])
+
+  @@unique([roleId, userId])
 }
 
 model staffProfile {
@@ -70,33 +72,9 @@ model staffProfile {
   userId    String     @unique
   clubId    String     @unique
   club      club       @relation(fields: [clubId], references: [id])
-  user      users      @relation(fields: [userId], references: [id])
-  staffRole staffRole[]
+  user      user      @relation(fields: [userId], references: [id])
 }
 
-model staffRole {
-  id           String       @id
-  staffId      String          @unique
-  clubRoleId   String       @unique
-  clubRole     clubRole     @relation(fields: [clubRoleId], references: [id])
-  staffProfile staffProfile @relation(fields: [staffId], references: [id])
-}
-
-model clubRole {
-  id         String      @id
-  clubId     String
-  roleName   String
-  club       club        @relation(fields: [clubId], references: [id])
-  permission permission?
-  staffRole  staffRole?
-}
-
-model permission {
-  id         String   @id
-  name       String
-  clubRoleId String   @unique
-  clubRole   clubRole @relation(fields: [clubRoleId], references: [id])
-}
 
 model review {
   id           String   @id @default(uuid())
@@ -109,7 +87,7 @@ model review {
   commentLeft  Int      @default(0)
   commentRight Int      @default(0)
   club         club     @relation(fields: [clubId], references: [id])
-  user         users    @relation(fields: [reviewerId], references: [id])
+  user         user    @relation(fields: [reviewerId], references: [id])
 }
 
 model cancellation {
@@ -118,7 +96,7 @@ model cancellation {
   cancelerId     String
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
-  user           users    @relation(fields: [cancelerId], references: [id])
+  user           user    @relation(fields: [cancelerId], references: [id])
 }
 
 model bookedSlot {
@@ -144,7 +122,7 @@ model booking {
   bookedSlot bookedSlot[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  user      users    @relation(fields: [userId], references: [id])
+  user      user    @relation(fields: [userId], references: [id])
 }
 
 model bill {
@@ -173,9 +151,8 @@ model club {
   status ClubStatus @default(active)
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt
-  user               users                @relation(fields: [courtOwnerId], references: [id])
+  user               user                @relation(fields: [courtOwnerId], references: [id])
   clubImage          clubImage[]
-  clubRole           clubRole[]
   review             review[]
   slot               slot[]
   clubSubscription  clubSubscription?
@@ -222,7 +199,7 @@ model memberSubscription {
   timeRemain Float?                      
   status             memberSubscriptionStatus
   bill bill @relation(fields: [billId], references: [id])
-  user               users              @relation(fields: [memberId], references: [id])
+  user               user              @relation(fields: [memberId], references: [id])
   subscriptionOption subscriptionOption @relation(fields: [subscriptionId], references: [id])
 }
 

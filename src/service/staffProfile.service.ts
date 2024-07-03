@@ -28,7 +28,6 @@ export class StaffProfileService implements IStaffProfileService {
     avatarUrl: string | null;
     dateOfBirth: Date | null;
     clubId: string;
-    staffRoles: { id: string; roleId: string }[];
   }): Promise<staffProfile> {
     const newUser = await StaffProfileRepository.getInstance().createUser({
       fullname: data.fullname,
@@ -42,7 +41,6 @@ export class StaffProfileService implements IStaffProfileService {
     var result = await StaffProfileRepository.getInstance().addStaffProfile({
       userId: newUser.id,
       clubId: data.clubId,
-      staffRoles: data.staffRoles,
     });
     return result;
   }

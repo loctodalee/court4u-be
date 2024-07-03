@@ -14,10 +14,12 @@ import { KeyTokenService } from './keyToken.service';
 import { filterData } from '../util/filterData';
 import { IEmailService } from './interface/iEmail.service';
 import { EmailService } from './email.service';
-import { keyTokens, users } from '@prisma/client';
+import { keyTokens } from '@prisma/client';
 import { IUserService } from './interface/iUser.service';
 import { UserService } from './user.service';
 import passport from 'passport';
+import { IRoleService } from './interface/iRole.service';
+import { RoleService } from './role.service';
 export class AuthService implements IAuthService {
   private static Instance: AuthService;
   public static getInstance(): IAuthService {
@@ -29,11 +31,13 @@ export class AuthService implements IAuthService {
   private static _keyTokenService: IKeyTokenService;
   private static _userService: IUserService;
   private static _emailService: IEmailService;
+  private static _roleService: IRoleService;
 
   static {
     this._keyTokenService = KeyTokenService.getInstance();
     this._userService = UserService.getInstance();
     this._emailService = EmailService.getInstance();
+    this._roleService = RoleService.getInstance();
   }
   //create public key and private key
   createKeys = () => {
@@ -99,8 +103,8 @@ export class AuthService implements IAuthService {
     phone: string;
     email: string;
   }): Promise<any> {
-    const user = await AuthService._userService.getUserByEmail({ email });
-    if (user) {
+    const foundUser = await AuthService._userService.getUserByEmail({ email });
+    if (foundUser) {
       throw new NotImplementError('Email already existed');
     }
 
@@ -110,16 +114,21 @@ export class AuthService implements IAuthService {
     // create user with status = false
     const hashPassword = await bcrypt.hash(password, 10);
 
-    await AuthService._userService.createNewUser({
+    var user = await AuthService._userService.createNewUser({
       email,
       password: hashPassword,
       otp: result.toString(),
       phone,
       status: 'disable',
       fullname,
-      role: ['owner'],
+      // role: ['owner'],
     });
-
+    const roleMember = await AuthService._roleService.findByName('owner');
+    if (!roleMember) throw new BadRequestError('Not found role');
+    await AuthService._roleService.assignRoleToUser({
+      roleId: roleMember.id,
+      userId: user.id,
+    });
     return {
       message: 'Verify email court owner',
     };
@@ -137,8 +146,8 @@ export class AuthService implements IAuthService {
     phone: string;
     email: string;
   }): Promise<any> {
-    const user = await AuthService._userService.getUserByEmail({ email });
-    if (user) {
+    const foundUser = await AuthService._userService.getUserByEmail({ email });
+    if (foundUser) {
       throw new NotImplementError('Email already existed');
     }
 
@@ -148,16 +157,21 @@ export class AuthService implements IAuthService {
     // create user with status = false
     const hashPassword = await bcrypt.hash(password, 10);
 
-    await AuthService._userService.createNewUser({
+    const user = await AuthService._userService.createNewUser({
       email,
       password: hashPassword,
       otp: result.toString(),
       phone,
       status: 'disable',
       fullname,
-      role: ['member'],
     });
 
+    const roleMember = await AuthService._roleService.findByName('member');
+    if (!roleMember) throw new BadRequestError('Not found role');
+    await AuthService._roleService.assignRoleToUser({
+      roleId: roleMember.id,
+      userId: user.id,
+    });
     return {
       message: 'Verify email user',
     };

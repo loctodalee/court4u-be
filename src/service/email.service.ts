@@ -6,10 +6,9 @@ import { transport } from '../lib/init.nodemailer';
 import { replacePlaceholder } from '../util/replaceHtml';
 import { IEmailService } from './interface/iEmail.service';
 // import { IOtpService } from './iOtp.service';
-import { ITemplateService } from './interface/iTemplate.service';
 // import { OtpSerivce } from './otp.service';
-import { TemplateService } from './template.service';
 import crypto from 'crypto';
+import { verifyTemplate } from '../template/sendMail.template';
 export class EmailService implements IEmailService {
   private static Instance: EmailService;
   public static getInstance(): IEmailService {
@@ -17,10 +16,6 @@ export class EmailService implements IEmailService {
       this.Instance = new EmailService();
     }
     return this.Instance;
-  }
-  private static _templateService: ITemplateService;
-  static {
-    this._templateService = TemplateService.getInstance();
   }
   private generateRandomToken(): number {
     const token = crypto.randomInt(0, Math.pow(2, 32));
@@ -66,18 +61,12 @@ export class EmailService implements IEmailService {
 
       const token = this.generateRandomToken();
       //2. get template
-      const template = await EmailService._templateService.getTemplate({
-        name: 'HTML EMAIL TOKEN',
-      });
-      if (!template) {
-        throw new NotFoundError('Not found template');
-      }
-
+      const template = verifyTemplate;
       //3. replace content
       const params = {
-        link_verify: `http://localhost:3000/v1/api/auth/welcome_back?token=${token}`,
+        link_verify: `http://localhost:3000/api/auth/welcome_back?token=${token}`,
       };
-      const content = replacePlaceholder(template.tem_html, params);
+      const content = replacePlaceholder(template, params);
       console.log('send email link verify');
       this.sendEmailLinkVerify({
         html: content,

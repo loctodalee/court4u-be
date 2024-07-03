@@ -14,6 +14,14 @@ export class SubscriptionForClubController {
     return this.Instance;
   }
 
+  public async getAllSubscription(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Get all subscriptions for clubs',
+      metaData:
+        await SubscriptionForClubController.subscriptionForClubService.getAllSubscription(),
+    }).send(res);
+  }
+
   public async createSubscription(req: Request, res: Response) {
     new SuccessResponse({
       message: 'Create subscription for clubs',

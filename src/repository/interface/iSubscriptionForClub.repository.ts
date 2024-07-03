@@ -5,6 +5,7 @@ import {
 } from '@prisma/client';
 
 export interface ISubscriptionForClubRepository {
+  getAll(): Promise<subscriptionForClub[]>;
   createNewSubscription(data: {
     name: string;
     price: number;

@@ -6,7 +6,6 @@ export interface IStaffProfileRepository {
   addStaffProfile(data: {
     userId: string;
     clubId: string;
-    staffRoles: { id: string; roleId: string }[];
   }): Promise<staffProfile>;
   createUser(data: {
     fullname: string;

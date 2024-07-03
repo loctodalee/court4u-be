@@ -24,15 +24,6 @@ export class StaffProfileRepository implements IStaffProfileRepository {
       data: {
         userId: data.userId,
         clubId: data.clubId,
-        staffRole: {
-          create: data.staffRoles.map((role) => ({
-            id: role.id,
-            clubRoleId: role.roleId,
-          })),
-        },
-      },
-      include: {
-        staffRole: true,
       },
     });
   }
@@ -46,7 +37,7 @@ export class StaffProfileRepository implements IStaffProfileRepository {
     avatarUrl: string | null;
     dateOfBirth: Date | null;
   }) {
-    return prisma.users.create({
+    return prisma.user.create({
       data: {
         fullname: data.fullname,
         password: data.password,

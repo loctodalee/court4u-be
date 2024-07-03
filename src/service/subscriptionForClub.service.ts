@@ -7,6 +7,7 @@ import {
 import { ISubscriptionForClubService } from './interface/iSubscriptionForClub.service';
 import { ISubscriptionForClubRepository } from '../repository/interface/iSubscriptionForClub.repository';
 import { SubscriptionForClubRepository } from '../repository/subscriptionForClub.repository';
+import { BadRequestError } from '../handleResponse/error.response';
 
 export class SubscriptionForClubService implements ISubscriptionForClubService {
   private static Instance: SubscriptionForClubService;
@@ -36,5 +37,12 @@ export class SubscriptionForClubService implements ISubscriptionForClubService {
     return await SubscriptionForClubService._subscriptionForClubRepo.searchById(
       id
     );
+  }
+
+  public async getAllSubscription(): Promise<subscriptionForClub[]> {
+    var result =
+      await SubscriptionForClubService._subscriptionForClubRepo.getAll();
+    if (!result) throw new BadRequestError('No subscription found!');
+    return result;
   }
 }

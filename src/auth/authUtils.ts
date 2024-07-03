@@ -4,7 +4,6 @@ import { NextFunction, Request, Response } from 'express';
 import { AuthFailure, BadRequestError } from '../handleResponse/error.response';
 import { IKeyTokenService } from '../service/interface/iKeyToken.service';
 import { KeyTokenService } from '../service/keyToken.service';
-import { keyTokens, users, club } from '@prisma/client';
 import prisma from '../lib/prisma';
 import { jwtDecode } from 'jwt-decode';
 

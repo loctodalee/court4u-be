@@ -12,6 +12,5 @@ export interface IStaffProfileService {
     avatarUrl: string | null;
     dateOfBirth: Date | null;
     clubId: string;
-    staffRoles: { id: string; roleId: string }[];
   }): Promise<staffProfile>;
 }
