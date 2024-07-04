@@ -46,4 +46,12 @@ export class SlotOnCourtRepository implements ISlotOnCourtRepository {
       },
     });
   }
+
+  public async getAllCourtBySlotId(id: string): Promise<slotOnCourt[] | null> {
+    return await prisma.slotOnCourt.findMany({
+      where: {
+        slotId: id,
+      },
+    });
+  }
 }

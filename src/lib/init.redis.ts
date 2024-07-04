@@ -1,16 +1,16 @@
 const { InternalServerError } = require('../handleResponse/error.response');
 const { REDIS_HOST, REDIS_PASSWORD, REDIS_PORT, REDIS_URL } = process.env;
+import redis from 'redis';
 import { createClient } from 'redis';
-
 interface RedisClient {
-  instanceConnect?: ReturnType<typeof createClient>;
+  instanceConnect?: ReturnType<typeof redis.createClient>;
 }
 
 let client: RedisClient = {};
 
 // Define connection status constants
 const statusConnectRedis = {
-  READY: 'ready',
+  READY: 'connect',
   END: 'end',
   RECONNECT: 'reconnecting',
   ERROR: 'error',
@@ -65,11 +65,7 @@ export const initRedis = async () => {
     });
 
     handleEventConnect(instanceRedis);
-
-    await instanceRedis.connect();
-
     client.instanceConnect = instanceRedis;
-
     console.log('Redis client initialized successfully');
   } catch (error: any) {
     console.error(`Failed to connect to Redis: ${error.message}`);
@@ -81,6 +77,4 @@ export const getRedis = () => {
   return client;
 };
 
-export const closeRedis = () => {
-  return client.instanceConnect?.disconnect();
-};
+export const closeRedis = () => {};

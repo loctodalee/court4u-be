@@ -3,7 +3,7 @@ import { List } from 'lodash';
 
 export interface IBillRepository {
   getBillById(id: string): Promise<bill | null>;
-  getAllBills(): Promise<List<bill>>;
+  getAllBills(): Promise<bill[]>;
   createBill(data: {
     method: string;
     total: number;

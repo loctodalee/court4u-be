@@ -99,7 +99,7 @@ export class AuthController {
    */
   async signUpCourtOwner(req: Request, res: Response) {
     new SuccessResponse({
-      mesage: 'Send mail success',
+      message: 'Send mail success',
       metaData: await AuthController.authService.newCourtOwner({ ...req.body }),
     }).send(res);
   }

@@ -102,9 +102,9 @@ model cancellation {
 model bookedSlot {
   id        String   @id @default(uuid())
   bookingId String
-  date      DateTime
+  date      DateTime @db.Date
   slotId    String
-  checkedIn String
+  checkedIn checkInStatus @default(pending)
   price Float
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -290,7 +290,11 @@ model clubSubscription{
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
 }
-
+enum checkInStatus {
+  pending
+  yes
+  no
+}
 enum ClubStatus {
   active 
   disable

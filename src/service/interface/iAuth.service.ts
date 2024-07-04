@@ -1,4 +1,4 @@
-import { users, keyTokens } from '@prisma/client';
+import { keyTokens } from '@prisma/client';
 
 export interface IAuthService {
   login({ email, password }: { email: string; password: string }): Promise<any>;

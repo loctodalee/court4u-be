@@ -1,4 +1,4 @@
-import { bookedSlot, Prisma } from '@prisma/client';
+import { bookedSlot, checkInStatus, Prisma } from '@prisma/client';
 import { IBookedSlotRepository } from './interface/iBookedSlot.repository';
 import prisma from '../lib/prisma';
 
@@ -16,7 +16,7 @@ export class BookedSlotRepository implements IBookedSlotRepository {
       bookingId: string;
       date: Date;
       slotId: string;
-      checkedIn: string;
+      checkedIn: checkInStatus;
       price: number;
     }[]
   ): Promise<Prisma.BatchPayload> {
@@ -29,10 +29,38 @@ export class BookedSlotRepository implements IBookedSlotRepository {
     return await prisma.bookedSlot.findMany();
   }
 
-  public async foundBookedSlot(id: string): Promise<bookedSlot | null> {
+  public async findBookedSlot(id: string): Promise<bookedSlot | null> {
     return await prisma.bookedSlot.findFirst({
       where: {
         id,
+      },
+    });
+  }
+
+  public async findBookedSlotByDateAndSlotId({
+    date,
+    slotId,
+  }: {
+    date: Date;
+    slotId: string;
+  }): Promise<bookedSlot[]> {
+    const targetDate = new Date(date);
+    const year = targetDate.getFullYear();
+    const month = targetDate.getMonth() + 1;
+    const day = targetDate.getDate() + 1;
+
+    return await prisma.bookedSlot.findMany({
+      where: {
+        AND: [
+          {
+            date: {
+              equals: new Date(year, month - 1, day),
+            },
+          },
+          {
+            slotId,
+          },
+        ],
       },
     });
   }

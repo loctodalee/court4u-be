@@ -1,4 +1,4 @@
-import { bookedSlot, booking, Prisma } from '@prisma/client';
+import { bookedSlot, booking, checkInStatus, Prisma } from '@prisma/client';
 import { bookSlot, IBookedSlotService } from './interface/iBookedSlot.service';
 import prisma from '../lib/prisma';
 import { forEach } from 'lodash';
@@ -12,15 +12,21 @@ import { IBookedSlotRepository } from '../repository/interface/iBookedSlot.repos
 import { BookedSlotRepository } from '../repository/bookedSlot.repository';
 import { IMemberSubscriptionService } from './interface/iMemberSubscription.service';
 import { MemberSubscriptionService } from './memberSubscription.service';
-import { NotFoundError } from '../handleResponse/error.response';
+import {
+  BadRequestError,
+  NotFoundError,
+} from '../handleResponse/error.response';
 import { ISubscriptionService } from './interface/iSubscription.service';
 import { SubscriptionFactory } from './subscription.service';
+import { acquireLock, releaseLock } from './redis.service';
+import { IPaymentService } from './interface/iPayment.service';
+import { PaymentService } from './payment.service';
 
 export type bookSlotInfo = {
   date: Date;
   slotId: string;
   bookingId: string;
-  checkedIn: string;
+  checkedIn: checkInStatus;
   price: number;
 };
 export class BookedSlotService implements IBookedSlotService {
@@ -37,6 +43,7 @@ export class BookedSlotService implements IBookedSlotService {
   private static _billService: IBillService;
   private static _bookedSlotRepository: IBookedSlotRepository;
   private static _memberSubscriptionService: IMemberSubscriptionService;
+  private static _paymentService: IPaymentService;
   static {
     this._memberSubscriptionService = MemberSubscriptionService.getInstance();
     this._bookedSlotRepository = BookedSlotRepository.getInstance();
@@ -44,8 +51,8 @@ export class BookedSlotService implements IBookedSlotService {
     this._bookingService = BookingService.getInstance();
     this._slotRepository = SlotRepository.getInstance();
     this._subscriptionService = SubscriptionFactory.getInstance();
+    this._paymentService = PaymentService.getInstance();
   }
-
   public async createBookedSlot({
     userId,
     subscriptionId,
@@ -68,14 +75,25 @@ export class BookedSlotService implements IBookedSlotService {
     });
     //tạo ra nơi để lưu lại full thông tin của 1 bookedSlot
     var bookedSlotInfoList: bookSlotInfo[] = [];
-
+    type lockCheck = {
+      slotId: string;
+      date: Date;
+      quantity: number;
+    };
+    var listLockCheck: lockCheck[] = [
+      {
+        date: slotList[0].date,
+        slotId: slotList[0].slotId,
+        quantity: 0,
+      },
+    ];
     // sort để gán giá của vào từng slot và push vào bookedSlotInfoList
     slots.forEach((slot) => {
       slotList.forEach((data) => {
         if (slot.id === data.slotId) {
           bookedSlotInfoList.push({
-            checkedIn: 'false',
-            date: new Date(Date.now()),
+            checkedIn: 'pending',
+            date: new Date(data.date),
             price: slot.price,
             bookingId: '0',
             slotId: data.slotId,
@@ -84,13 +102,48 @@ export class BookedSlotService implements IBookedSlotService {
       });
     });
 
+    slotList.forEach((slot) => {
+      listLockCheck.forEach((data) => {
+        console.log(data);
+        if (slot.slotId === data.slotId && slot.date === data.date) {
+          data.quantity += 1;
+        } else {
+          listLockCheck.push({
+            date: slot.date,
+            quantity: 1,
+            slotId: slot.slotId,
+          });
+        }
+      });
+    });
+
+    console.log(listLockCheck);
+
     // tính total price để tạo bill
-    const totalPrice = slots.reduce((sum, slot) => sum + slot.price, 0);
+    const totalPrice = bookedSlotInfoList.reduce(
+      (sum, slot) => sum + slot.price,
+      0
+    );
     const totalTime = slots.reduce(
       (sum, slot) => sum + (slot.endTime.getTime() - slot.endTime.getTime()),
       0
     );
     console.log(totalPrice);
+
+    //lock
+    const acquireProduct = await Promise.all(
+      listLockCheck.map(async (x) => {
+        const keyLock = await acquireLock(x.slotId, x.date, x.quantity);
+        if (keyLock) {
+          await releaseLock(keyLock);
+        }
+        return keyLock ? true : false;
+      })
+    );
+    console.log(acquireProduct);
+    if (acquireProduct.includes(false)) {
+      throw new BadRequestError('Booked slot is not valid');
+    }
     if (!subscriptionId) {
       // nếu không có sử dụng gói để book slot
       const bill = await BookedSlotService._billService.createBill({
@@ -113,6 +166,15 @@ export class BookedSlotService implements IBookedSlotService {
       bookedSlotInfoList.forEach((item) => {
         item.bookingId = booking.id;
       });
+      var payment = await BookedSlotService._paymentService.momoPayment({
+        price: totalPrice,
+        orderId: booking.id,
+        returnUrl: '/bookedSlot/momo/PaymentCallBack',
+      });
+      await BookedSlotService._bookedSlotRepository.createBookedSlot(
+        bookedSlotInfoList
+      );
+      return payment;
     } else {
       // có sử dụng subscription để book slot
       // kiểm tra coi subscription có tồn tại không
@@ -158,18 +220,32 @@ export class BookedSlotService implements IBookedSlotService {
       bookedSlotInfoList.forEach((item) => {
         item.bookingId = booking.id;
       });
+      return await BookedSlotService._bookedSlotRepository.createBookedSlot(
+        bookedSlotInfoList
+      );
     }
-
-    return await BookedSlotService._bookedSlotRepository.createBookedSlot(
-      bookedSlotInfoList
-    );
   }
 
   public async getAllBookedSlot(): Promise<bookedSlot[]> {
     return await BookedSlotService._bookedSlotRepository.getAllBookedSlot();
   }
 
-  public async foundBookedSlot(id: string): Promise<bookedSlot | null> {
-    return await BookedSlotService._bookedSlotRepository.foundBookedSlot(id);
+  public async findBookedSlot(id: string): Promise<bookedSlot | null> {
+    return await BookedSlotService._bookedSlotRepository.findBookedSlot(id);
+  }
+
+  public async getBookedSlotWithDateAndSlotId({
+    slotId,
+    date,
+  }: {
+    slotId: string;
+    date: Date;
+  }): Promise<bookedSlot[]> {
+    return await BookedSlotService._bookedSlotRepository.findBookedSlotByDateAndSlotId(
+      {
+        slotId,
+        date,
+      }
+    );
   }
 }

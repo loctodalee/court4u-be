@@ -15,4 +15,5 @@ export interface ISlotOnCourtRepository {
   }): Promise<slotOnCourt | null>;
   searchSlotOnCourt(id: string): Promise<slotOnCourt | null>;
   getAllSlotOnCourt(): Promise<slotOnCourt[]>;
+  getAllCourtBySlotId(id: string): Promise<slotOnCourt[] | null>;
 }

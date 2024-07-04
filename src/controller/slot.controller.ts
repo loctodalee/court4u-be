@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { ISlotService } from '../service/interface/iSlot.service';
 import { SlotService } from '../service/slot.service';
 import { ISlotOnCourtService } from '../service/interface/ISlotOnCourt.service';
-import { SlotOnCourtService } from '../service/SlotOnCourt.service';
+import { SlotOnCourtService } from '../service/slotOnCourt.service';
 const { SuccessResponse } = require('../handleResponse/success.response');
 
 export class SlotController {
@@ -41,6 +41,23 @@ export class SlotController {
       message: 'Add slot to court',
       metaData: await SlotController.slotOnCourtService.addCourtOnSlot({
         slotId: req.params.id,
+        ...req.body,
+      }),
+    }).send(res);
+  }
+
+  public async getAllCourtsBySlotId(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'get court by slot id',
+      metaData: await SlotController.slotOnCourtService.getAllCourtBySlotId(
+        req.params.id
+      ),
+    }).send(res);
+  }
+  public async getRemainCourt(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'get court remain court',
+      metaData: await SlotController.slotOnCourtService.getRemainCourt({
         ...req.body,
       }),
     }).send(res);

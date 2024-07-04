@@ -8,5 +8,9 @@ router.post(
   '/checkout',
   asyncHandler(BookingController.getInstance().bookedSlot)
 );
+router.post(
+  '/getByDateAndSlotId',
+  asyncHandler(BookingController.getInstance().getBookedSlotByIdAndDate)
+);
 
 module.exports = router;

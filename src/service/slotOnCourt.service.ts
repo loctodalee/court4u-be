@@ -3,6 +3,8 @@ import { ISlotOnCourtService } from './interface/ISlotOnCourt.service';
 import { ISlotOnCourtRepository } from '../repository/interface/iSlotOnCourt.repository';
 import { SlotOnCourtRepository } from '../repository/slotOnCourt.repository';
 import { BadRequestError } from '../handleResponse/error.response';
+import { IBookedSlotService } from './interface/iBookedSlot.service';
+import { BookedSlotService } from './bookedSlot.service';
 export class SlotOnCourtService implements ISlotOnCourtService {
   private static Instance: SlotOnCourtService;
   public static getInstance(): SlotOnCourtService {
@@ -11,8 +13,12 @@ export class SlotOnCourtService implements ISlotOnCourtService {
     }
     return this.Instance;
   }
-  private static _slotOnCourtRepository: ISlotOnCourtRepository =
-    SlotOnCourtRepository.getInstance();
+  private static _slotOnCourtRepository: ISlotOnCourtRepository;
+  private static _bookedSlotService: IBookedSlotService;
+  static {
+    this._slotOnCourtRepository = SlotOnCourtRepository.getInstance();
+    this._bookedSlotService = BookedSlotService.getInstance();
+  }
   public async addCourtOnSlot({
     status,
     slotId,
@@ -47,5 +53,31 @@ export class SlotOnCourtService implements ISlotOnCourtService {
     return await SlotOnCourtService._slotOnCourtRepository.searchSlotOnCourt(
       id
     );
+  }
+
+  public async getAllCourtBySlotId(id: string): Promise<slotOnCourt[] | null> {
+    return await SlotOnCourtService._slotOnCourtRepository.getAllCourtBySlotId(
+      id
+    );
+  }
+
+  public async getRemainCourt({
+    slotId,
+    date,
+  }: {
+    slotId: string;
+    date: Date;
+  }): Promise<number> {
+    var numbCourt =
+      await SlotOnCourtService._slotOnCourtRepository.getAllCourtBySlotId(
+        slotId
+      );
+    var bookedSlot =
+      await SlotOnCourtService._bookedSlotService.getBookedSlotWithDateAndSlotId(
+        { slotId, date }
+      );
+
+    var remainCourt = numbCourt!.length - bookedSlot.length;
+    return remainCourt;
   }
 }

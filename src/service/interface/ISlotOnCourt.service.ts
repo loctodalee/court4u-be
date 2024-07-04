@@ -11,4 +11,12 @@ export interface ISlotOnCourtService {
     status: CourtSlotStatus;
   }): Promise<slotOnCourt>;
   searchSlotOnCourt(id: string): Promise<slotOnCourt | null>;
+  getAllCourtBySlotId(id: string): Promise<slotOnCourt[] | null>;
+  getRemainCourt({
+    slotId,
+    date,
+  }: {
+    slotId: string;
+    date: Date;
+  }): Promise<number>;
 }

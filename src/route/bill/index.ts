@@ -1,10 +1,11 @@
 import express from 'express';
 import { asyncHandler } from '../../helper/asyncHandler';
 import { authentication, CheckApiKey } from '../../auth/authUtils';
-import { CourtController } from '../../controller/court.controller';
+import { BillController } from '../../controller/bill.controller';
 const router = express.Router();
 router.use(authentication);
 router.use(CheckApiKey);
-router.post('/', asyncHandler(CourtController.getInstance().createCourt));
+router.get('/:id', asyncHandler(BillController.getInstance().getBillById));
+router.get('/', asyncHandler(BillController.getInstance().getAllBill));
 
 module.exports = router;

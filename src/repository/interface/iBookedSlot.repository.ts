@@ -1,4 +1,4 @@
-import { bookedSlot, Prisma } from '@prisma/client';
+import { bookedSlot, checkInStatus, Prisma } from '@prisma/client';
 
 export interface IBookedSlotRepository {
   createBookedSlot(
@@ -6,10 +6,17 @@ export interface IBookedSlotRepository {
       bookingId: string;
       date: Date;
       slotId: string;
-      checkedIn: string;
+      checkedIn: checkInStatus;
       price: number;
     }[]
   ): Promise<Prisma.BatchPayload>;
-  foundBookedSlot(id: string): Promise<bookedSlot | null>;
+  findBookedSlot(id: string): Promise<bookedSlot | null>;
+  findBookedSlotByDateAndSlotId({
+    date,
+    slotId,
+  }: {
+    date: Date;
+    slotId: string;
+  }): Promise<bookedSlot[]>;
   getAllBookedSlot(): Promise<bookedSlot[]>;
 }

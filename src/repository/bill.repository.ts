@@ -18,7 +18,7 @@ export class BillRepository implements IBillRepository {
     return prisma.bill.findUnique({ where: { id } });
   }
 
-  public async getAllBills(): Promise<List<bill>> {
+  public async getAllBills(): Promise<bill[]> {
     return prisma.bill.findMany();
   }
 

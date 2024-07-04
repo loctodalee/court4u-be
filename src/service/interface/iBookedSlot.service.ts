@@ -19,5 +19,12 @@ export interface IBookedSlotService {
   //   checkedIn: string;
   // }[];
   getAllBookedSlot(): Promise<bookedSlot[]>;
-  foundBookedSlot(id: string): Promise<bookedSlot | null>;
+  findBookedSlot(id: string): Promise<bookedSlot | null>;
+  getBookedSlotWithDateAndSlotId({
+    slotId,
+    date,
+  }: {
+    slotId: string;
+    date: Date;
+  }): Promise<bookedSlot[]>;
 }

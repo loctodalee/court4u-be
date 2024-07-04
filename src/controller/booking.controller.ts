@@ -41,4 +41,23 @@ export class BookingController {
       }),
     }).send(res);
   }
+
+  public async getAllBookedSlot(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Get all booked slot',
+      metaData: await BookingController.bookedSlotService.getAllBookedSlot(),
+    }).send(res);
+  }
+
+  public async getBookedSlotByIdAndDate(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Get booked slot',
+      metaData:
+        await BookingController.bookedSlotService.getBookedSlotWithDateAndSlotId(
+          {
+            ...req.body,
+          }
+        ),
+    }).send(res);
+  }
 }
