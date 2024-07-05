@@ -11,6 +11,7 @@ import {
 } from '../handleResponse/error.response';
 import { ISlotOnCourtService } from './interface/ISlotOnCourt.service';
 import { SlotOnCourtService } from './slotOnCourt.service';
+import { toMidnight } from '../util/timeFormat';
 
 export class SlotService implements ISlotService {
   private static Instance: SlotService;
@@ -116,18 +117,11 @@ export class SlotService implements ISlotService {
       date: Date;
     };
 
-    var start = new Date(
-      startDate.getFullYear(),
-      startDate.getMonth(),
-      startDate.getDate() + 1
-    );
-    var end = new Date(
-      endDate.getFullYear(),
-      endDate.getMonth(),
-      endDate.getDate() + 1
-    );
+    var start = toMidnight(startDate);
+    var end = toMidnight(endDate);
     var listSlotInfo: slotInfo[] = [];
     for (let i = start; i <= end; i.setDate(i.getDate() + 1)) {
+      console.log(i);
       slots.forEach((x) => {
         listSlotInfo.push({
           ...x,
@@ -136,10 +130,11 @@ export class SlotService implements ISlotService {
           //   date: i,
           // }),
           courtRemain: 1,
-          date: i,
+          date: new Date(i.getFullYear(), i.getMonth(), i.getDate()),
         });
       });
     }
+
     await Promise.all(
       listSlotInfo.map(async (slotInfo) => {
         slotInfo.courtRemain =

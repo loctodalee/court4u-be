@@ -5,6 +5,7 @@ import { SlotOnCourtRepository } from '../repository/slotOnCourt.repository';
 import { BadRequestError } from '../handleResponse/error.response';
 import { IBookedSlotService } from './interface/iBookedSlot.service';
 import { BookedSlotService } from './bookedSlot.service';
+import { toMidnight } from '../util/timeFormat';
 export class SlotOnCourtService implements ISlotOnCourtService {
   private static Instance: SlotOnCourtService;
   public static getInstance(): SlotOnCourtService {
@@ -72,9 +73,10 @@ export class SlotOnCourtService implements ISlotOnCourtService {
       await SlotOnCourtService._slotOnCourtRepository.getAllCourtBySlotId(
         slotId
       );
+
     var bookedSlot =
       await SlotOnCourtService._bookedSlotService.getBookedSlotWithDateAndSlotId(
-        { slotId, date }
+        { slotId, date: toMidnight(date) }
       );
 
     var remainCourt = numbCourt!.length - bookedSlot.length;
