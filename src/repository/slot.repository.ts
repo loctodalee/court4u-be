@@ -39,4 +39,20 @@ export class SlotRepository implements ISlotRepository {
   public async findManySlot({ options }: { options: any }): Promise<slot[]> {
     return await prisma.slot.findMany(options);
   }
+
+  // public async findSlotsWithDateAndClubId({
+  //   clubId,
+  //   startDate,
+  //   endDate,
+  // }: {
+  //   clubId: string;
+  //   startDate: Date;
+  //   endDate: Date;
+  // }): Promise<slot[]>{
+  //   return await prisma.slot.findMany({
+  //     where:{
+
+  //     }
+  //   })
+  // }
 }

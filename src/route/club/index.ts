@@ -4,6 +4,10 @@ import { asyncHandler } from '../../helper/asyncHandler';
 import { authentication, CheckApiKey } from '../../auth/authUtils';
 const router = express.Router();
 
+router.get(
+  '/id/:clubId?',
+  asyncHandler(ClubController.getInstance().getSlotInfoByClubIdAndDate)
+);
 router.get('/:clubId', asyncHandler(ClubController.getInstance().findClub));
 router.get('/', asyncHandler(ClubController.getInstance().getClubs));
 

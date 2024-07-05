@@ -61,4 +61,16 @@ export class ClubController {
       metaData: await ClubController.clubService.deleteClub({ id: clubId }),
     }).send(res);
   }
+
+  async getSlotInfoByClubIdAndDate(req: Request, res: Response) {
+    const clubId = req.clubId;
+    new SuccessResponse({
+      message: 'get club and slot success',
+      metaData: await ClubController.slotService.getSlotInfoByClubIdAndDate({
+        clubId: req.params.clubId,
+        startDate: new Date(req.query.startDate as string),
+        endDate: new Date(req.query.endDate as string),
+      }),
+    }).send(res);
+  }
 }
