@@ -18,11 +18,17 @@ export class PaymentService implements IPaymentService {
     orderId: string;
     returnUrl: string;
   }): Promise<any> {
-    const requestId =
-      process.env.MOMO_PARTNER_CODE! + new Date().getTime() + 'id';
+    const requestId = process.env.MOMO_PARTNER_CODE! + new Date().getTime();
     const orderInfo = 'Thanh toán qua ví momo';
     const payUrl = process.env.MOMO_RETURN_URL + returnUrl;
-    const rawSignature = `partnerCode=${process.env.MOMO_PARTNER_CODE}&accessKey=${process.env.MOMO_ACCESS_KEY}&requestId=${requestId}&amount=${price}&orderId=${orderId}&orderInfo=${orderInfo}&returnUrl=${payUrl}&notifyUrl=${process.env.MOMO_NOTIFY_URL}&extraData=`;
+    var ipnUrl = payUrl;
+    var extraData = '';
+    var orderGroupId = '';
+    // const rawSignature = `partnerCode=${process.env.MOMO_PARTNER_CODE}&accessKey=${process.env.MOMO_ACCESS_KEY}&requestId=${requestId}&amount=${price}&orderId=${orderId}&orderInfo=${orderInfo}&returnUrl=${payUrl}&notifyUrl=${process.env.MOMO_NOTIFY_URL}&requestExpire=${requestExpire}&extraData=`;
+    // const rawSignature = `partnerCode=${process.env.MOMO_PARTNER_CODE}&accessKey=${process.env.MOMO_ACCESS_KEY}&requestId=${requestId}&amount=${price}&orderId=${orderId}&orderInfo=${orderInfo}&returnUrl=${payUrl}&notifyUrl=${process.env.MOMO_NOTIFY_URL}&extraData=`;
+    const rawSignature = `accessKey=${process.env.MOMO_ACCESS_KEY}&amount=${price}&extraData=${extraData}&ipnUrl=${ipnUrl}&orderId=${orderId}&orderInfo=${orderInfo}&partnerCode=${process.env.MOMO_PARTNER_CODE}&redirectUrl=${payUrl}&requestId=${requestId}&requestType=${process.env.MOMO_REQUEST_TYPE}`;
+    console.log('Raw Signature:', rawSignature);
+    console.log(rawSignature);
     const signature = crypto
       .createHmac('sha256', process.env.MOMO_SERECT_KEY!)
       .update(rawSignature)
@@ -30,23 +36,27 @@ export class PaymentService implements IPaymentService {
 
     const requestBody = JSON.stringify({
       partnerCode: process.env.MOMO_PARTNER_CODE,
-      accessKey: process.env.MOMO_ACCESS_KEY,
-      requestId,
-      amount: price.toString(),
-      orderId,
-      orderInfo,
-      returnUrl: payUrl,
-      notifyUrl: process.env.MOMO_NOTIFY_URL,
-      extraData: '',
+      partnerName: 'Test',
+      storeId: 'MomoTestStore',
+      requestId: requestId,
+      amount: price,
+      orderId: orderId,
+      orderInfo: orderInfo,
+      redirectUrl: payUrl,
+      ipnUrl: ipnUrl,
+      lang: 'vi',
       requestType: process.env.MOMO_REQUEST_TYPE,
+      autoCapture: true,
+      extraData: extraData,
+      orderGroupId: orderGroupId,
+      orderExpireTime: 10,
       signature: signature,
-      lang: 'en',
     });
 
     const options = {
-      hostname: new URL(process.env.MOMO_API_URL!).hostname,
+      hostname: 'test-payment.momo.vn',
       port: 443,
-      path: new URL(process.env.MOMO_API_URL!).pathname,
+      path: '/v2/gateway/api/create',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -57,6 +67,7 @@ export class PaymentService implements IPaymentService {
     return new Promise((resolve, reject) => {
       const momoRequest = https.request(options, (momoResponse) => {
         let data = '';
+        momoResponse.setEncoding('utf-8');
         momoResponse.on('data', (chunk) => {
           data += chunk;
         });
