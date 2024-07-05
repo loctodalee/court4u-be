@@ -18,7 +18,7 @@ export interface IClubService {
     logoUrl: string | null;
     description: string;
   }): Promise<club>;
-
+  // findClubInfo({ clubId }: { clubId: string }): Promise<any>;
   foundClubById({ clubId }: { clubId: string }): Promise<club | null>;
   getClubs(): Promise<club[]>;
   updateClub(

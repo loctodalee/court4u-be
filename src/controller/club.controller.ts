@@ -1,10 +1,13 @@
 import { Request, Response } from 'express';
 import { IClubService } from '../service/interface/iClub.service';
 import { ClubService } from '../service/club.service';
+import { ISlotService } from '../service/interface/iSlot.service';
+import { SlotService } from '../service/slot.service';
 const { SuccessResponse } = require('../handleResponse/success.response');
 
 export class ClubController {
   private static readonly clubService: IClubService = ClubService.getInstance();
+  private static readonly slotService: ISlotService = SlotService.getInstance();
   private static Instance: ClubController;
   public static getInstance(): ClubController {
     if (!this.Instance) {
@@ -31,7 +34,7 @@ export class ClubController {
   async findClub(req: Request, res: Response) {
     new SuccessResponse({
       message: 'create club success',
-      metaData: await ClubController.clubService.foundClubById({
+      metaData: await ClubController.slotService.findClubInfo({
         clubId: req.params.clubId as string,
       }),
     }).send(res);

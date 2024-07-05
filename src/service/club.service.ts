@@ -5,9 +5,10 @@ import { ClubRepository } from '../repository/club.repository';
 import { IUserService } from './interface/iUser.service';
 import { UserService } from './user.service';
 import { BadRequestError } from '../handleResponse/error.response';
+
 export class ClubService implements IClubService {
   private static Instance: ClubService;
-  public static getInstance(): IClubService {
+  public static getInstance(): ClubService {
     if (!this.Instance) {
       this.Instance = new ClubService();
     }
@@ -19,7 +20,21 @@ export class ClubService implements IClubService {
     this._userService = UserService.getInstance();
     this._clubRepository = ClubRepository.getInstance();
   }
-
+  // public async findClubInfo({ clubId }: { clubId: string }): Promise<any> {
+  //   var club = await ClubService._clubRepository.foundClub({
+  //     options: {
+  //       where: {
+  //         id: clubId,
+  //       },
+  //     },
+  //   });
+  //   if (!club) throw new BadRequestError('Club not found!');
+  //   var slot = ClubService._slotService.getSlotByClubId(club.id);
+  //   return {
+  //     club,
+  //     slot,
+  //   };
+  // }
   public async addClub({
     courtOwnerId,
     name,

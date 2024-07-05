@@ -12,4 +12,7 @@ export interface ISlotService {
     endTime: Date;
     dateOfWeek: number;
   }): Promise<slot>;
+
+  getSlotByClubId(id: string): Promise<slot[]>;
+  findClubInfo({ clubId }: { clubId: string }): Promise<any>;
 }

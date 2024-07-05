@@ -5,11 +5,10 @@ import { SlotRepository } from '../repository/slot.repository';
 import { IClubService } from './interface/iClub.service';
 import { ClubService } from './club.service';
 import {
+  BadRequestError,
   NotFoundError,
   NotImplementError,
 } from '../handleResponse/error.response';
-import { ISlotOnCourtRepository } from '../repository/interface/iSlotOnCourt.repository';
-import { SlotOnCourtRepository } from '../repository/slotOnCourt.repository';
 
 export class SlotService implements ISlotService {
   private static Instance: SlotService;
@@ -51,5 +50,33 @@ export class SlotService implements ISlotService {
       price,
     });
     return result;
+  }
+
+  public async getSlotByClubId(id: string): Promise<slot[]> {
+    return await SlotService._slotRepository.findManySlot({
+      options: {
+        where: {
+          clubId: id,
+        },
+      },
+    });
+  }
+
+  public async findClubInfo({ clubId }: { clubId: string }): Promise<any> {
+    var club = await SlotService._clubService.foundClubById({
+      clubId,
+    });
+    if (!club) throw new BadRequestError('Club not found!');
+    var slot = await SlotService._slotRepository.findManySlot({
+      options: {
+        where: {
+          clubId: club.id,
+        },
+      },
+    });
+    return {
+      club,
+      slot,
+    };
   }
 }
