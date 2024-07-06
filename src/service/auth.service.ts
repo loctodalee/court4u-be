@@ -196,10 +196,17 @@ export class AuthService implements IAuthService {
 
     if (!foundUser) throw new NotFoundError('Token not found');
     const keys = this.createKeys();
+    const foundRole = await AuthService._roleService.findUserRole({
+      userId: foundUser.id,
+    });
+    if (!foundRole) throw new BadRequestError('Login fail');
+    const listRole = await AuthService._roleService.findRoleName(foundRole);
+    const listName = listRole.map((x) => x.name);
     const tokens = await createTokenPair({
       payload: {
         userId: foundUser.id,
         email: foundUser.email,
+        roles: listName,
       },
       publicKey: keys.publicKey,
       privateKey: keys.privateKey,
@@ -223,30 +230,22 @@ export class AuthService implements IAuthService {
   //--------login with third party
   public async loginWithThirdParty(user: any): Promise<any> {
     const keys = this.createKeys();
+    const foundRole = await AuthService._roleService.findUserRole({
+      userId: user.id,
+    });
+    if (!foundRole) throw new BadRequestError('Login fail');
+    const listRole = await AuthService._roleService.findRoleName(foundRole);
+    const listName = listRole.map((x) => x.name);
     const tokens = await createTokenPair({
       payload: {
         userId: user.id,
         email: user.email,
+        roles: listName,
       },
       publicKey: keys.publicKey,
       privateKey: keys.privateKey,
     });
-    const options = {
-      where: {
-        userId: user.id,
-      },
-      update: {
-        publicKey: keys.publicKey,
-        privateKey: keys.privateKey,
-        refreshToken: tokens.refreshToken,
-      },
-      create: {
-        userId: user.id,
-        publicKey: keys.publicKey,
-        privateKey: keys.privateKey,
-        refreshToken: tokens.refreshToken,
-      },
-    };
+
     await AuthService._keyTokenService.upsertKey({
       userId: user.id,
       publicKey: keys.publicKey,
@@ -267,6 +266,12 @@ export class AuthService implements IAuthService {
     refreshToken: string;
   }): Promise<any> {
     const { userId, email } = user;
+    const foundRole = await AuthService._roleService.findUserRole({
+      userId: user.id,
+    });
+    if (!foundRole) throw new BadRequestError('Login fail');
+    const listRole = await AuthService._roleService.findRoleName(foundRole);
+    const listName = listRole.map((x) => x.name);
     if (keyStore.refreshTokenUsed.includes(refreshToken)) {
       AuthService._keyTokenService.deleteKeyByUserId({ userId });
       throw new ForbiddenError('Something go wrong');
