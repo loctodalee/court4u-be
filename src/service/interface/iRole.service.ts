@@ -18,4 +18,5 @@ export interface IRoleService {
     userId?: string;
     roleId?: string;
   }): Promise<userRole[] | null>;
+  findRoleName(listRole: userRole[]): Promise<role[]>;
 }

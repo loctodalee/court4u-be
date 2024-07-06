@@ -1,4 +1,4 @@
-import { Role, role } from '@prisma/client';
+import { Role, role, userRole } from '@prisma/client';
 import { IRoleRepository } from './interface/IRole.repository';
 import prisma from '../lib/prisma';
 import { BadRequestError } from '../handleResponse/error.response';
@@ -53,5 +53,16 @@ export class RoleRepository implements IRoleRepository {
     } catch (error: any) {
       throw new Error(error);
     }
+  }
+
+  public async getListRoleById(listUserRole: userRole[]): Promise<role[]> {
+    const roleIds = listUserRole.map((userRole) => userRole.roleId);
+    return await prisma.role.findMany({
+      where: {
+        id: {
+          in: roleIds,
+        },
+      },
+    });
   }
 }

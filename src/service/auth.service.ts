@@ -66,6 +66,13 @@ export class AuthService implements IAuthService {
       throw new BadRequestError('Login fail');
     }
 
+    //get roles
+    const foundRole = await AuthService._roleService.findUserRole({
+      userId: foundUser.id,
+    });
+    if (!foundRole) throw new BadRequestError('Login fail');
+    const listRole = await AuthService._roleService.findRoleName(foundRole);
+    const listName = listRole.map((x) => x.name);
     //create public key for accessToken, private key for refreshToken
     const keys = this.createKeys();
 
@@ -74,6 +81,7 @@ export class AuthService implements IAuthService {
       payload: {
         userId: foundUser.id,
         email: foundUser.email,
+        roles: listName,
       },
       publicKey: keys.publicKey,
       privateKey: keys.privateKey,

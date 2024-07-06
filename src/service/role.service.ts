@@ -90,4 +90,8 @@ export class RoleService implements IRoleService {
     if (!result) throw new NotFoundError('Not found user role');
     return result;
   }
+
+  public async findRoleName(listRole: userRole[]): Promise<role[]> {
+    return await RoleService._roleRepository.getListRoleById(listRole);
+  }
 }

@@ -1,4 +1,4 @@
-import { Role, role } from '@prisma/client';
+import { Role, role, userRole } from '@prisma/client';
 
 export interface IRoleRepository {
   getAll(): Promise<role[]>;
@@ -6,4 +6,5 @@ export interface IRoleRepository {
   findByName(name: Role): Promise<role | null>;
   addRole(name: string): Promise<role>;
   deleteRole(id: string): Promise<void>;
+  getListRoleById(listUserRole: userRole[]): Promise<role[]>;
 }
