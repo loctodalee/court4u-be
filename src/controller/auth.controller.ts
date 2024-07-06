@@ -47,12 +47,10 @@ export class AuthController {
    * @param res {user: {id, username, phone, avatarUrl, email}, tokens: {accessToken, refreshToken} }
    */
   async checkLoginEmailToken(req: Request, res: Response) {
-    new SuccessResponse({
-      message: 'Verify success',
-      metaData: await AuthController.authService.checkLoginEmailToken({
-        token: req.query.token,
-      }),
-    }).send(res);
+    await AuthController.authService.checkLoginEmailToken({
+      token: req.query.token,
+    }),
+      res.redirect('http://localhost:3000/login');
   }
 
   /**
