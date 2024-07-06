@@ -1,4 +1,4 @@
-import { club } from '@prisma/client';
+import { club, ClubStatus } from '@prisma/client';
 
 export interface IClubService {
   addClub({
@@ -30,7 +30,14 @@ export interface IClubService {
       cityOfProvince?: string;
       logoUrl?: string;
       description?: string;
+      status?: ClubStatus;
     }
   ): Promise<club>;
   deleteClub({ id }: { id: string }): Promise<club>;
+  searchByLocation(data: {
+    cityOfProvince?: string;
+    district?: string;
+    address?: string;
+    name?: string;
+  }): Promise<club[]>;
 }

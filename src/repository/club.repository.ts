@@ -77,4 +77,17 @@ export class ClubRepository implements IClubRepository {
       },
     });
   }
+
+  public async searchClub(data: {
+    cityOfProvince?: string;
+    district?: string;
+    address?: string;
+    name?: string;
+  }): Promise<club[]> {
+    return await prisma.club.findMany({
+      where: {
+        ...data,
+      },
+    });
+  }
 }

@@ -169,7 +169,7 @@ export class BookedSlotService implements IBookedSlotService {
       var payment = await BookedSlotService._paymentService.momoPayment({
         price: totalPrice,
         orderId: booking.id,
-        returnUrl: '/bookedSlot/momo/PaymentCallBack',
+        returnUrl: '/bookSlots/momo/PaymentCallBack',
       });
       await BookedSlotService._bookedSlotRepository.createBookedSlot(
         bookedSlotInfoList
@@ -247,5 +247,48 @@ export class BookedSlotService implements IBookedSlotService {
         date,
       }
     );
+  }
+
+  public async paymentCallBack(avgs: any): Promise<any> {
+    const { orderId: bookingId, message } = avgs;
+    const booking = await BookedSlotService._bookingService.foundBooking(
+      bookingId
+    );
+    console.log(avgs);
+    if (!booking) throw new BadRequestError('Booking not found!');
+    if (message == 'Successful.') {
+      const updateBooking =
+        await BookedSlotService._bookingService.updateBooking(
+          bookingId,
+          'active'
+        );
+
+      if (!updateBooking) throw new BadRequestError('Update booking fail');
+      const billUpdate = await BookedSlotService._billService.updateBill(
+        booking.billId,
+        { status: 'success' }
+      );
+
+      if (!billUpdate) throw new BadRequestError('Bill update fail');
+      return booking;
+    } else {
+      const updateBooking =
+        await BookedSlotService._bookingService.updateBooking(
+          bookingId,
+          'canceled'
+        );
+      if (!updateBooking) throw new BadRequestError('Update booking fail');
+
+      const billUpdate = await BookedSlotService._billService.updateBill(
+        booking.billId,
+        { status: 'fail' }
+      );
+      if (!billUpdate) throw new BadRequestError('Bill update fail');
+
+      await BookedSlotService._bookedSlotRepository.deleteManyBookedSlot(
+        booking.id
+      );
+      throw new BadRequestError('Fail at payment');
+    }
   }
 }

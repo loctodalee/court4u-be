@@ -27,4 +27,6 @@ export interface IBookedSlotService {
     slotId: string;
     date: Date;
   }): Promise<bookedSlot[]>;
+
+  paymentCallBack(avgs: any): Promise<any>;
 }

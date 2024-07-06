@@ -64,4 +64,12 @@ export class BookedSlotRepository implements IBookedSlotRepository {
       },
     });
   }
+
+  public async deleteManyBookedSlot(bookingId: string): Promise<void> {
+    await prisma.bookedSlot.deleteMany({
+      where: {
+        bookingId: bookingId,
+      },
+    });
+  }
 }

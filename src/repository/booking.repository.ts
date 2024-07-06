@@ -34,4 +34,18 @@ export class BookingRepository implements IBookingRepository {
       },
     });
   }
+
+  public async updateBooking(
+    bookingId: string,
+    status: BookingStatus
+  ): Promise<booking> {
+    return await prisma.booking.update({
+      where: {
+        id: bookingId,
+      },
+      data: {
+        status,
+      },
+    });
+  }
 }

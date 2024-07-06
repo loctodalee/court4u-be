@@ -11,4 +11,5 @@ export interface IBookingService {
 
   getAllBooking(): Promise<booking[]>;
   foundBooking(id: string): Promise<booking | null>;
+  updateBooking(bookingId: string, status: BookingStatus): Promise<booking>;
 }

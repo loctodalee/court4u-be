@@ -60,4 +60,13 @@ export class BookingController {
         ),
     }).send(res);
   }
+
+  public async paymentCallBack(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Payment response',
+      metaData: await BookingController.bookedSlotService.paymentCallBack({
+        ...req.query,
+      }),
+    }).send(res);
+  }
 }

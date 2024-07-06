@@ -1,4 +1,4 @@
-import { club } from '@prisma/client';
+import { club, ClubStatus } from '@prisma/client';
 import { IClubService } from './interface/iClub.service';
 import { IClubRepository } from '../repository/interface/iClub.repository';
 import { ClubRepository } from '../repository/club.repository';
@@ -20,21 +20,15 @@ export class ClubService implements IClubService {
     this._userService = UserService.getInstance();
     this._clubRepository = ClubRepository.getInstance();
   }
-  // public async findClubInfo({ clubId }: { clubId: string }): Promise<any> {
-  //   var club = await ClubService._clubRepository.foundClub({
-  //     options: {
-  //       where: {
-  //         id: clubId,
-  //       },
-  //     },
-  //   });
-  //   if (!club) throw new BadRequestError('Club not found!');
-  //   var slot = ClubService._slotService.getSlotByClubId(club.id);
-  //   return {
-  //     club,
-  //     slot,
-  //   };
-  // }
+
+  public async searchByLocation(data: {
+    cityOfProvince?: string;
+    district?: string;
+    address?: string;
+    name?: string;
+  }): Promise<club[]> {
+    return await ClubService._clubRepository.searchClub(data);
+  }
   public async addClub({
     courtOwnerId,
     name,
@@ -99,6 +93,7 @@ export class ClubService implements IClubService {
       cityOfProvince?: string;
       logoUrl?: string;
       description?: string;
+      status?: ClubStatus;
     }
   ): Promise<club> {
     var result = await ClubService._clubRepository.updateClub(clubId, data);

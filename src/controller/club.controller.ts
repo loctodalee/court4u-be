@@ -3,6 +3,7 @@ import { IClubService } from '../service/interface/iClub.service';
 import { ClubService } from '../service/club.service';
 import { ISlotService } from '../service/interface/iSlot.service';
 import { SlotService } from '../service/slot.service';
+import { club } from '@prisma/client';
 const { SuccessResponse } = require('../handleResponse/success.response');
 
 export class ClubController {
@@ -63,13 +64,21 @@ export class ClubController {
   }
 
   async getSlotInfoByClubIdAndDate(req: Request, res: Response) {
-    const clubId = req.clubId;
     new SuccessResponse({
       message: 'get club and slot success',
       metaData: await ClubController.slotService.getSlotInfoByClubIdAndDate({
         clubId: req.params.clubId,
         startDate: new Date(req.query.startDate as string),
         endDate: new Date(req.query.endDate as string),
+      }),
+    }).send(res);
+  }
+
+  async searchClub(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'get club and slot success',
+      metaData: await ClubController.clubService.searchByLocation({
+        ...req.query,
       }),
     }).send(res);
   }

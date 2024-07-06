@@ -130,7 +130,7 @@ export class MemberSubscriptionService implements IMemberSubscriptionService {
       );
     if (!foundMemberSubs)
       throw new NotFoundError('Member Subscription not found');
-    if (message == 'Success') {
+    if (message == 'Successful.') {
       // update member subscription status
       const updateMemberSubsOptions = {
         where: {

@@ -1,14 +1,12 @@
-import {
-  BadRequestError,
-  NotFoundError,
-} from '../handleResponse/error.response';
 import { transport } from '../lib/init.nodemailer';
 import { replacePlaceholder } from '../util/replaceHtml';
 import { IEmailService } from './interface/iEmail.service';
-// import { IOtpService } from './iOtp.service';
-// import { OtpSerivce } from './otp.service';
+
 import crypto from 'crypto';
 import { verifyTemplate } from '../template/sendMail.template';
+import { LibraryResponse, SendEmailV3_1 } from 'node-mailjet';
+import { mailjet } from '../lib/init.mailjet';
+import { error } from 'console';
 export class EmailService implements IEmailService {
   private static Instance: EmailService;
   public static getInstance(): IEmailService {
@@ -52,6 +50,42 @@ export class EmailService implements IEmailService {
     }
   }
 
+  public async sendMailJect({
+    html,
+    toEmail,
+    subject,
+    text,
+  }: {
+    html: any;
+    toEmail: string;
+    subject: string;
+    text: string;
+  }): Promise<any> {
+    const data: SendEmailV3_1.Body = {
+      Messages: [
+        {
+          From: {
+            Email: '"Court4u" <loctodale.service@gmail.com>',
+          },
+          To: [
+            {
+              Email: toEmail,
+            },
+          ],
+
+          Subject: subject,
+          HTMLPart: html,
+          TextPart: text,
+        },
+      ],
+    };
+    const result: LibraryResponse<SendEmailV3_1.Response> = await mailjet
+      .post('send', { version: 'v3.1' })
+      .request(data);
+
+    const { Status } = result.body.Messages[0];
+  }
+
   public async sendEmailToken({ email }: { email: string }): Promise<any> {
     try {
       //1. get Token
@@ -68,7 +102,15 @@ export class EmailService implements IEmailService {
       };
       const content = replacePlaceholder(template, params);
       console.log('send email link verify');
-      this.sendEmailLinkVerify({
+      // this.sendEmailLinkVerify({
+      //   html: content,
+      //   toEmail: email,
+      //   subject: 'Verify your email',
+      //   text: 'Verify',
+      // }).catch((error) => {
+      //   throw new Error(error);
+      // });
+      this.sendMailJect({
         html: content,
         toEmail: email,
         subject: 'Verify your email',

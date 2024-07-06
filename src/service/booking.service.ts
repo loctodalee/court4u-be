@@ -13,7 +13,6 @@ export class BookingService implements IBookingService {
   }
   private static _bookingRepository: IBookingRepository =
     BookingRepository.getInstance();
-  constructor() {}
   public async createBooking(data: {
     userId: string;
     billId: string;
@@ -30,5 +29,15 @@ export class BookingService implements IBookingService {
 
   public async foundBooking(id: string): Promise<booking | null> {
     return await BookingService._bookingRepository.foundBooking(id);
+  }
+
+  public async updateBooking(
+    bookingId: string,
+    status: BookingStatus
+  ): Promise<booking> {
+    return await BookingService._bookingRepository.updateBooking(
+      bookingId,
+      status
+    );
   }
 }

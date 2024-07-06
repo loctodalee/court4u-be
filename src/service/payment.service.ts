@@ -44,7 +44,7 @@ export class PaymentService implements IPaymentService {
       orderInfo: orderInfo,
       redirectUrl: payUrl,
       ipnUrl: ipnUrl,
-      lang: 'vi',
+      lang: 'en',
       requestType: process.env.MOMO_REQUEST_TYPE,
       autoCapture: true,
       extraData: extraData,

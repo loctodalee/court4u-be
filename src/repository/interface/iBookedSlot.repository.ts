@@ -19,4 +19,5 @@ export interface IBookedSlotRepository {
     slotId: string;
   }): Promise<bookedSlot[]>;
   getAllBookedSlot(): Promise<bookedSlot[]>;
+  deleteManyBookedSlot(bookingId: string): Promise<void>;
 }

@@ -3,6 +3,10 @@ import { asyncHandler } from '../../helper/asyncHandler';
 import { authentication } from '../../auth/authUtils';
 import { BookingController } from '../../controller/booking.controller';
 const router = express.Router();
+router.get(
+  '/momo/PaymentCallBack',
+  asyncHandler(BookingController.getInstance().paymentCallBack)
+);
 router.use(authentication);
 router.post(
   '/checkout',

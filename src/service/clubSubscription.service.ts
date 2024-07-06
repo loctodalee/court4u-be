@@ -111,7 +111,7 @@ export class ClubSubscriptionService implements IClubSubscriptionService {
       clubSubscription.billId
     );
     if (!bill) throw new BadRequestError('Not found bill');
-    if (message === 'Success') {
+    if (message === 'Successful.') {
       const updateClubSub =
         await ClubSubscriptionService._clubSubsriptionRepo.updateClubSubs(
           clubSubscription.id,
@@ -120,6 +120,12 @@ export class ClubSubscriptionService implements IClubSubscriptionService {
       await ClubSubscriptionService._billService.updateBill(bill.id, {
         status: 'success',
       });
+      await ClubSubscriptionService._clubService.updateClub(
+        updateClubSub.clubId,
+        {
+          status: 'active',
+        }
+      );
       return updateClubSub;
     } else {
       await ClubSubscriptionService._clubSubsriptionRepo.updateClubSubs(

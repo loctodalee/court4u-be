@@ -32,4 +32,10 @@ export interface IClubRepository {
     }
   ): Promise<club>;
   deleteClub({ id }: { id: string }): Promise<club>;
+  searchClub(data: {
+    cityOfProvince?: string;
+    district?: string;
+    address?: string;
+    name?: string;
+  }): Promise<club[]>;
 }
