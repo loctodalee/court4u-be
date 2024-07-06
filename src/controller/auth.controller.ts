@@ -60,10 +60,6 @@ export class AuthController {
    * @param res
    */
   async LoginThirdParty(req: Request, res: Response) {
-    // new SuccessResponse({
-    //   message: 'Login success',
-    //   metaData: await AuthController.authService.loginWithThirdParty(req.user),
-    // }).send(res);
     const tokens = await AuthController.authService.loginWithThirdParty(
       req.user
     );
@@ -82,7 +78,7 @@ export class AuthController {
    */
   async handleRefreshToken(req: Request, res: Response) {
     new SuccessResponse({
-      message: 'Login with refresh token',
+      message: 'Login with refreshToken',
       metaData: await AuthController.authService.handleRefreshToken({
         keyStore: req.keyStores,
         refreshToken: req.refreshToken,

@@ -52,7 +52,7 @@ export class KeyTokenRepository implements IKeyTokenRepository {
     refreshToken: string;
     currentToken: keyTokens;
   }): Promise<any> {
-    await prisma.keyTokens.update({
+    return await prisma.keyTokens.update({
       where: {
         userId,
       },

@@ -73,7 +73,6 @@ export const authentication = asyncHandler(
         req.user = decodeUser;
         req.refreshToken = refreshToken;
         req.keyStores = keyStore;
-        next();
       } catch (error) {
         throw new AuthFailure('auth error');
       }

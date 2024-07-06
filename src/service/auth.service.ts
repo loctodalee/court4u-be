@@ -20,7 +20,6 @@ import { UserService } from './user.service';
 import passport from 'passport';
 import { IRoleService } from './interface/iRole.service';
 import { RoleService } from './role.service';
-import { response } from 'express';
 export class AuthService implements IAuthService {
   private static Instance: AuthService;
   public static getInstance(): IAuthService {
@@ -266,6 +265,7 @@ export class AuthService implements IAuthService {
     refreshToken: string;
   }): Promise<any> {
     const { userId, email } = user;
+
     const foundRole = await AuthService._roleService.findUserRole({
       userId: user.id,
     });
@@ -280,10 +280,15 @@ export class AuthService implements IAuthService {
       throw new AuthFailure('Refresh token is wrong');
 
     const tokens = await createTokenPair({
-      payload: { userId, email },
-      privateKey: keyStore.privateKey,
+      payload: {
+        userId: user.id,
+        email: user.email,
+        roles: listName,
+      },
       publicKey: keyStore.publicKey,
+      privateKey: keyStore.privateKey,
     });
+
     const keyToken = await AuthService._keyTokenService.foundKey({
       userId,
     });
@@ -294,10 +299,7 @@ export class AuthService implements IAuthService {
       refreshToken: tokens.refreshToken,
       userId,
     });
-
-    return {
-      tokens,
-      result,
-    };
+    return tokens;
+    return foundRole;
   }
 }

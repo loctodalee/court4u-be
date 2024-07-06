@@ -25,16 +25,8 @@ class SuccessResponse {
     this.metaData = metaData;
   }
 
-  send(res: Response, accessToken: string, refreshToken: string) {
-    const option = {
-      httpOnly: true,
-      secure: true,
-    };
-    return res
-      .status(this.statusCode)
-      .cookie('accessToken', accessToken, option)
-      .cookie('refreshToken', refreshToken, option)
-      .json(this);
+  send(res: Response) {
+    return res.status(this.statusCode).json(this);
   }
 }
 export { SuccessResponse };
