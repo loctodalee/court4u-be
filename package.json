@@ -1,7 +1,7 @@
 {
   "name": "court4u-be",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "ts-node index.ts",
@@ -12,8 +12,13 @@
     "prisma-studio": "dotenv -e .env.development.local -- npx prisma studio"
   },
   "author": "",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "license": "ISC",
-  "description": "",
+  "description": "Simple hello world sample in Node",
+  "private": true,
   "dependencies": {
     "@prisma/client": "^5.14.0",
     "@types/bcrypt": "^5.0.2",
