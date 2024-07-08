@@ -1,8 +1,8 @@
 const app = require('./src/app');
-const PORT = process.env.PORT || 8080;
+const port = parseInt(process.env.PORT as string) || 8080;
 
-const server = app.listen(PORT, () => {
-  console.log(`Court4u start with port ${PORT}`);
+const server = app.listen(port, () => {
+  console.log(`Court4u start with port ${port}`);
 });
 
 process.on('SIGINT', () => {
