@@ -1,4 +1,4 @@
-import { Sex, staffProfile, users } from '@prisma/client';
+import { Sex, staffProfile, user } from '@prisma/client';
 import { List } from 'lodash';
 
 export interface IStaffProfileRepository {
@@ -15,5 +15,5 @@ export interface IStaffProfileRepository {
     sex: Sex;
     avatarUrl: string | null;
     dateOfBirth: Date | null;
-  }): Promise<users>;
+  }): Promise<user>;
 }
