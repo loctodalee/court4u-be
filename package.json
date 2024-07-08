@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node server.ts",
+    "start": "ts-node index.ts",
     "build": "tsc",
     "db-push": "dotenv -e .env.development.local -- npx prisma db push",
     "db-pull": "dotenv -e .env.development.local -- npx prisma db pull",
