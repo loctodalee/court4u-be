@@ -62,4 +62,14 @@ export class SlotController {
       }),
     }).send(res);
   }
+
+  public async getClubWithDateTime(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'get court remain court',
+      metaData: await SlotController.slotService.getClubWithDateTime(
+        new Date(req.query.date as string),
+        new Date(req.query.time as string)
+      ),
+    }).send(res);
+  }
 }

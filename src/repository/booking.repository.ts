@@ -37,14 +37,23 @@ export class BookingRepository implements IBookingRepository {
 
   public async updateBooking(
     bookingId: string,
-    status: BookingStatus
+    data: {
+      status?: BookingStatus;
+      totalPrice?: number;
+    }
   ): Promise<booking> {
     return await prisma.booking.update({
       where: {
         id: bookingId,
       },
-      data: {
-        status,
+      data,
+    });
+  }
+
+  public async deleteBooking(id: string): Promise<void> {
+    await prisma.booking.delete({
+      where: {
+        id,
       },
     });
   }

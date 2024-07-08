@@ -21,4 +21,6 @@ export interface IClubSubscriptionService {
   }): Promise<any>;
 
   paymentCallBack(args: any): Promise<any>;
+  findClubSubsByClubId(id: string): Promise<clubSubscription | null>;
+  getAll(): Promise<clubSubscription[]>;
 }

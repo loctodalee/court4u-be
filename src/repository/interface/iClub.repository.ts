@@ -9,6 +9,7 @@ export interface IClubRepository {
     cityOfProvince,
     logoUrl,
     description,
+    preOrder,
   }: {
     courtOwnerId: string;
     name: string;
@@ -17,6 +18,7 @@ export interface IClubRepository {
     cityOfProvince: string;
     logoUrl: string | null;
     description: string;
+    preOrder: number;
   }): Promise<club>;
   foundClub({ options }: { options: any }): Promise<club | null>;
   getClubs(): Promise<club[]>;
@@ -29,6 +31,7 @@ export interface IClubRepository {
       cityOfProvince?: string;
       logoUrl?: string;
       description?: string;
+      preOrder?: number;
     }
   ): Promise<club>;
   deleteClub({ id }: { id: string }): Promise<club>;

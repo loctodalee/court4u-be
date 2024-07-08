@@ -54,4 +54,18 @@ export class ClubSubscriptionRepository implements IClubSubscriptionRepository {
       },
     });
   }
+
+  public async foundClubsubByClubId(
+    id: string
+  ): Promise<clubSubscription | null> {
+    return await prisma.clubSubscription.findFirst({
+      where: {
+        clubId: id,
+      },
+    });
+  }
+
+  public async getAll(): Promise<clubSubscription[]> {
+    return await prisma.clubSubscription.findMany();
+  }
 }

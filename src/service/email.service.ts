@@ -6,7 +6,6 @@ import crypto from 'crypto';
 import { verifyTemplate } from '../template/sendMail.template';
 import { LibraryResponse, SendEmailV3_1 } from 'node-mailjet';
 import { mailjet } from '../lib/init.mailjet';
-import { error } from 'console';
 export class EmailService implements IEmailService {
   private static Instance: EmailService;
   public static getInstance(): IEmailService {
@@ -55,11 +54,13 @@ export class EmailService implements IEmailService {
     toEmail,
     subject,
     text,
+    attachment = undefined,
   }: {
     html: any;
     toEmail: string;
     subject: string;
     text: string;
+    attachment?: SendEmailV3_1.InlinedAttachment[];
   }): Promise<any> {
     const data: SendEmailV3_1.Body = {
       Messages: [
@@ -72,17 +73,16 @@ export class EmailService implements IEmailService {
               Email: toEmail,
             },
           ],
-
           Subject: subject,
           HTMLPart: html,
           TextPart: text,
+          InlinedAttachments: attachment,
         },
       ],
     };
     const result: LibraryResponse<SendEmailV3_1.Response> = await mailjet
       .post('send', { version: 'v3.1' })
       .request(data);
-
     const { Status } = result.body.Messages[0];
   }
 
@@ -102,19 +102,47 @@ export class EmailService implements IEmailService {
       };
       const content = replacePlaceholder(template, params);
       console.log('send email link verify');
-      // this.sendEmailLinkVerify({
-      //   html: content,
-      //   toEmail: email,
-      //   subject: 'Verify your email',
-      //   text: 'Verify',
-      // }).catch((error) => {
-      //   throw new Error(error);
-      // });
       this.sendMailJect({
         html: content,
         toEmail: email,
         subject: 'Verify your email',
         text: 'Verify',
+      }).catch((error) => {
+        throw new Error(error);
+      });
+      return token;
+    } catch (error: any) {
+      throw new Error(error);
+    }
+  }
+
+  public async sendEmailConfirmation({
+    email,
+    content,
+    subject,
+    attachment,
+  }: {
+    subject: string;
+    email: string;
+    content: string;
+    attachment: SendEmailV3_1.InlinedAttachment[];
+  }): Promise<any> {
+    try {
+      const token = this.generateRandomToken();
+      //2. get template
+      const template = verifyTemplate;
+      //3. replace content
+      const params = {
+        // link_verify: `http://localhost:8080/api/auth/welcome_back?token=${token}`,
+      };
+      // const content = replacePlaceholder(template, params);
+      console.log('send email confirmation');
+      await this.sendMailJect({
+        html: content,
+        toEmail: email,
+        subject,
+        text: 'Court4u',
+        attachment,
       }).catch((error) => {
         throw new Error(error);
       });

@@ -10,4 +10,5 @@ export interface ICourtService {
     status: CourtStatus;
     number: number;
   }): Promise<court>;
+  getAllCourtByClubId(id: string): Promise<court[]>;
 }

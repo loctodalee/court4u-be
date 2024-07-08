@@ -38,4 +38,22 @@ export class ClubSubscriptionController {
         ),
     }).send(res);
   }
+
+  public async findClubSubsByClubId(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Find club subscription',
+      metaData:
+        await ClubSubscriptionController.clubSubscriptionService.findClubSubsByClubId(
+          req.clubId
+        ),
+    }).send(res);
+  }
+
+  public async getAll(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Find club subscription',
+      metaData:
+        await ClubSubscriptionController.clubSubscriptionService.getAll(),
+    }).send(res);
+  }
 }

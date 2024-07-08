@@ -24,4 +24,5 @@ export interface ISlotService {
     startDate: Date;
     endDate: Date;
   }): Promise<any>;
+  getClubWithDateTime(date: Date, time: Date): Promise<any>;
 }

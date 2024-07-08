@@ -58,4 +58,12 @@ export class MemberSubscriptionRepository
   }): Promise<memberSubscription> {
     return await prisma.memberSubscription.update(options);
   }
+
+  public async findBySubscriptionId(id: string): Promise<memberSubscription[]> {
+    return await prisma.memberSubscription.findMany({
+      where: {
+        subscriptionId: id,
+      },
+    });
+  }
 }

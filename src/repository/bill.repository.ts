@@ -49,6 +49,6 @@ export class BillRepository implements IBillRepository {
   }
 
   public async deleteBill(id: string): Promise<bill | null> {
-    return prisma.bill.delete({ where: { id } });
+    return await prisma.bill.delete({ where: { id } });
   }
 }

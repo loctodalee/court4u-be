@@ -29,4 +29,5 @@ export interface IMemberSubscriptionRepository {
   }: {
     options: any;
   }): Promise<memberSubscription>;
+  findBySubscriptionId(id: string): Promise<memberSubscription[]>;
 }

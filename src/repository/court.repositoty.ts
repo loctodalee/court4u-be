@@ -27,4 +27,12 @@ export class CourtRepository implements ICourtRepository {
       },
     });
   }
+
+  public async getAllCourtByClubId(id: string): Promise<court[]> {
+    return await prisma.court.findMany({
+      where: {
+        clubId: id,
+      },
+    });
+  }
 }

@@ -152,12 +152,13 @@ model club {
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt
   user               user                @relation(fields: [courtOwnerId], references: [id])
+  preOrder Int @default(100)
   clubImage          clubImage[]
   review             review[]
   slot               slot[]
   clubSubscription  clubSubscription?
   staffProfile       staffProfile?
-  subscriptionDetail subscriptionDetail?
+  subscriptionDetail subscriptionDetail[]
   subscriptionOption subscriptionOption[]
   court court[]
 }
@@ -210,7 +211,7 @@ model subscriptionDetail {
   totalTime  Int?
   createdAt   DateTime                 @default(now())
   updatedAt   DateTime                 @updatedAt
-  clubId      String                   @unique
+  clubId      String                   
   status      SubscriptionOptionStatus
   club        club                     @relation(fields: [clubId], references: [id])
 }

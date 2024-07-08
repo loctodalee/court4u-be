@@ -147,4 +147,33 @@ export class SlotService implements ISlotService {
     console.log(listSlotInfo);
     return listSlotInfo;
   }
+
+  public async getClubWithDateTime(date: Date, time: Date): Promise<any> {
+    const slots = await SlotService._slotRepository.findManySlot({
+      options: {},
+    });
+    interface slotRemain extends slot {
+      remain: number;
+    }
+    const remainSlotList: slotRemain[] = [];
+
+    await Promise.all(
+      slots.map(async (x) => {
+        const remain = await SlotService._slotOnCourtService.getRemainCourt({
+          slotId: x.id,
+          date,
+        });
+        if (remain != 0) {
+          remainSlotList.push({
+            ...x,
+            remain: remain,
+          });
+        }
+      })
+    );
+
+    console.log(remainSlotList);
+
+    return remainSlotList;
+  }
 }

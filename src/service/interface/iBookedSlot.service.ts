@@ -11,7 +11,7 @@ export interface IBookedSlotService {
   }: {
     userId: string;
     slotList: bookSlot[];
-  }): Promise<Prisma.BatchPayload>;
+  }): Promise<any>;
   // userId: string;
   // data: {
   //   date: Date;
@@ -29,4 +29,6 @@ export interface IBookedSlotService {
   }): Promise<bookedSlot[]>;
 
   paymentCallBack(avgs: any): Promise<any>;
+  updateCheckIn(bookedSlotId: string): Promise<any>;
+  updateRemainMoney(bookedSlotId: string, money: number): Promise<any>;
 }

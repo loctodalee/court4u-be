@@ -197,9 +197,10 @@ export class MemberSubscriptionService implements IMemberSubscriptionService {
   }
 
   public async updateMonthSubscription(
-    id: string
-  ): Promise<memberSubscription> {
-    const today = new Date(Date.now()).toISOString().split('T')[0];
+    id: string,
+    date: Date
+  ): Promise<memberSubscription | null> {
+    const bookDate = new Date(date).toISOString().split('T')[0];
     const subscription =
       await MemberSubscriptionService._memberSubscriptionRepository.foundMemberSubscription(
         {
@@ -213,7 +214,7 @@ export class MemberSubscriptionService implements IMemberSubscriptionService {
     if (!subscription) {
       throw new NotFoundError('Subscription not found');
     }
-    if (!subscription.usesHistory.includes(today)) {
+    if (!subscription.usesHistory.includes(bookDate)) {
       const updatedSubscription =
         await MemberSubscriptionService._memberSubscriptionRepository.updateMemberSubscription(
           {
@@ -221,7 +222,7 @@ export class MemberSubscriptionService implements IMemberSubscriptionService {
               where: { id },
               data: {
                 usesHistory: {
-                  push: today,
+                  push: bookDate,
                 },
               },
             },
@@ -229,7 +230,7 @@ export class MemberSubscriptionService implements IMemberSubscriptionService {
         );
       return updatedSubscription;
     } else {
-      return subscription;
+      return null;
     }
   }
 
@@ -251,6 +252,14 @@ export class MemberSubscriptionService implements IMemberSubscriptionService {
       {
         options,
       }
+    );
+  }
+
+  public async findMemberSubscriptionBySubId(
+    id: string
+  ): Promise<memberSubscription[]> {
+    return await MemberSubscriptionService._memberSubscriptionRepository.findBySubscriptionId(
+      id
     );
   }
 }

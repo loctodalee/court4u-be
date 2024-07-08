@@ -29,4 +29,12 @@ export class CourtController {
       }),
     }).send(res);
   }
+  async getAllCourtByClubId(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'get  new court',
+      metaData: await CourtController.courtService.getAllCourtByClubId(
+        req.clubId
+      ),
+    }).send(res);
+  }
 }

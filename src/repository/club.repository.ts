@@ -18,6 +18,7 @@ export class ClubRepository implements IClubRepository {
     cityOfProvince,
     logoUrl,
     description,
+    preOrder,
   }: {
     courtOwnerId: string;
     name: string;
@@ -26,6 +27,7 @@ export class ClubRepository implements IClubRepository {
     cityOfProvince: string;
     logoUrl: string | null;
     description: string;
+    preOrder: number;
   }): Promise<club> {
     return await prisma.club.create({
       data: {
@@ -36,6 +38,7 @@ export class ClubRepository implements IClubRepository {
         name,
         description,
         logoUrl,
+        preOrder,
       },
     });
   }
@@ -57,6 +60,7 @@ export class ClubRepository implements IClubRepository {
       cityOfProvince?: string;
       logoUrl?: string;
       description?: string;
+      preOrder?: number;
     }
   ): Promise<club> {
     return await prisma.club.update({

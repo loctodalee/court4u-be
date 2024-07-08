@@ -29,4 +29,8 @@ export class CourtService implements ICourtService {
       status,
     });
   }
+
+  public async getAllCourtByClubId(id: string): Promise<court[]> {
+    return await CourtService._courtRepository.getAllCourtByClubId(id);
+  }
 }

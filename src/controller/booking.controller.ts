@@ -69,4 +69,23 @@ export class BookingController {
       }),
     }).send(res);
   }
+
+  public async checkIn(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Checkin Success',
+      metaData: await BookingController.bookedSlotService.updateCheckIn(
+        req.query.bookedSlotId as string
+      ),
+    }).send(res);
+  }
+
+  public async updateRemainPrice(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Checkin Success',
+      metaData: await BookingController.bookedSlotService.updateRemainMoney(
+        req.params.bookedSlotId,
+        req.body.price
+      ),
+    }).send(res);
+  }
 }

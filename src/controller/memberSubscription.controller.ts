@@ -37,7 +37,15 @@ export class MemberSubscriptionController {
           }
         ),
     }).send(res);
-    // res.status(200).json(req.query);
-    // console.log(req.query);
+  }
+
+  public async findBySubscriptionId(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Find membersubscription',
+      metaData:
+        await MemberSubscriptionController.memberSubscriptionService.findMemberSubscriptionBySubId(
+          req.params.id
+        ),
+    }).send(res);
   }
 }

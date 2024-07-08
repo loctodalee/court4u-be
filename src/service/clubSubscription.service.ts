@@ -140,4 +140,19 @@ export class ClubSubscriptionService implements IClubSubscriptionService {
       throw new BadRequestError('Payment fail');
     }
   }
+
+  public async findClubSubsByClubId(
+    id: string
+  ): Promise<clubSubscription | null> {
+    const result =
+      await ClubSubscriptionService._clubSubsriptionRepo.foundClubsubByClubId(
+        id
+      );
+    if (!result) throw new NotFoundError('No subscription found');
+    return result;
+  }
+
+  public async getAll(): Promise<clubSubscription[]> {
+    return await ClubSubscriptionService._clubSubsriptionRepo.getAll();
+  }
 }

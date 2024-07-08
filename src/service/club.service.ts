@@ -37,6 +37,7 @@ export class ClubService implements IClubService {
     cityOfProvince,
     logoUrl = null,
     description = '',
+    preOrder,
   }: {
     courtOwnerId: string;
     name: string;
@@ -45,6 +46,7 @@ export class ClubService implements IClubService {
     cityOfProvince: string;
     logoUrl: string | null;
     description: string;
+    preOrder: number;
   }): Promise<club> {
     const newClub = await ClubService._clubRepository.addClub({
       name,
@@ -54,6 +56,7 @@ export class ClubService implements IClubService {
       description,
       district,
       logoUrl,
+      preOrder,
     });
     await ClubService._userService.updateApiKey({
       apiKey: newClub.apiKey,
@@ -94,6 +97,7 @@ export class ClubService implements IClubService {
       logoUrl?: string;
       description?: string;
       status?: ClubStatus;
+      preOrder?: number;
     }
   ): Promise<club> {
     var result = await ClubService._clubRepository.updateClub(clubId, data);
