@@ -79,4 +79,4 @@ const app = express();
   );
 })();
 
-export default app;
+module.exports = app;

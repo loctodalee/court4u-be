@@ -5,14 +5,14 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "ts-node index.ts",
-    "build": "tsc",
+    "build": "npx tsc",
+    "gcp-build": "npx tsc",
     "db-push": "dotenv -e .env.development.local -- npx prisma db push",
     "db-pull": "dotenv -e .env.development.local -- npx prisma db pull",
     "prisma-gen": "npx prisma generate",
     "prisma-studio": "dotenv -e .env.development.local -- npx prisma studio"
   },
   "author": "",
-  "type": "commonjs",
   "engines": {
     "node": ">=16.0.0"
   },
