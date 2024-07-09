@@ -1,0 +1,20 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const asyncHandler_1 = require("../../helper/asyncHandler");
+const authUtils_1 = require("../../auth/authUtils");
+const slot_controller_1 = require("../../controller/slot.controller");
+const rbac_1 = require("../../middleware/rbac");
+const router = express_1.default.Router();
+router.get('/getClubs', (0, asyncHandler_1.asyncHandler)(slot_controller_1.SlotController.getInstacnce().getClubWithDateTime));
+router.get('/getCourtBySlotId/:id', (0, asyncHandler_1.asyncHandler)(slot_controller_1.SlotController.getInstacnce().getAllCourtsBySlotId));
+router.post('/getRemainCourt', (0, asyncHandler_1.asyncHandler)(slot_controller_1.SlotController.getInstacnce().getRemainCourt));
+router.use(authUtils_1.authentication);
+router.use(authUtils_1.CheckApiKey);
+router.use((0, rbac_1.grantAccess)('createAny', 'slot'));
+router.post('/', (0, asyncHandler_1.asyncHandler)(slot_controller_1.SlotController.getInstacnce().addSlot));
+router.post('/:id/courts', (0, asyncHandler_1.asyncHandler)(slot_controller_1.SlotController.getInstacnce().addCourtOnSlot));
+module.exports = router;

@@ -1,0 +1,20 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const asyncHandler_1 = require("../../helper/asyncHandler");
+const authUtils_1 = require("../../auth/authUtils");
+const role_controller_1 = require("../../controller/role.controller");
+const rbac_1 = require("../../middleware/rbac");
+const router = express_1.default.Router();
+router.use(authUtils_1.authentication);
+router.use((0, rbac_1.grantAccess)('readAny', 'role'));
+router.post('/', (0, asyncHandler_1.asyncHandler)(role_controller_1.RoleController.getInstance().addRole));
+router.get('/name/:name', (0, asyncHandler_1.asyncHandler)(role_controller_1.RoleController.getInstance().findByName));
+router.get('/userRole', (0, asyncHandler_1.asyncHandler)(role_controller_1.RoleController.getInstance().getAllUserRole));
+router.get('/userRole/:userId/:roleId', (0, asyncHandler_1.asyncHandler)(role_controller_1.RoleController.getInstance().findUserRole));
+router.get('/:id', (0, asyncHandler_1.asyncHandler)(role_controller_1.RoleController.getInstance().findRoleById));
+router.get('/', (0, asyncHandler_1.asyncHandler)(role_controller_1.RoleController.getInstance().getAllRole));
+module.exports = router;
