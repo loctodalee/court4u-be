@@ -6,7 +6,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node index.ts",
     "build": "tsc",
-    "start": "node dist/app.js",
+    "start": "node app.js",
     "gcp-build": "npx tsc",
     "db-push": "dotenv -e .env.development.local -- npx prisma db push",
     "db-pull": "dotenv -e .env.development.local -- npx prisma db pull",
