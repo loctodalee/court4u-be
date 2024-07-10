@@ -6,7 +6,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node index.ts",
     "build": "tsc",
-    "start": "node dist/index.js",
+    "start": " node dist/index.js",
     "gcp-build": "npx tsc",
     "db-push": "dotenv -e .env.development.local -- npx prisma db push",
     "db-pull": "dotenv -e .env.development.local -- npx prisma db pull",
@@ -60,6 +60,6 @@
     "morgan": "^1.10.0",
     "prisma": "^5.14.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.5"
+    "typescript": "^5.5.3"
   }
 }

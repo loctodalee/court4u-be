@@ -4,13 +4,13 @@ import { IUserService } from '../service/interface/iUser.service';
 import { UserService } from '../service/user.service';
 
 const FacebookStrategy = require('passport-facebook').Strategy;
-
+const host = process.env.HOST;
 passport.use(
   new FacebookStrategy(
     {
       clientID: process.env.FACEBOOK_CLIENT_ID,
       clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-      callbackURL: 'http://localhost:8080/api/auth/facebook/callback',
+      callbackURL: `${host}/api/auth/facebook/callback`,
       profileFields: ['id', 'email', 'name', 'displayName', 'photos'],
     },
     async (

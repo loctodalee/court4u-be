@@ -265,10 +265,11 @@ export class BookedSlotService implements IBookedSlotService {
           booking.id
         );
       var attachments: SendEmailV3_1.InlinedAttachment[] = [];
+      const host = process.env.HOST;
       var listQRMail: QRMail[] = await Promise.all(
         bookedSlot.map(async (x, index) => {
           const qrBuffer = await QRCode.toBuffer(
-            `http://localhost:8080/api/bookSlots/checkIn?bookedSlotId=${x.id}`
+            `${host}/api/bookSlots/checkIn?bookedSlotId=${x.id}`
           );
           const attachmentId = `qr-${index}.png`;
           const base64QR = qrBuffer.toString('base64');
@@ -352,11 +353,12 @@ export class BookedSlotService implements IBookedSlotService {
         await BookedSlotService._bookedSlotRepository.getSlotByBookingId(
           booking.id
         );
+      const host = process.env.HOST;
       var attachments: SendEmailV3_1.InlinedAttachment[] = [];
       var listQRMail: QRMail[] = await Promise.all(
         bookedSlot.map(async (x, index) => {
           const qrBuffer = await QRCode.toBuffer(
-            `http://localhost:8080/api/bookSlots/checkIn?bookedSlotId=${x.id}`
+            `${host}/api/bookSlots/checkIn?bookedSlotId=${x.id}`
           );
           const attachmentId = `qr-${index}.png`;
           const base64QR = qrBuffer.toString('base64');
