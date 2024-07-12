@@ -66,4 +66,26 @@ export class MemberSubscriptionRepository
       },
     });
   }
+
+  public async getAll(): Promise<memberSubscription[]> {
+    return await prisma.memberSubscription.findMany();
+  }
+
+  public async getByClubId(clubId: string): Promise<memberSubscription[]> {
+    return await prisma.memberSubscription.findMany({
+      where: {
+        subscriptionOption: {
+          clubId,
+        },
+      },
+    });
+  }
+
+  public async getByUserId(userId: string): Promise<memberSubscription[]> {
+    return await prisma.memberSubscription.findMany({
+      where: {
+        memberId: userId,
+      },
+    });
+  }
 }

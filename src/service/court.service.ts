@@ -33,4 +33,8 @@ export class CourtService implements ICourtService {
   public async getAllCourtByClubId(id: string): Promise<court[]> {
     return await CourtService._courtRepository.getAllCourtByClubId(id);
   }
+
+  public async getCourtsBySlotId(slotId: string): Promise<court[]> {
+    return await CourtService._courtRepository.getCourtBySlotId(slotId);
+  }
 }

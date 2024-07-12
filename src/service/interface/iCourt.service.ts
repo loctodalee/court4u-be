@@ -11,4 +11,5 @@ export interface ICourtService {
     number: number;
   }): Promise<court>;
   getAllCourtByClubId(id: string): Promise<court[]>;
+  getCourtsBySlotId(slotId: string): Promise<court[]>;
 }

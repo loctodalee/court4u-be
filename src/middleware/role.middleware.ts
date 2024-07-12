@@ -166,6 +166,18 @@ let grantList = [
     action: 'read:any',
     attributes: '*',
   },
+  {
+    role: 'admin',
+    resource: 'Dashboard.Admin',
+    action: 'read:any',
+    attributes: '*',
+  },
+  {
+    role: 'owner',
+    resource: 'Dashboard.Owner',
+    action: 'read:own',
+    attributes: '*',
+  },
 ];
 const ac = new AccessControl(grantList);
 export default ac;

@@ -31,4 +31,5 @@ export interface IBookedSlotService {
   paymentCallBack(avgs: any): Promise<any>;
   updateCheckIn(bookedSlotId: string): Promise<any>;
   updateRemainMoney(bookedSlotId: string, money: number): Promise<any>;
+  getBookedSlotsByClubId(clubId: string): Promise<bookedSlot[]>;
 }

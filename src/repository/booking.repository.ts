@@ -57,4 +57,27 @@ export class BookingRepository implements IBookingRepository {
       },
     });
   }
+
+  public async getBookingsByClubId(clubId: string) {
+    const bookings = await prisma.booking.findMany({
+      where: {
+        bookedSlot: {
+          some: {
+            slot: {
+              clubId: clubId,
+            },
+          },
+        },
+      },
+      include: {
+        bookedSlot: {
+          include: {
+            slot: true,
+          },
+        },
+        user: true,
+      },
+    });
+    return bookings;
+  }
 }

@@ -18,4 +18,5 @@ export interface IBookingRepository {
     }
   ): Promise<booking>;
   deleteBooking(id: string): Promise<void>;
+  getBookingsByClubId(id: string): Promise<booking[]>;
 }

@@ -477,4 +477,10 @@ export class BookedSlotService implements IBookedSlotService {
       remainMoney,
     };
   }
+
+  public async getBookedSlotsByClubId(clubId: string): Promise<bookedSlot[]> {
+    return await BookedSlotService._bookedSlotRepository.getBookedSlotByClubId(
+      clubId
+    );
+  }
 }

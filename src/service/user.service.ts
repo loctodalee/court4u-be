@@ -1,7 +1,12 @@
 import { user } from '@prisma/client';
 import { UserRepository } from '../repository/user.repository';
 import { IUserService } from './interface/iUser.service';
-import { AuthFailure, BadRequestError } from '../handleResponse/error.response';
+import {
+  AuthFailure,
+  BadRequestError,
+  NotFoundError,
+} from '../handleResponse/error.response';
+import { filterData } from '../util/filterData';
 
 export class UserService implements IUserService {
   private static Instance: UserService;
@@ -11,7 +16,7 @@ export class UserService implements IUserService {
     }
     return this.Instance;
   }
-  public async getAll(): Promise<user[]> {
+  public async getAll(): Promise<any[]> {
     return UserRepository.getInstance().getAll();
   }
   public async getUserByEmail({
@@ -26,7 +31,29 @@ export class UserService implements IUserService {
     };
     return await UserRepository.getInstance().getUser({ options });
   }
-
+  public async getUserByIdFilter({ id }: { id: string }): Promise<any> {
+    const options = {
+      where: {
+        id,
+      },
+    };
+    const result = await UserRepository.getInstance().getUser({ options });
+    if (!result) throw new NotFoundError('User not found');
+    return filterData({
+      fields: [
+        'id',
+        'fullname',
+        'email',
+        'phone',
+        'sex',
+        'avatarUrl',
+        'dateOfBirth',
+        'status',
+        'apiKey',
+      ],
+      object: result,
+    });
+  }
   public async getUserById({ id }: { id: string }): Promise<user | null> {
     const options = {
       where: {

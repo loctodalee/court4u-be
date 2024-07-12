@@ -1,8 +1,7 @@
-import { BillStatus, BillType, PrismaClient, bill } from '@prisma/client';
+import { BillStatus, BillType, PrismaClient, bill, slot } from '@prisma/client';
 import { List } from 'lodash';
 import { IBillRepository } from './interface/iBill.repository';
-
-const prisma = new PrismaClient();
+import prisma from '../lib/prisma';
 
 export class BillRepository implements IBillRepository {
   private static instance: BillRepository;
@@ -50,5 +49,38 @@ export class BillRepository implements IBillRepository {
 
   public async deleteBill(id: string): Promise<bill | null> {
     return await prisma.bill.delete({ where: { id } });
+  }
+
+  public async getBillsByClubId(clubId: string): Promise<bill[]> {
+    const bills = await prisma.bill.findMany({
+      where: {
+        OR: [
+          {
+            clubSubscription: {
+              clubId,
+            },
+          },
+          {
+            memberSubscription: {
+              subscriptionOption: {
+                clubId,
+              },
+            },
+          },
+          {
+            booking: {
+              bookedSlot: {
+                some: {
+                  slot: {
+                    clubId,
+                  },
+                },
+              },
+            },
+          },
+        ],
+      },
+    });
+    return bills;
   }
 }

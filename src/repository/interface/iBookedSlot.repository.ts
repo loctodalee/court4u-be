@@ -28,4 +28,5 @@ export interface IBookedSlotRepository {
     bookedSlotId: string;
     checkIn: checkInStatus;
   }): Promise<bookedSlot>;
+  getBookedSlotByClubId(clubId: string): Promise<bookedSlot[]>;
 }

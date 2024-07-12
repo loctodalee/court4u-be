@@ -51,4 +51,7 @@ export class BookingService implements IBookingService {
   public async deleteBooking(id: string): Promise<void> {
     await BookingService._bookingRepository.deleteBooking(id);
   }
+  public async getBookingByClubId(id: string): Promise<booking[]> {
+    return await BookingService._bookingRepository.getBookingsByClubId(id);
+  }
 }

@@ -97,4 +97,14 @@ export class BookedSlotRepository implements IBookedSlotRepository {
       },
     });
   }
+
+  public async getBookedSlotByClubId(clubId: string): Promise<bookedSlot[]> {
+    return await prisma.bookedSlot.findMany({
+      where: {
+        slot: {
+          clubId,
+        },
+      },
+    });
+  }
 }

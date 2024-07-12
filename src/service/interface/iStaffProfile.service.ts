@@ -13,4 +13,5 @@ export interface IStaffProfileService {
     dateOfBirth: Date | null;
     clubId: string;
   }): Promise<staffProfile>;
+  getStaffProfileByClubId(clubId: string): Promise<staffProfile[]>;
 }

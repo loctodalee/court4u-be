@@ -16,4 +16,8 @@ router.use('/api/slots', require('./slot'));
 router.use('/api/staffProfiles', require('./staffProfile'));
 router.use('/api/clubImages', require('./clubImage'));
 router.use('/api/bookSlots', require('./bookSlot'));
+router.use('/api/dashboard/admin', require('./dashboard/admin'));
+router.use('/api/dashboard/owner', require('./dashboard/owner'));
+router.use('/api/dashboard/staff', require('./dashboard/staff'));
+
 module.exports = router;

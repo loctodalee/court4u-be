@@ -11,4 +11,5 @@ export interface ICourtRepository {
     number: number;
   }): Promise<court>;
   getAllCourtByClubId(id: string): Promise<court[]>;
+  getCourtBySlotId(slotId: string): Promise<court[]>;
 }

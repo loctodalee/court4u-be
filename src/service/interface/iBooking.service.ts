@@ -17,4 +17,5 @@ export interface IBookingService {
   ): Promise<booking>;
   updateBookingPrice(bookingId: string, price: number): Promise<booking>;
   deleteBooking(id: string): Promise<void>;
+  getBookingByClubId(id: string): Promise<booking[]>;
 }

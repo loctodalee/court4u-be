@@ -35,4 +35,16 @@ export class CourtRepository implements ICourtRepository {
       },
     });
   }
+
+  public async getCourtBySlotId(slotId: string): Promise<court[]> {
+    return await prisma.court.findMany({
+      where: {
+        slotOnCourt: {
+          some: {
+            slotId,
+          },
+        },
+      },
+    });
+  }
 }

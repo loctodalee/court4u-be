@@ -11,8 +11,20 @@ export class UserRepository implements IUserRepository {
     }
     return UserRepository.Instance;
   }
-  public async getAll(): Promise<user[]> {
-    return await prisma.user.findMany();
+  public async getAll(): Promise<any[]> {
+    return await prisma.user.findMany({
+      select: {
+        id: true,
+        fullname: true,
+        email: true,
+        phone: true,
+        avatarUrl: true,
+        dateOfBirth: true,
+        sex: true,
+        status: true,
+        apiKey: true,
+      },
+    });
   }
   public async getUser({ options }: { options: any }): Promise<user | null> {
     return await prisma.user.findFirst(options);

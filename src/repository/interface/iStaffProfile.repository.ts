@@ -16,4 +16,6 @@ export interface IStaffProfileRepository {
     avatarUrl: string | null;
     dateOfBirth: Date | null;
   }): Promise<user>;
+
+  getStaffProfileByClubId(clubId: string): Promise<staffProfile[]>;
 }

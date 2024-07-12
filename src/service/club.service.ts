@@ -27,6 +27,7 @@ export class ClubService implements IClubService {
     address?: string;
     name?: string;
   }): Promise<club[]> {
+    console.log(data.cityOfProvince);
     return await ClubService._clubRepository.searchClub(data);
   }
   public async addClub({

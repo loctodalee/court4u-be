@@ -262,4 +262,24 @@ export class MemberSubscriptionService implements IMemberSubscriptionService {
       id
     );
   }
+
+  public async getAllMemberSubscription(): Promise<memberSubscription[]> {
+    return await MemberSubscriptionService._memberSubscriptionRepository.getAll();
+  }
+
+  public async getMemberSubscriptionByClubId(
+    clubId: string
+  ): Promise<memberSubscription[]> {
+    return await MemberSubscriptionService._memberSubscriptionRepository.getByClubId(
+      clubId
+    );
+  }
+
+  public async getMemberSubscriptionByUserId(
+    userId: string
+  ): Promise<memberSubscription[]> {
+    return await MemberSubscriptionService._memberSubscriptionRepository.getByUserId(
+      userId
+    );
+  }
 }

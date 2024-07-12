@@ -1,9 +1,10 @@
 import { user } from '@prisma/client';
 
 export interface IUserService {
-  getAll(): Promise<user[]>;
+  getAll(): Promise<any[]>;
   getUserByEmail({ email }: { email: string }): Promise<user | null>;
   getUserById({ id }: { id: string }): Promise<user | null>;
+  getUserByIdFilter({ id }: { id: string }): Promise<any>;
   createNewUser({
     fullname,
     password,

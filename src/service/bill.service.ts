@@ -44,10 +44,14 @@ export class BillService implements IBillService {
       status?: BillStatus;
     }
   ): Promise<bill | null> {
-    return BillService.billRepository.updateBill(id, data);
+    return await BillService.billRepository.updateBill(id, data);
   }
 
   public async deleteBill(id: string): Promise<bill | null> {
-    return BillService.billRepository.deleteBill(id);
+    return await BillService.billRepository.deleteBill(id);
+  }
+
+  public async getBillsByClubId(clubId: string): Promise<bill[]> {
+    return await BillService.billRepository.getBillsByClubId(clubId);
   }
 }

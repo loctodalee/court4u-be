@@ -115,7 +115,7 @@ model bookedSlot {
 model booking {
   id        String   @id @default(uuid())
   userId    String
-  billId    String
+  billId    String @unique
   date      DateTime
   status    BookingStatus
   totalPrice Float
@@ -123,6 +123,8 @@ model booking {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   user      user    @relation(fields: [userId], references: [id])
+  bill bill @relation(fields: [billId], references: [id])
+
 }
 
 model bill {
@@ -136,6 +138,7 @@ model bill {
   type      BillType
   memberSubscription memberSubscription?
   clubSubscription clubSubscription?
+  booking booking?
 }
 
 model club {

@@ -23,55 +23,39 @@ import { BookedSlotService } from '../service/bookedSlot.service';
 import { ISubscriptionForClubService } from '../service/interface/iSubscriptionForClub.service';
 import { SubscriptionForClubService } from '../service/subscriptionForClub.service';
 import { Request, Response } from 'express';
+import { ICourtService } from '../service/interface/iCourt.service';
+import { CourtService } from '../service/court.service';
 const { SuccessResponse } = require('../handleResponse/success.response');
 
-export class DashboardController {
-  private static Instance: DashboardController;
-  public static getInstance(): DashboardController {
+export class DashboardStaffController {
+  private static Instance: DashboardStaffController;
+  public static getInstance(): DashboardStaffController {
     if (!this.Instance) {
-      this.Instance = new DashboardController();
+      this.Instance = new DashboardStaffController();
     }
     return this.Instance;
   }
 
-  private static _billService: IBillService;
   private static _clubServce: IClubService;
   private static _userService: IUserService;
   private static _bookingService: IBookingService;
-  private static _clubSubscriptionService: IClubSubscriptionService;
-  private static _memberSubscriptionService: IMemberSubscriptionService;
   private static _reviewService: IReviewService;
   private static _slotService: ISlotService;
+  private static _courtService: ICourtService;
   private static _staffProfile: IStaffProfileService;
-  private static _subscriptionOptionService: ISubscriptionService;
   private static _bookedSlotService: IBookedSlotService;
-  private static _subscriptionService: ISubscriptionForClubService;
+  private static _subscriptionForClubService: ISubscriptionForClubService;
 
   static {
-    this._billService = BillService.getInstance();
     this._clubServce = ClubService.getInstance();
     this._userService = UserService.getInstance();
     this._bookingService = BookingService.getInstance();
-    this._clubSubscriptionService = ClubSubscriptionService.getInstance();
-    this._memberSubscriptionService = MemberSubscriptionService.getInstance();
     this._reviewService = ReviewService.getInstance();
     this._slotService = SlotService.getInstance();
     this._staffProfile = StaffProfileService.getInstance();
-    this._subscriptionOptionService = SubscriptionFactory.getInstance();
-    this._subscriptionService = SubscriptionForClubService.getInstance();
+    this._subscriptionForClubService = SubscriptionForClubService.getInstance();
     this._bookedSlotService = BookedSlotService.getInstance();
-  }
-
-  /**
-   * @description Dashboard lấy toàn bộ Club
-   * @param req {}
-   * @param res {club[]}
-   */
-  public async getAllClub(req: Request, res: Response) {
-    new SuccessResponse({
-      message: 'Get All Club',
-      metaData: await DashboardController._clubServce.getClubs(),
-    }).send(res);
+    this._courtService = CourtService.getInstance();
   }
 
   /**
@@ -82,49 +66,95 @@ export class DashboardController {
   public async getClubById(req: Request, res: Response) {
     new SuccessResponse({
       message: 'Get All Club',
-      metaData: await DashboardController._clubServce.foundClubById({
-        clubId: req.query.id as string,
+      metaData: await DashboardStaffController._clubServce.foundClubById({
+        clubId: req.clubId,
       }),
     }).send(res);
   }
 
   /**
-   * @description Get club by location
-   * @param req {req.params.cityOfProvince?, req.params.district?, req.params.address?, req.prams.name?}
-   * @param res {club[]}
+   * @description Get bookings by club id
+   * @param req {req.params.id}
+   * @param res {booking[]}
    */
-  public async findClubByLocation(req: Request, res: Response) {
+  public async getBookingByClubId(req: Request, res: Response) {
     new SuccessResponse({
-      message: 'Get All Club',
-      metaData: await DashboardController._clubServce.searchByLocation({
-        ...req.params,
-      }),
+      message: 'Get bookings by club id',
+      metaData:
+        await DashboardStaffController._bookingService.getBookingByClubId(
+          req.clubId
+        ),
     }).send(res);
   }
 
   /**
-   * @description lấy toàn bộ bill
-   * @param req {}
-   * @param res {bill[]}
+   * @description Lấy slot theo club id
+   * @param req {req.params.clubId}
+   * @param res { slot[]}
    */
-  public async getAllBill(req: Request, res: Response) {
+  public async getSlotsByClubId(req: Request, res: Response) {
     new SuccessResponse({
-      message: 'Get All Bill',
-      metaData: await DashboardController._billService.getAllBills(),
-    }).send(res);
-  }
-
-  /**
-   * @description lấy bill theo id
-   * @param req {id: string}
-   * @param res {bill}
-   */
-  public async getBillById(req: Request, res: Response) {
-    new SuccessResponse({
-      message: 'Get All Bill',
-      metaData: await DashboardController._billService.getBillById(
-        req.query.id as string
+      message: 'Get slots by club id',
+      metaData: await DashboardStaffController._slotService.getSlotByClubId(
+        req.clubId
       ),
+    }).send(res);
+  }
+
+  /**
+   * @description Lấy toàn bộ courts theo slot id
+   * @param req {req.query.slotId}
+   * @param res {court[]}
+   */
+  public async getCourtOnSlotId(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Get court in slot',
+      metaData: await DashboardStaffController._courtService.getCourtsBySlotId(
+        req.params.slotId
+      ),
+    }).send(res);
+  }
+
+  /**
+   * @description lấy toàn bộ staff profile qua club id
+   * @param req {req.params.clubId}
+   * @param res {staffProfile[]}
+   */
+  public async getStaffProfileByClubId(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Get staff profile by club id',
+      metaData:
+        await DashboardStaffController._staffProfile.getStaffProfileByClubId(
+          req.clubId
+        ),
+    }).send(res);
+  }
+
+  /**
+   * @description lấy toàn bộ booked slot theo club id
+   * @param req {req.query.clubId}
+   * @param res {bookedSlot[]}
+   */
+  public async getBookedSlotByClubId(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Get booked slot by club id',
+      metaData:
+        await DashboardStaffController._bookedSlotService.getBookedSlotsByClubId(
+          req.clubId
+        ),
+    }).send(res);
+  }
+
+  /**
+   * @description lấy toàn bộ subscription for club
+   * @param req {}
+   * @param res {subscriptionForClub[]}
+   */
+  public async getAllSubscriptionForClub(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Get all subscription for club ',
+      metaData:
+        await DashboardStaffController._subscriptionForClubService.getAllSubscription(),
     }).send(res);
   }
 }

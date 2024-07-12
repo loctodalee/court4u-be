@@ -49,4 +49,14 @@ export class StaffProfileRepository implements IStaffProfileRepository {
       },
     });
   }
+
+  public async getStaffProfileByClubId(
+    clubId: string
+  ): Promise<staffProfile[]> {
+    return await prisma.staffProfile.findMany({
+      where: {
+        clubId,
+      },
+    });
+  }
 }

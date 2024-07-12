@@ -44,4 +44,12 @@ export class StaffProfileService implements IStaffProfileService {
     });
     return result;
   }
+
+  public async getStaffProfileByClubId(
+    clubId: string
+  ): Promise<staffProfile[]> {
+    return await StaffProfileRepository.getInstance().getStaffProfileByClubId(
+      clubId
+    );
+  }
 }
