@@ -1,9 +1,10 @@
 const { InternalServerError } = require('../handleResponse/error.response');
 const { REDIS_HOST, REDIS_PASSWORD, REDIS_PORT, REDIS_URL } = process.env;
-import redis from 'redis';
-import { createClient } from 'redis';
+import redis, { Redis } from 'ioredis';
+// import { createClient } from 'redis';
 interface RedisClient {
-  instanceConnect?: ReturnType<typeof redis.createClient>;
+  // instanceConnect?: ReturnType<typeof redis.createClient>;
+  instanceConnect?: redis;
 }
 
 let client: RedisClient = {};
@@ -34,9 +35,7 @@ const handleTimeoutError = () => {
   }, REDIS_CONNECT_TIMEOUT);
 };
 
-const handleEventConnect = (
-  connectionRedis: ReturnType<typeof createClient>
-) => {
+const handleEventConnect = (connectionRedis: Redis) => {
   connectionRedis.on(statusConnectRedis.READY, () => {
     console.log('connection redis - connection status: connected');
     if (connectionTimeout) clearTimeout(connectionTimeout);
@@ -60,9 +59,7 @@ const handleEventConnect = (
 
 export const initRedis = async () => {
   try {
-    const instanceRedis = createClient({
-      url: REDIS_URL,
-    });
+    const instanceRedis = new Redis(REDIS_URL as string);
 
     handleEventConnect(instanceRedis);
     client.instanceConnect = instanceRedis;

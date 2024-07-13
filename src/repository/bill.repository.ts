@@ -1,7 +1,18 @@
-import { BillStatus, BillType, PrismaClient, bill, slot } from '@prisma/client';
+import {
+  BillStatus,
+  BillType,
+  PrismaClient,
+  bill,
+  slot,
+  memberSubscription,
+} from '@prisma/client';
 import { List } from 'lodash';
 import { IBillRepository } from './interface/iBill.repository';
 import prisma from '../lib/prisma';
+import { getRedis } from '../lib/init.redis';
+import { BadRequestError } from '../handleResponse/error.response';
+import { randomInt } from 'crypto';
+const { instanceConnect: redisClient } = getRedis();
 
 export class BillRepository implements IBillRepository {
   private static instance: BillRepository;
@@ -14,11 +25,52 @@ export class BillRepository implements IBillRepository {
   }
 
   public async getBillById(id: string): Promise<bill | null> {
-    return prisma.bill.findUnique({ where: { id } });
+    return new Promise((resolve, reject) => {
+      redisClient!.get(`bill-${id}`, async (err, data) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+
+        if (data == null) {
+          const result = await prisma.bill.findUnique({ where: { id } });
+          if (result) {
+            redisClient!.setex(
+              `bill-${id}`,
+              randomInt(3600, 4200),
+              JSON.stringify(result)
+            );
+          }
+          resolve(result);
+        } else {
+          resolve(JSON.parse(data));
+        }
+      });
+    });
   }
 
   public async getAllBills(): Promise<bill[]> {
-    return prisma.bill.findMany();
+    return new Promise((resolve, reject) => {
+      redisClient!.get(`bill-all`, async (err, data) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        if (data == null) {
+          const result = await prisma.bill.findMany();
+          if (result) {
+            redisClient!.setex(
+              `bill-all`,
+              randomInt(3600, 4200),
+              JSON.stringify(result)
+            );
+          }
+          resolve(result);
+        } else {
+          resolve(JSON.parse(data));
+        }
+      });
+    });
   }
 
   public async createBill(data: {
@@ -28,7 +80,16 @@ export class BillRepository implements IBillRepository {
     type: BillType;
     status: BillStatus;
   }): Promise<bill> {
-    return prisma.bill.create({ data });
+    const result = await prisma.bill.create({ data });
+
+    redisClient!.del(`bill-all`);
+    const getAll = await prisma.bill.findMany();
+    redisClient!.setex(
+      `bill-all`,
+      randomInt(3600, 4200),
+      JSON.stringify(getAll)
+    );
+    return result;
   }
 
   public async updateBill(
@@ -41,46 +102,81 @@ export class BillRepository implements IBillRepository {
       status?: BillStatus;
     }
   ): Promise<bill | null> {
-    return prisma.bill.update({
+    const result = prisma.bill.update({
       where: { id },
       data,
     });
+    redisClient!.del(`bill-${id}`);
+    redisClient!.setex(
+      `bill-${id}`,
+      randomInt(3600, 4200),
+      JSON.stringify(result)
+    );
+    return result;
   }
 
   public async deleteBill(id: string): Promise<bill | null> {
-    return await prisma.bill.delete({ where: { id } });
+    const result = await prisma.bill.delete({ where: { id } });
+    redisClient!.del(`bill-${id}`);
+    redisClient!.del(`bill-all`);
+    const getAll = await prisma.bill.findMany();
+    redisClient!.setex(
+      `bill-all`,
+      randomInt(3600, 4200),
+      JSON.stringify(getAll)
+    );
+    return result;
   }
 
   public async getBillsByClubId(clubId: string): Promise<bill[]> {
-    const bills = await prisma.bill.findMany({
-      where: {
-        OR: [
-          {
-            clubSubscription: {
-              clubId,
-            },
-          },
-          {
-            memberSubscription: {
-              subscriptionOption: {
-                clubId,
-              },
-            },
-          },
-          {
-            booking: {
-              bookedSlot: {
-                some: {
-                  slot: {
+    return new Promise((resolve, reject) => {
+      redisClient!.get(`bill-club-${clubId}`, async (err, data) => {
+        if (err) {
+          reject(err);
+          throw err;
+        }
+        if (data == null) {
+          const bills = await prisma.bill.findMany({
+            where: {
+              OR: [
+                {
+                  clubSubscription: {
                     clubId,
                   },
                 },
-              },
+                {
+                  memberSubscription: {
+                    subscriptionOption: {
+                      clubId,
+                    },
+                  },
+                },
+                {
+                  booking: {
+                    bookedSlot: {
+                      some: {
+                        slot: {
+                          clubId,
+                        },
+                      },
+                    },
+                  },
+                },
+              ],
             },
-          },
-        ],
-      },
+          });
+          if (bills) {
+            redisClient!.setex(
+              `bill-club-${clubId}`,
+              randomInt(3600, 4200),
+              JSON.stringify(bills)
+            );
+          }
+          resolve(bills);
+        } else {
+          resolve(JSON.parse(data));
+        }
+      });
     });
-    return bills;
   }
 }

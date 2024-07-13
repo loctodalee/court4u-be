@@ -124,7 +124,6 @@ export class BookedSlotService implements IBookedSlotService {
 
     slotList.forEach((slot) => {
       listLockCheck.forEach((data) => {
-        console.log(data);
         if (slot.slotId === data.slotId && slot.date === data.date) {
           data.quantity += 1;
         } else {
@@ -137,8 +136,6 @@ export class BookedSlotService implements IBookedSlotService {
       });
     });
 
-    console.log(listLockCheck);
-
     // tính total price để tạo bill
     const totalPrice = bookedSlotInfoList.reduce(
       (sum, slot) => sum + slot.price,
@@ -148,7 +145,6 @@ export class BookedSlotService implements IBookedSlotService {
       (sum, slot) => sum + (slot.endTime.getTime() - slot.endTime.getTime()),
       0
     );
-    console.log(totalPrice);
 
     //lock
     const acquireProduct = await Promise.all(

@@ -3,7 +3,7 @@ import { List } from 'lodash';
 import { BillRepository } from '../repository/bill.repository';
 import { IBillService } from './interface/iBill.service';
 import { IBillRepository } from '../repository/interface/iBill.repository';
-
+import { getRedis } from '../lib/init.redis';
 export class BillService implements IBillService {
   private static Instance: BillService;
   public static getInstance(): IBillService {

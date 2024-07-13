@@ -1,6 +1,10 @@
 import { slot } from '@prisma/client';
 import { ISlotRepository } from './interface/iSlot.repository';
 import prisma from '../lib/prisma';
+import { getRedis } from '../lib/init.redis';
+import { randomInt } from 'crypto';
+import { deleteKeysByPattern } from '../util/deleteKeysByPattern';
+const { instanceConnect: redisClient } = getRedis();
 
 export class SlotRepository implements ISlotRepository {
   private static Instance: SlotRepository;
@@ -33,11 +37,32 @@ export class SlotRepository implements ISlotRepository {
         price,
       },
     });
+    deleteKeysByPattern(`slot-`);
     return result;
   }
 
   public async findManySlot({ options }: { options: any }): Promise<slot[]> {
-    return await prisma.slot.findMany(options);
+    return new Promise((resolve, reject) => {
+      redisClient?.get(`slot-${options}`, async (err, data) => {
+        if (err) {
+          reject(err);
+          throw err;
+        }
+        if (data == null) {
+          const result = await prisma.slot.findMany(options);
+          if (result) {
+            redisClient.setex(
+              `slot-${options}`,
+              randomInt(3600, 4200),
+              JSON.stringify(result)
+            );
+          }
+          resolve(result);
+        } else {
+          resolve(JSON.parse(data));
+        }
+      });
+    });
   }
 
   // public async findSlotsWithDateAndClubId({

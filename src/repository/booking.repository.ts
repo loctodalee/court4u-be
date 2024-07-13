@@ -1,6 +1,12 @@
 import { BookingStatus, booking } from '@prisma/client';
 import { IBookingRepository } from './interface/iBookingRepository';
 import prisma from '../lib/prisma';
+import { getRedis } from '../lib/init.redis';
+import { BillRepository } from './bill.repository';
+import { randomInt } from 'crypto';
+import redis from 'redis';
+import { deleteKeysByPattern } from '../util/deleteKeysByPattern';
+const { instanceConnect: redisClient } = getRedis();
 
 export class BookingRepository implements IBookingRepository {
   private static Instance: BookingRepository;
@@ -18,20 +24,63 @@ export class BookingRepository implements IBookingRepository {
     date: Date;
     status: BookingStatus;
   }): Promise<booking> {
-    return await prisma.booking.create({
+    const result = await prisma.booking.create({
       data,
     });
+
+    return result;
   }
 
   public async getAllBooking(): Promise<booking[]> {
-    return await prisma.booking.findMany();
+    return new Promise((resolve, reject) => {
+      redisClient!.get(`booking-all`, async (err, data) => {
+        if (err) {
+          reject(err);
+          throw err;
+        }
+        if (data == null) {
+          const result = await prisma.booking.findMany();
+          if (!result) {
+            redisClient!.setex(
+              `booking-all`,
+              randomInt(3600, 4200),
+              JSON.stringify(result)
+            );
+          }
+          resolve(result);
+        } else {
+          resolve(JSON.parse(data));
+        }
+      });
+    });
   }
 
   public async foundBooking(id: string): Promise<booking | null> {
-    return await prisma.booking.findFirst({
-      where: {
-        id,
-      },
+    return new Promise((resolve, reject) => {
+      redisClient!.get(`booking-${id}`, async (err, data) => {
+        if (err) {
+          reject(err);
+          throw err;
+        }
+        if (data == null) {
+          const result = await prisma.booking.findFirst({
+            where: {
+              id,
+            },
+          });
+
+          if (!result) {
+            redisClient!.setex(
+              `booking-${id}`,
+              randomInt(3600, 4200),
+              JSON.stringify(result)
+            );
+          }
+          resolve(result);
+        } else {
+          resolve(JSON.parse(data));
+        }
+      });
     });
   }
 
@@ -42,12 +91,19 @@ export class BookingRepository implements IBookingRepository {
       totalPrice?: number;
     }
   ): Promise<booking> {
-    return await prisma.booking.update({
+    const result = await prisma.booking.update({
       where: {
         id: bookingId,
       },
       data,
     });
+    redisClient?.del(`booking-${bookingId}`);
+    redisClient?.setex(
+      `booking-${bookingId}`,
+      randomInt(3600, 4200),
+      JSON.stringify(result)
+    );
+    return result;
   }
 
   public async deleteBooking(id: string): Promise<void> {
@@ -56,28 +112,58 @@ export class BookingRepository implements IBookingRepository {
         id,
       },
     });
+
+    redisClient?.del(`booking-${id}`);
+    redisClient?.del(`bookedSlot-booking-${id}`);
+    redisClient?.del(`booking-all`);
+    deleteKeysByPattern(`booking`);
+    const getAll = await prisma.booking.findMany();
+    redisClient?.setex(
+      `booking-all`,
+      randomInt(3600, 4200),
+      JSON.stringify(getAll)
+    );
   }
 
-  public async getBookingsByClubId(clubId: string) {
-    const bookings = await prisma.booking.findMany({
-      where: {
-        bookedSlot: {
-          some: {
-            slot: {
-              clubId: clubId,
+  public async getBookingsByClubId(id: string): Promise<booking[]> {
+    return new Promise((resolve, reject) => {
+      redisClient?.get(`booking-club-${id}`, async (err, data) => {
+        if (err) {
+          reject(err);
+          throw err;
+        }
+        if (data == null) {
+          const result = await prisma.booking.findMany({
+            where: {
+              bookedSlot: {
+                some: {
+                  slot: {
+                    clubId: id,
+                  },
+                },
+              },
             },
-          },
-        },
-      },
-      include: {
-        bookedSlot: {
-          include: {
-            slot: true,
-          },
-        },
-        user: true,
-      },
+            include: {
+              bookedSlot: {
+                include: {
+                  slot: true,
+                },
+              },
+              user: true,
+            },
+          });
+          if (result) {
+            redisClient.setex(
+              `booking-club-${id}`,
+              randomInt(3600, 4200),
+              JSON.stringify(result)
+            );
+          }
+          resolve(result);
+        } else {
+          resolve(JSON.parse(data));
+        }
+      });
     });
-    return bookings;
   }
 }
