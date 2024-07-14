@@ -42,26 +42,8 @@ export class SlotRepository implements ISlotRepository {
   }
 
   public async findManySlot({ options }: { options: any }): Promise<slot[]> {
-    return new Promise((resolve, reject) => {
-      redisClient?.get(`slot-${options}`, async (err, data) => {
-        if (err) {
-          reject(err);
-          throw err;
-        }
-        if (data == null) {
-          const result = await prisma.slot.findMany(options);
-          if (result) {
-            redisClient.setex(
-              `slot-${options}`,
-              randomInt(3600, 4200),
-              JSON.stringify(result)
-            );
-          }
-          resolve(result);
-        } else {
-          resolve(JSON.parse(data));
-        }
-      });
-    });
+    const result = await prisma.slot.findMany(options);
+
+    return result;
   }
 }

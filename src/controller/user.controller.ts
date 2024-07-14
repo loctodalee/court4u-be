@@ -25,4 +25,12 @@ export class UserController {
       }),
     }).send(res);
   }
+  async getUserById(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Get Success',
+      metaData: await UserController.userService.getUserById({
+        id: req.params.id,
+      }),
+    }).send(res);
+  }
 }

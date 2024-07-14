@@ -10,6 +10,6 @@ router.get(
   grantAccess('readAny', 'user'),
   asyncHandler(UserController.getInstance().getAllUser)
 );
-// router.get('/users', asyncHandler(UserController.getInstance().getUserByEmail));
-
+router.get('/:id', asyncHandler(UserController.getInstance().getUserById));
+router;
 module.exports = router;
