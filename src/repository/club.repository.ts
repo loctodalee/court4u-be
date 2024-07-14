@@ -130,32 +130,29 @@ export class ClubRepository implements IClubRepository {
     name?: string;
   }): Promise<club[]> {
     return new Promise((resolve, reject) => {
-      redisClient?.get(
-        `club-location-${{ ...data }}`,
-        async (err, response) => {
-          if (err) {
-            reject(err);
-            throw err;
-          }
-          if (response == null) {
-            const result = await prisma.club.findMany({
-              where: {
-                ...data,
-              },
-            });
-            if (result) {
-              redisClient.setex(
-                `club-location-${{ ...data }}`,
-                randomInt(3600, 4200),
-                JSON.stringify(result)
-              );
-            }
-            resolve(result);
-          } else {
-            resolve(JSON.parse(response));
-          }
+      redisClient?.get(`club-location-${data}`, async (err, response) => {
+        if (err) {
+          reject(err);
+          throw err;
         }
-      );
+        if (response == null) {
+          const result = await prisma.club.findMany({
+            where: {
+              ...data,
+            },
+          });
+          if (result) {
+            redisClient.setex(
+              `club-location-${data.cityOfProvince}-${data.district}-${data.address}-${data.name}`,
+              randomInt(3600, 4200),
+              JSON.stringify(result)
+            );
+          }
+          resolve(result);
+        } else {
+          resolve(JSON.parse(response));
+        }
+      });
     });
   }
 }
