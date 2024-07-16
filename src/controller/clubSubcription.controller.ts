@@ -56,4 +56,14 @@ export class ClubSubscriptionController {
         await ClubSubscriptionController.clubSubscriptionService.getAll(),
     }).send(res);
   }
+
+  public async deleteClubSubscription(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Find club subscription',
+      metaData:
+        await ClubSubscriptionController.clubSubscriptionService.deleteClubSubscription(
+          req.params.id
+        ),
+    }).send(res);
+  }
 }

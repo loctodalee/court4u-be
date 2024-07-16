@@ -37,6 +37,13 @@ export interface IClubService {
     }
   ): Promise<club>;
   deleteClub({ id }: { id: string }): Promise<club>;
+  updateClubStatus({
+    clubId,
+    status,
+  }: {
+    clubId: string;
+    status: ClubStatus;
+  }): Promise<club>;
   searchByLocation(data: {
     cityOfProvince?: string;
     district?: string;

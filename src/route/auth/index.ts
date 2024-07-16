@@ -52,4 +52,5 @@ router.post(
   '/handleRefreshToken',
   asyncHandler(AuthController.getInstance().handleRefreshToken)
 );
+router.get('/logout', asyncHandler(AuthController.getInstance().logout));
 module.exports = router;

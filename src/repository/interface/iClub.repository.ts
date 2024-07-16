@@ -1,4 +1,4 @@
-import { club } from '@prisma/client';
+import { club, ClubStatus } from '@prisma/client';
 
 export interface IClubRepository {
   addClub({
@@ -32,6 +32,7 @@ export interface IClubRepository {
       logoUrl?: string;
       description?: string;
       preOrder?: number;
+      status?: ClubStatus;
     }
   ): Promise<club>;
   deleteClub({ id }: { id: string }): Promise<club>;

@@ -15,5 +15,9 @@ export interface ISlotRepository {
     price: number;
   }): Promise<slot>;
 
+  findSlotByDateListAndClubId(
+    clubId: string,
+    listDate: number[]
+  ): Promise<slot[]>;
   findManySlot({ options }: { options: any }): Promise<slot[]>;
 }

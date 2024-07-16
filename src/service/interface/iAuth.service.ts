@@ -35,4 +35,5 @@ export interface IAuthService {
     user: any;
     refreshToken: string;
   }): Promise<any>;
+  logOut(userId: string): Promise<void>;
 }

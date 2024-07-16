@@ -59,7 +59,10 @@ export class ClubController {
     const clubId = req.clubId;
     new SuccessResponse({
       message: 'delete club success',
-      metaData: await ClubController.clubService.deleteClub({ id: clubId }),
+      metaData: await ClubController.clubService.updateClubStatus({
+        clubId,
+        status: 'disable',
+      }),
     }).send(res);
   }
 

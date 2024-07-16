@@ -1,4 +1,5 @@
 import { createTokenPair } from '../auth/authUtils';
+import Jwt from 'jsonwebtoken';
 import {
   AuthFailure,
   BadRequestError,
@@ -300,6 +301,13 @@ export class AuthService implements IAuthService {
       userId,
     });
     return tokens;
-    return foundRole;
+  }
+
+  public async logOut(userId: string): Promise<void> {
+    var keyToken = await AuthService._keyTokenService.foundKey({ userId });
+    if (!keyToken) {
+      throw new BadRequestError('Logout fail!');
+    }
+    await AuthService._keyTokenService.deleteKeyByUserId({ userId });
   }
 }

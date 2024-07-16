@@ -46,4 +46,25 @@ export class SlotRepository implements ISlotRepository {
 
     return result;
   }
+
+  public async findSlotByDateListAndClubId(
+    clubId: string,
+    listDate: number[]
+  ): Promise<slot[]> {
+    const result = await prisma.slot.findMany({
+      where: {
+        AND: [
+          {
+            clubId,
+          },
+          {
+            dateOfWeek: {
+              in: listDate,
+            },
+          },
+        ],
+      },
+    });
+    return result;
+  }
 }

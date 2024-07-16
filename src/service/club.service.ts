@@ -104,7 +104,17 @@ export class ClubService implements IClubService {
     var result = await ClubService._clubRepository.updateClub(clubId, data);
     return result;
   }
-
+  public async updateClubStatus({
+    clubId,
+    status,
+  }: {
+    clubId: string;
+    status: ClubStatus;
+  }): Promise<club> {
+    return await ClubService._clubRepository.updateClub(clubId, {
+      status,
+    });
+  }
   public async deleteClub({ id }: { id: string }): Promise<club> {
     var result = await ClubService._clubRepository.deleteClub({ id });
     return result;

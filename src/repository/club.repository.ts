@@ -1,4 +1,4 @@
-import { club } from '@prisma/client';
+import { club, ClubStatus } from '@prisma/client';
 import { IClubRepository } from './interface/iClub.repository';
 import prisma from '../lib/prisma';
 import { getRedis } from '../lib/init.redis';
@@ -93,6 +93,7 @@ export class ClubRepository implements IClubRepository {
       logoUrl?: string;
       description?: string;
       preOrder?: number;
+      status?: ClubStatus;
     }
   ): Promise<club> {
     const result = await prisma.club.update({

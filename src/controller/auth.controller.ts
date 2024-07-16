@@ -97,4 +97,11 @@ export class AuthController {
       metaData: await AuthController.authService.newCourtOwner({ ...req.body }),
     }).send(res);
   }
+
+  async logout(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Send mail success',
+      metaData: await AuthController.authService.logOut(req.user.userId),
+    }).send(res);
+  }
 }

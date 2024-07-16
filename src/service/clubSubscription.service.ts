@@ -155,4 +155,10 @@ export class ClubSubscriptionService implements IClubSubscriptionService {
   public async getAll(): Promise<clubSubscription[]> {
     return await ClubSubscriptionService._clubSubsriptionRepo.getAll();
   }
+  public async deleteClubSubscription(id: string): Promise<clubSubscription> {
+    return await ClubSubscriptionService._clubSubsriptionRepo.updateClubSubs(
+      id,
+      { status: 'disable' }
+    );
+  }
 }
