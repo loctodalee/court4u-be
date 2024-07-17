@@ -176,4 +176,65 @@ export class SlotService implements ISlotService {
 
     return remainSlotList;
   }
+
+  public async getSlotInfo({
+    clubId,
+    startDate,
+  }: {
+    clubId: string;
+    startDate: Date;
+  }): Promise<any> {
+    const start = toMidnight(startDate);
+    const end = new Date(startDate);
+    end.setDate(start.getDate() + 6);
+    let listDate: number[] = [];
+    for (let i = new Date(start); i <= end; i.setDate(i.getDate() + 1)) {
+      listDate.push(i.getDay());
+    }
+    var club = await SlotService._clubService.foundClubById({ clubId });
+    if (!club) throw new BadRequestError('Club not found');
+    var slots = await SlotService._slotRepository.findSlotByDateListAndClubId(
+      clubId,
+      listDate
+    );
+    if (!slots) throw new BadRequestError('Slot not found');
+    type slotInfo = {
+      id: string;
+      clubId: string;
+      startTime: Date;
+      endTime: Date;
+      dateOfWeek: number;
+      createdAt: Date;
+      updatedAt: Date;
+      price: number;
+      courtRemain: number;
+      date: Date;
+    };
+
+    var listSlotInfo: slotInfo[] = [];
+    console.log(start);
+    console.log(end);
+    for (let i = start; i <= end; i.setDate(i.getDate() + 1)) {
+      console.log(i);
+      slots.forEach((x) => {
+        if (x.dateOfWeek == i.getDay()) {
+          listSlotInfo.push({
+            ...x,
+            courtRemain: 1,
+            date: new Date(i.getFullYear(), i.getMonth(), i.getDate() + 1),
+          });
+        }
+      });
+    }
+    await Promise.all(
+      listSlotInfo.map(async (slotInfo) => {
+        slotInfo.courtRemain =
+          await SlotService._slotOnCourtService.getRemainCourt({
+            slotId: slotInfo.id,
+            date: slotInfo.date,
+          });
+      })
+    );
+    return listSlotInfo;
+  }
 }

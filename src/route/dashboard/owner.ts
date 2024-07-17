@@ -3,6 +3,7 @@ import { asyncHandler } from '../../helper/asyncHandler';
 import { authentication, CheckApiKey } from '../../auth/authUtils';
 import { grantAccess } from '../../middleware/rbac';
 import { DashboardOwnerController } from '../../controller/dashboard.controller.owner';
+import { createStaffProfileValidation } from '../../validation/staffProfile.validation';
 const router = express.Router();
 router.use(authentication);
 router.use(grantAccess('readOwn', 'Dashboard.Owner'));
@@ -78,6 +79,7 @@ router.get(
 
 router.post(
   '/staffProfile/',
+  asyncHandler(createStaffProfileValidation),
   asyncHandler(DashboardOwnerController.getInstance().createStaffProfile)
 );
 

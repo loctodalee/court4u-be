@@ -103,4 +103,22 @@ export class CourtRepository implements ICourtRepository {
       });
     });
   }
+
+  public async findExistedCourt(
+    clubId: string,
+    number: number
+  ): Promise<court | null> {
+    return await prisma.court.findFirst({
+      where: {
+        AND: [
+          {
+            clubId,
+          },
+          {
+            number,
+          },
+        ],
+      },
+    });
+  }
 }
