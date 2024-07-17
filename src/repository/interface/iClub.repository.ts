@@ -42,4 +42,6 @@ export interface IClubRepository {
     address?: string;
     name?: string;
   }): Promise<club[]>;
+
+  getClubsByOwnerId(id: string): Promise<club[]>;
 }

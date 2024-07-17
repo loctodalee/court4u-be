@@ -147,4 +147,8 @@ export class ClubService implements IClubService {
     if (!result) throw new BadRequestError('Login club fail');
     return club;
   }
+
+  public async getClubsByOwnerId(id: string): Promise<club[]> {
+    return await ClubService._clubRepository.getClubsByOwnerId(id);
+  }
 }

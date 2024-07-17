@@ -12,7 +12,7 @@ export interface IEmailService {
     subject: string;
     text: string;
   }): Promise<any>;
-
+  sendEmailTokenStaff({ email }: { email: string }): Promise<any>;
   sendEmailToken({ email }: { email: string }): Promise<any>;
   sendEmailConfirmation({
     email,

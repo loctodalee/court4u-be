@@ -8,10 +8,14 @@ router.use(authentication);
 router.use(grantAccess('readOwn', 'Dashboard.Owner'));
 //-------------- SELECT CLUB ---------------//
 router.get(
+  '/clubs',
+  asyncHandler(DashboardOwnerController.getInstance().getClubByOwnerId)
+);
+
+router.get(
   '/club/select/:clubId',
   asyncHandler(DashboardOwnerController.getInstance().selectClub)
 );
-
 //--------------- CLUB -------------------//
 router.use(CheckApiKey);
 

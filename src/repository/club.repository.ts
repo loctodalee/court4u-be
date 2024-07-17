@@ -156,4 +156,12 @@ export class ClubRepository implements IClubRepository {
       });
     });
   }
+
+  public async getClubsByOwnerId(id: string): Promise<club[]> {
+    return await prisma.club.findMany({
+      where: {
+        courtOwnerId: id,
+      },
+    });
+  }
 }

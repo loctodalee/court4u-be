@@ -131,7 +131,7 @@ let grantList = [
     attributes: '*',
   },
   {
-    role: 'member',
+    role: 'admin',
     resource: 'staffProfile',
     action: 'read:any',
     attributes: '*',

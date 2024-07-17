@@ -76,6 +76,14 @@ export class DashboardOwnerController {
     }).send(res);
   }
 
+  public async getClubByOwnerId(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Get Club By Owner Id',
+      metaData: await DashboardOwnerController._clubServce.getClubsByOwnerId(
+        req.user.userId
+      ),
+    }).send(res);
+  }
   /**
    * @description Dashboard lấy club theo id
    * @param req {id: req.query.id}

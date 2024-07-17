@@ -15,6 +15,8 @@ import { UserService } from './user.service';
 import { IRoleService } from './interface/iRole.service';
 import { RoleService } from './role.service';
 import { randomPassword } from '../util/randomPassword';
+import { IClubService } from './interface/iClub.service';
+import { ClubService } from './club.service';
 
 export class StaffProfileService implements IStaffProfileService {
   private static Instance: StaffProfileService;
@@ -29,11 +31,13 @@ export class StaffProfileService implements IStaffProfileService {
   private static _emailService: IEmailService;
   private static _userService: IUserService;
   private static _roleService: IRoleService;
+  private static _clubService: IClubService;
   static {
     this._staffRepository = StaffProfileRepository.getInstance();
     this._emailService = EmailService.getInstance();
     this._userService = UserService.getInstance();
     this._roleService = RoleService.getInstance();
+    this._clubService = ClubService.getInstance();
   }
 
   public async getStaffProfiles(): Promise<List<staffProfile> | null> {
@@ -48,18 +52,28 @@ export class StaffProfileService implements IStaffProfileService {
     phone: string;
     clubId: string;
   }): Promise<staffProfile> {
+    //find user
     const foundUser = await StaffProfileService._userService.getUserByEmail({
       email: data.email,
     });
     if (foundUser) {
       throw new NotImplementError('Email already existed');
     }
-    const result = await StaffProfileService._emailService.sendEmailToken({
+
+    //find club
+    const foundClub = await StaffProfileService._clubService.foundClubById({
+      clubId: data.clubId,
+    });
+    if (!foundClub) throw new BadRequestError('Club not found');
+
+    //send mail to verify
+    const result = await StaffProfileService._emailService.sendEmailTokenStaff({
       email: data.email,
     });
     const password = randomPassword(8);
     const hashPassword = await bcrypt.hash(password, 10);
 
+    //create user
     var user = await StaffProfileService._userService.createNewUser({
       email: data.email,
       password: hashPassword,
@@ -68,6 +82,17 @@ export class StaffProfileService implements IStaffProfileService {
       status: 'disable',
       fullname: data.fullname,
     });
+    var updateUser = await StaffProfileService._userService.updateUser({
+      options: {
+        where: {
+          id: user.id,
+        },
+        data: {
+          apiKey: foundClub.apiKey,
+        },
+      },
+    });
+    if (!updateUser) throw new BadRequestError('Update api key fail');
     const roleMember = await StaffProfileService._roleService.findByName(
       'staff'
     );
