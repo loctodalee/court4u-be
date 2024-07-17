@@ -70,16 +70,17 @@ let grantList = [
     action: 'read:own',
     attributes: '*',
   },
-  {
-    role: 'admin',
-    resource: 'buyClubSubscription',
-    action: 'read:any',
-    attributes: '*',
-  },
+
   {
     role: 'owner',
     resource: 'court',
     action: 'read:own',
+    attributes: '*',
+  },
+  {
+    role: 'admin',
+    resource: 'buyClubSubscription',
+    action: 'read:any',
     attributes: '*',
   },
   {

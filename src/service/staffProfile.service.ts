@@ -108,16 +108,6 @@ export class StaffProfileService implements IStaffProfileService {
         clubId: data.clubId,
       });
     return staffProfile;
-
-    //  const hashPassword = await bcrypt.hash(data.email, 10);
-    // const newUser = await StaffProfileService._userService.createNewUser({
-    //   fullname: data.fullname,
-    //   password: hashPassword,
-    //   email: data.email,
-    // phone: data.phone,
-    // status: "disable"
-    // otp: string;
-    // });
   }
 
   public async getStaffProfileByClubId(

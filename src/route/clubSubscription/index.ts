@@ -10,12 +10,9 @@ router.get(
   asyncHandler(ClubSubscriptionController.getInstance().paymentCallBack)
 );
 router.use(authentication);
-router.use(
-  '/',
-  grantAccess('readAny', 'buyClubSubscription'),
-  asyncHandler(ClubSubscriptionController.getInstance().getAll)
-);
+
 router.use(CheckApiKey);
+
 router.get(
   '/club',
   grantAccess('readOwn', 'buyClubSubscription'),
@@ -25,6 +22,11 @@ router.post(
   '/buy',
   grantAccess('createOwn', 'buyClubSubscription'),
   asyncHandler(ClubSubscriptionController.getInstance().clubBuySubscription)
+);
+router.use(
+  '/',
+  grantAccess('readAny', 'buyClubSubscription'),
+  asyncHandler(ClubSubscriptionController.getInstance().getAll)
 );
 
 module.exports = router;

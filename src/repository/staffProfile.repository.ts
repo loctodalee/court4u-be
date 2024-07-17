@@ -35,6 +35,21 @@ export class StaffProfileRepository implements IStaffProfileRepository {
       where: {
         clubId,
       },
+      include: {
+        user: {
+          select: {
+            id: true,
+            apiKey: true,
+            fullname: true,
+            email: true,
+            phone: true,
+            sex: true,
+            status: true,
+            dateOfBirth: true,
+            avatarUrl: true,
+          },
+        },
+      },
     });
   }
 }

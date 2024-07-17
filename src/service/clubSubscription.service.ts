@@ -94,7 +94,7 @@ export class ClubSubscriptionService implements IClubSubscriptionService {
     const payment = await ClubSubscriptionService._paymentService.momoPayment({
       price: result.price,
       orderId: result.id,
-      returnUrl: '/clubSubscription/momo/PaymentCallBack',
+      returnUrl: '/clubSubscriptions/momo/PaymentCallBack',
     });
     return payment;
   }

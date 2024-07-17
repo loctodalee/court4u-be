@@ -17,6 +17,7 @@ const grantAccess = (
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const rol_name = req.user.roles[0] as string;
+      console.log(rol_name);
       const permission = ac.can(rol_name)[action](resouce);
       if (!permission.granted) {
         throw new AuthFailure('you dont have permission');
