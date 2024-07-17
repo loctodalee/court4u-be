@@ -53,6 +53,15 @@ export class AuthController {
       res.redirect('http://localhost:3000/login');
   }
 
+  async checkLoginStaffEmailToken(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Staff verify success',
+      metaData: await AuthController.authService.checkLoginEmailToken({
+        token: req.query.token,
+      }),
+    }).send(res);
+  }
+
   /**
    * @description Chuyển hướng đến trang login của third party (facebook, google) để xử lý và tạo ra accesstoken và refreshtoken
    * @test localhost:3000/v1/api/auth/google

@@ -28,28 +28,6 @@ export class StaffProfileRepository implements IStaffProfileRepository {
     });
   }
 
-  public async createUser(data: {
-    fullname: string;
-    password: string | null;
-    email: string;
-    phone: string | null;
-    sex: Sex;
-    avatarUrl: string | null;
-    dateOfBirth: Date | null;
-  }) {
-    return prisma.user.create({
-      data: {
-        fullname: data.fullname,
-        password: data.password,
-        email: data.email,
-        phone: data.phone,
-        sex: data.sex,
-        avatarUrl: data.avatarUrl,
-        dateOfBirth: data.dateOfBirth,
-      },
-    });
-  }
-
   public async getStaffProfileByClubId(
     clubId: string
   ): Promise<staffProfile[]> {

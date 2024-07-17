@@ -119,4 +119,32 @@ export class ClubService implements IClubService {
     var result = await ClubService._clubRepository.deleteClub({ id });
     return result;
   }
+
+  public async updateApiKey({
+    userId,
+    clubId,
+  }: {
+    userId: string;
+    clubId: string;
+  }): Promise<club> {
+    let user = await ClubService._userService.getUserById({ id: userId });
+    if (!user) throw new BadRequestError('User not found');
+    let club = await ClubService._clubRepository.foundClub({
+      options: {
+        where: {
+          id: clubId,
+        },
+      },
+    });
+    if (!club) throw new BadRequestError('Club not found');
+
+    if (club.courtOwnerId !== user.id)
+      throw new BadRequestError('Login club fail');
+    var result = await ClubService._userService.updateApiKey({
+      apiKey: club.apiKey,
+      userId: user.id,
+    });
+    if (!result) throw new BadRequestError('Login club fail');
+    return club;
+  }
 }

@@ -3,31 +3,39 @@ import { AuthController } from '../../controller/auth.controller';
 import { asyncHandler } from '../../helper/asyncHandler';
 import passport from 'passport';
 import { authentication } from '../../auth/authUtils';
+import {
+  loginValidation,
+  signUpNewUser,
+} from '../../validation/user.validation';
 const router = express.Router();
 
 router.post(
   '/signup',
+  asyncHandler(signUpNewUser),
   asyncHandler(AuthController.getInstance().sendMailVerify)
 );
 
 router.post(
   '/owner/signup',
+  asyncHandler(signUpNewUser),
   asyncHandler(AuthController.getInstance().signUpCourtOwner)
 );
 
-router.post('/login', asyncHandler(AuthController.getInstance().Login));
+router.post(
+  '/login',
+  asyncHandler(loginValidation),
+  asyncHandler(AuthController.getInstance().Login)
+);
 
 router.get(
   '/welcome_back',
   asyncHandler(AuthController.getInstance().checkLoginEmailToken)
 );
+router.get(
+  '/staff/welcome_back',
+  asyncHandler(AuthController.getInstance().checkLoginStaffEmailToken)
+);
 
-// router.get(
-//   '/google',
-//   passport.authenticate('google', {
-//     scope: ['profile', 'email'],
-//   })
-// );
 router.get('/google', AuthController.getInstance().LoginGoogle);
 router.get(
   '/google/callback',

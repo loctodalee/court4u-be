@@ -7,15 +7,6 @@ export interface IStaffProfileRepository {
     userId: string;
     clubId: string;
   }): Promise<staffProfile>;
-  createUser(data: {
-    fullname: string;
-    password: string | null;
-    email: string;
-    phone: string | null;
-    sex: Sex;
-    avatarUrl: string | null;
-    dateOfBirth: Date | null;
-  }): Promise<user>;
 
   getStaffProfileByClubId(clubId: string): Promise<staffProfile[]>;
 }

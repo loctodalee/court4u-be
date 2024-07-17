@@ -5,26 +5,31 @@ import { grantAccess } from '../../middleware/rbac';
 import { DashboardOwnerController } from '../../controller/dashboard.controller.owner';
 const router = express.Router();
 router.use(authentication);
-router.use(CheckApiKey);
 router.use(grantAccess('readOwn', 'Dashboard.Owner'));
+//-------------- SELECT CLUB ---------------//
+router.get(
+  '/club/select/:clubId',
+  asyncHandler(DashboardOwnerController.getInstance().selectClub)
+);
 
 //--------------- CLUB -------------------//
+router.use(CheckApiKey);
 
 router.get(
-  '/club/:id',
+  '/club/',
   asyncHandler(DashboardOwnerController.getInstance().getClubById)
 );
 
 //--------------- BILL ---------------------//
 
 router.get(
-  '/bill/club/:clubId',
+  '/bill/club/',
   asyncHandler(DashboardOwnerController.getInstance().getBillByClubId)
 );
 
 //------------------ Booking ----------------------------//
 router.get(
-  '/booking/club/:clubId',
+  '/booking/club/',
   asyncHandler(DashboardOwnerController.getInstance().getBookingByClubId)
 );
 
@@ -38,7 +43,7 @@ router.get(
 
 //--------------- Member Subscription -------------------//
 router.get(
-  '/memberSubscription/club/:clubId',
+  '/memberSubscription/club/',
   asyncHandler(
     DashboardOwnerController.getInstance().getAllMemberSubscriptionByClubId
   )
@@ -51,18 +56,23 @@ router.get(
   asyncHandler(DashboardOwnerController.getInstance().getCourtOnSlotId)
 );
 router.get(
-  '/slot/club/:clubId',
+  '/slot/club/',
   asyncHandler(DashboardOwnerController.getInstance().getSlotsByClubId)
 );
 //---------------------- Staff profile --------------------//
 router.get(
-  '/staffProfile/club/:clubId',
+  '/staffProfile/club/',
   asyncHandler(DashboardOwnerController.getInstance().getStaffProfileByClubId)
+);
+
+router.post(
+  '/staffProfile/club/',
+  asyncHandler(DashboardOwnerController.getInstance().createStaffProfile)
 );
 
 //--------------------- Subscription Options (subscription cho member) ---------------//
 router.get(
-  '/subscriptionOption/club/:clubId',
+  '/subscriptionOption/club/',
   asyncHandler(
     DashboardOwnerController.getInstance().getAllSubscriptionOptionByClubId
   )
@@ -70,7 +80,7 @@ router.get(
 
 //----------------------- Booked Slot -------------------------------//
 router.get(
-  '/bookedSlot/club/:clubId',
+  '/bookedSlot/club/',
   asyncHandler(DashboardOwnerController.getInstance().getBookedSlotByClubId)
 );
 

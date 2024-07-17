@@ -23,7 +23,7 @@ const app = express();
   // Add headers before the routes are defined
   // Configure CORS
   const corsOptions = {
-    origin: 'http://localhost:3000', // Allow this origin
+    origin: '*', // Allow this origin
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow these methods
     allowedHeaders: ['Content-Type', 'Authorization'], // Allow these headers
     credentials: true, // Allow credentials

@@ -17,7 +17,7 @@ router.get(
 
 //------------------ Booking ----------------------------//
 router.get(
-  '/booking/club/:clubId',
+  '/booking/club/',
   asyncHandler(DashboardStaffController.getInstance().getBookingByClubId)
 );
 
@@ -28,18 +28,18 @@ router.get(
   asyncHandler(DashboardStaffController.getInstance().getCourtOnSlotId)
 );
 router.get(
-  '/slot/club/:clubId',
+  '/slot/club/',
   asyncHandler(DashboardStaffController.getInstance().getSlotsByClubId)
 );
 //---------------------- Staff profile --------------------//
 router.get(
-  '/staffProfile/club/:clubId',
+  '/staffProfile/club/',
   asyncHandler(DashboardStaffController.getInstance().getStaffProfileByClubId)
 );
 
 //----------------------- Booked Slot -------------------------------//
 router.get(
-  '/bookedSlot/club/:clubId',
+  '/bookedSlot/club/',
   asyncHandler(DashboardStaffController.getInstance().getBookedSlotByClubId)
 );
 

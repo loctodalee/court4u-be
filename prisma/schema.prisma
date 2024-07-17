@@ -27,7 +27,6 @@ model user {
   facebookAccessToken String?
   apiKey              String?              @unique
   booking             booking[]
-  cancellation        cancellation[]
   club                club[]
   keyToken            keyTokens?
   memberSubscription  memberSubscription[]
@@ -90,14 +89,6 @@ model review {
   user         user    @relation(fields: [reviewerId], references: [id])
 }
 
-model cancellation {
-  id             String   @id
-  canceledSlotId String?
-  cancelerId     String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  user           user    @relation(fields: [cancelerId], references: [id])
-}
 
 model bookedSlot {
   id        String   @id @default(uuid())

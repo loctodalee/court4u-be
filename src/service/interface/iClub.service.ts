@@ -50,4 +50,11 @@ export interface IClubService {
     address?: string;
     name?: string;
   }): Promise<club[]>;
+  updateApiKey({
+    userId,
+    clubId,
+  }: {
+    userId: string;
+    clubId: string;
+  }): Promise<club>;
 }

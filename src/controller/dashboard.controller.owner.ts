@@ -66,6 +66,16 @@ export class DashboardOwnerController {
     this._courtService = CourtService.getInstance();
   }
 
+  public async selectClub(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Login with club',
+      metaData: await DashboardOwnerController._clubServce.updateApiKey({
+        userId: req.user.userId,
+        clubId: req.params.clubId,
+      }),
+    }).send(res);
+  }
+
   /**
    * @description Dashboard lấy club theo id
    * @param req {id: req.query.id}
@@ -164,6 +174,16 @@ export class DashboardOwnerController {
         await DashboardOwnerController._staffProfile.getStaffProfileByClubId(
           req.clubId
         ),
+    }).send(res);
+  }
+
+  public async createStaffProfile(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Create staff profile',
+      metaData: await DashboardOwnerController._staffProfile.addStaffProfile({
+        clubId: req.clubId,
+        ...req.body,
+      }),
     }).send(res);
   }
 

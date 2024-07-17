@@ -33,29 +33,15 @@ export class StaffProfileController {
 
   //
   async createStaffProfile(req: Request, res: Response) {
-    const {
-      fullname,
-      password,
-      email,
-      phone,
-      sex,
-      avatarUrl,
-      dateOfBirth,
-      clubId,
-      staffRoles,
-    } = req.body;
+    const { fullname, email, phone } = req.body;
 
     try {
       const newProfile =
         await StaffProfileService.getInstance().addStaffProfile({
           fullname,
-          password,
           email,
           phone,
-          sex,
-          avatarUrl,
-          dateOfBirth,
-          clubId,
+          clubId: req.clubId,
         });
       new SuccessResponse({
         message: 'Create Success',

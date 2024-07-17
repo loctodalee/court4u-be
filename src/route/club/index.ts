@@ -3,6 +3,10 @@ import express from 'express';
 import { asyncHandler } from '../../helper/asyncHandler';
 import { authentication, CheckApiKey } from '../../auth/authUtils';
 import { grantAccess } from '../../middleware/rbac';
+import {
+  createClubValidation,
+  updateClubValidation,
+} from '../../validation/club.validation';
 const router = express.Router();
 
 router.get('/location', asyncHandler(ClubController.getInstance().searchClub));
@@ -16,13 +20,15 @@ router.use(authentication);
 router.post(
   '/',
   grantAccess('createOwn', 'club'),
+  asyncHandler(createClubValidation),
   asyncHandler(ClubController.getInstance().createClub)
 );
 
 router.use(CheckApiKey);
 router.post(
-  '/:id',
+  '/update',
   grantAccess('updateOwn', 'club'),
+  asyncHandler(updateClubValidation),
   asyncHandler(ClubController.getInstance().updateClub)
 );
 router.delete(
