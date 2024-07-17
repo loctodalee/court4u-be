@@ -28,15 +28,12 @@ export class MemberSubscriptionController {
   }
 
   public async paymentCallBack(req: Request, res: Response) {
-    new SuccessResponse({
-      message: 'Direct Payment',
-      metaData:
-        await MemberSubscriptionController.memberSubscriptionService.paymentCallBack(
-          {
-            ...req.query,
-          }
-        ),
-    }).send(res);
+    await MemberSubscriptionController.memberSubscriptionService.paymentCallBack(
+      {
+        ...req.query,
+      }
+    ),
+      res.redirect(`https://court4u-fe.vercel.app/thanks`);
   }
 
   public async findBySubscriptionId(req: Request, res: Response) {

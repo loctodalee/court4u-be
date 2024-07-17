@@ -50,7 +50,7 @@ export class AuthController {
     await AuthController.authService.checkLoginEmailToken({
       token: req.query.token,
     }),
-      res.redirect('http://localhost:3000/login');
+      res.redirect('https://court4u-fe.vercel.app/login');
   }
 
   async checkLoginStaffEmailToken(req: Request, res: Response) {
@@ -74,7 +74,7 @@ export class AuthController {
     );
     console.log(tokens);
     res.redirect(
-      `http://localhost:3000/redirect?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`
+      `https://court4u-fe.vercel.app/redirect?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`
     );
   }
   async LoginGoogle(req: Request, res: Response) {

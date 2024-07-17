@@ -62,12 +62,10 @@ export class BookingController {
   }
 
   public async paymentCallBack(req: Request, res: Response) {
-    new SuccessResponse({
-      message: 'Payment response',
-      metaData: await BookingController.bookedSlotService.paymentCallBack({
-        ...req.query,
-      }),
-    }).send(res);
+    await BookingController.bookedSlotService.paymentCallBack({
+      ...req.query,
+    }),
+      res.redirect(`https://court4u-fe.vercel.app/thanks`);
   }
 
   public async checkIn(req: Request, res: Response) {

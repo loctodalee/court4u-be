@@ -28,15 +28,10 @@ export class ClubSubscriptionController {
   }
 
   public async paymentCallBack(req: Request, res: Response) {
-    new SuccessResponse({
-      message: 'Buy subscription',
-      metaData:
-        await ClubSubscriptionController.clubSubscriptionService.paymentCallBack(
-          {
-            ...req.query,
-          }
-        ),
-    }).send(res);
+    await ClubSubscriptionController.clubSubscriptionService.paymentCallBack({
+      ...req.query,
+    }),
+      res.redirect(`https://court4u-fe.vercel.app/thanks`);
   }
 
   public async findClubSubsByClubId(req: Request, res: Response) {
