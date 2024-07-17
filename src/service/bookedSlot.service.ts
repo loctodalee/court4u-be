@@ -244,10 +244,12 @@ export class BookedSlotService implements IBookedSlotService {
         }
 
         case 'Time': {
-          await BookedSlotService._memberSubscriptionService.updateTimeSubscription(
-            memberSubs.id,
-            totalTime
-          );
+          const memberSubscription =
+            await BookedSlotService._memberSubscriptionService.updateTimeSubscription(
+              memberSubs.id,
+              totalTime
+            );
+          break;
         }
       }
       bookedSlotInfoList.forEach((item) => {

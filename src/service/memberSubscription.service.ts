@@ -237,7 +237,7 @@ export class MemberSubscriptionService implements IMemberSubscriptionService {
   public async updateTimeSubscription(
     id: string,
     time: number
-  ): Promise<memberSubscription> {
+  ): Promise<memberSubscription | null> {
     const options = {
       where: {
         id,
@@ -248,6 +248,20 @@ export class MemberSubscriptionService implements IMemberSubscriptionService {
         },
       },
     };
+    const foundMemberSubscription =
+      await MemberSubscriptionService._memberSubscriptionRepository.foundMemberSubscription(
+        {
+          options: {
+            where: {
+              id,
+            },
+          },
+        }
+      );
+    if (!foundMemberSubscription) return null;
+    if (foundMemberSubscription.timeRemain! - time < 0) {
+      return null;
+    }
     return await MemberSubscriptionService._memberSubscriptionRepository.updateMemberSubscription(
       {
         options,

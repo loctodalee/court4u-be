@@ -111,7 +111,14 @@ export class DashboardOwnerController {
       ),
     }).send(res);
   }
-
+  async getBillByCourtOwnerId(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'get bill by owner success',
+      metaData: await DashboardOwnerController._billService.getBillByOwnerId(
+        req.user.userId
+      ),
+    }).send(res);
+  }
   /**
    * @description Get bookings by club id
    * @param req {req.params.id}

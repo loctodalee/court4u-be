@@ -18,6 +18,11 @@ router.get(
   '/club/select/:clubId',
   asyncHandler(DashboardOwnerController.getInstance().selectClub)
 );
+//--------------- Get with out api key ---------------//
+router.get(
+  '/bills',
+  asyncHandler(DashboardOwnerController.getInstance().getBillByCourtOwnerId)
+);
 //----------------------- Subscription For Club ---------------- //
 router.get(
   '/subscriptionForClub',
@@ -34,7 +39,7 @@ router.get(
 //--------------- BILL ---------------------//
 
 router.get(
-  '/bill',
+  '/bill/club',
   asyncHandler(DashboardOwnerController.getInstance().getBillByClubId)
 );
 

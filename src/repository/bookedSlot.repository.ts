@@ -5,6 +5,7 @@ import { getRedis } from '../lib/init.redis';
 import { randomInt } from 'crypto';
 import { BillRepository } from './bill.repository';
 import { deleteKeysByPattern } from '../util/deleteKeysByPattern';
+import { toMidnight } from '../util/timeFormat';
 const { instanceConnect: redisClient } = getRedis();
 export class BookedSlotRepository implements IBookedSlotRepository {
   private static Instance: BookedSlotRepository;
@@ -128,15 +129,14 @@ export class BookedSlotRepository implements IBookedSlotRepository {
   }): Promise<bookedSlot[]> {
     const targetDate = new Date(date);
     const year = targetDate.getFullYear();
-    const month = targetDate.getMonth() + 1;
-    const day = targetDate.getDate() + 1;
-
-    return await prisma.bookedSlot.findMany({
+    const month = targetDate.getMonth();
+    const day = targetDate.getDate();
+    const result = await prisma.bookedSlot.findMany({
       where: {
         AND: [
           {
             date: {
-              equals: new Date(year, month - 1, day),
+              equals: toMidnight(new Date(year, month, day - 1)),
             },
           },
           {
@@ -145,6 +145,7 @@ export class BookedSlotRepository implements IBookedSlotRepository {
         ],
       },
     });
+    return result;
   }
 
   public async deleteManyBookedSlot(bookingId: string): Promise<void> {

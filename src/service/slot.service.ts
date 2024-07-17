@@ -212,10 +212,7 @@ export class SlotService implements ISlotService {
     };
 
     var listSlotInfo: slotInfo[] = [];
-    console.log(start);
-    console.log(end);
     for (let i = start; i <= end; i.setDate(i.getDate() + 1)) {
-      console.log(i);
       slots.forEach((x) => {
         if (x.dateOfWeek == i.getDay()) {
           listSlotInfo.push({

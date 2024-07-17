@@ -54,4 +54,8 @@ export class BillService implements IBillService {
   public async getBillsByClubId(clubId: string): Promise<bill[]> {
     return await BillService.billRepository.getBillsByClubId(clubId);
   }
+
+  public async getBillByOwnerId(id: string): Promise<bill[]> {
+    return await BillService.billRepository.getBillByOwnerId(id);
+  }
 }

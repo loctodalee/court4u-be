@@ -15,7 +15,10 @@ export interface IMemberSubscriptionService {
     id: string,
     date: Date
   ): Promise<memberSubscription | null>;
-  updateTimeSubscription(id: string, time: number): Promise<memberSubscription>;
+  updateTimeSubscription(
+    id: string,
+    time: number
+  ): Promise<memberSubscription | null>;
   findMemberSubscriptionBySubId(id: string): Promise<memberSubscription[]>;
   getAllMemberSubscription(): Promise<memberSubscription[]>;
   getMemberSubscriptionByClubId(clubId: string): Promise<memberSubscription[]>;

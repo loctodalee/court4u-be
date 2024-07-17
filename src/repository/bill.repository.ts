@@ -179,4 +179,42 @@ export class BillRepository implements IBillRepository {
       });
     });
   }
+
+  public async getBillByOwnerId(id: string): Promise<bill[]> {
+    return await prisma.bill.findMany({
+      where: {
+        OR: [
+          {
+            clubSubscription: {
+              club: {
+                courtOwnerId: id,
+              },
+            },
+          },
+          {
+            memberSubscription: {
+              subscriptionOption: {
+                club: {
+                  courtOwnerId: id,
+                },
+              },
+            },
+          },
+          {
+            booking: {
+              bookedSlot: {
+                some: {
+                  slot: {
+                    club: {
+                      courtOwnerId: id,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        ],
+      },
+    });
+  }
 }

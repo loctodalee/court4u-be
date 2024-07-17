@@ -25,4 +25,5 @@ export interface IBillService {
   ): Promise<bill | null>;
   deleteBill(id: string): Promise<bill | null>;
   getBillsByClubId(clubId: string): Promise<bill[]>;
+  getBillByOwnerId(id: string): Promise<bill[]>;
 }
