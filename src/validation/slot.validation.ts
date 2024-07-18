@@ -22,6 +22,7 @@ export const createSlotValidation = async (
 
   try {
     await slotSchema.validateAsync(req.body);
+    next();
   } catch (error: any) {
     throw new BadRequestError(error);
   }

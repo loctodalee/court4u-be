@@ -15,4 +15,8 @@ router.post(
   '/verify/changePassword',
   asyncHandler(UserController.getInstance().changePasswordAfterRegister)
 );
+router.post(
+  `/update`,
+  asyncHandler(UserController.getInstance().updateUserInfo)
+);
 module.exports = router;

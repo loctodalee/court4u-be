@@ -1,4 +1,4 @@
-import { user } from '@prisma/client';
+import { Sex, user, UserStatus } from '@prisma/client';
 
 export interface IUserService {
   getAll(): Promise<any[]>;
@@ -84,4 +84,25 @@ export interface IUserService {
     password: string;
   }): Promise<void>;
   updateUserOtp(otp: string, userId: string): Promise<user>;
+  updateUserInfo({
+    id,
+    fullname,
+    password,
+    email,
+    sex,
+    phone,
+    avatarUrl,
+    dateOfBirth,
+    status,
+  }: {
+    id: string;
+    fullname?: string;
+    password?: string;
+    email?: string;
+    sex?: Sex;
+    phone?: string;
+    avatarUrl?: string;
+    dateOfBirth?: string;
+    status?: UserStatus;
+  }): Promise<user>;
 }

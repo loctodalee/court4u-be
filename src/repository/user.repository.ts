@@ -1,4 +1,4 @@
-import { $Enums, user } from '@prisma/client';
+import { $Enums, Sex, user, UserStatus } from '@prisma/client';
 import prisma from '../lib/prisma';
 import { IUserRepository } from './interface/iUser.repository';
 import { AuthFailure } from '../handleResponse/error.response';
@@ -78,6 +78,27 @@ export class UserRepository implements IUserRepository {
       data: {
         password: password,
       },
+    });
+  }
+
+  public async updateUserInfo(
+    id: string,
+    data: {
+      fullname?: string;
+      password?: string;
+      email?: string;
+      sex?: Sex;
+      phone?: string;
+      avatarUrl?: string;
+      dateOfBirth?: string;
+      status?: UserStatus;
+    }
+  ): Promise<user> {
+    return await prisma.user.update({
+      where: {
+        id,
+      },
+      data,
     });
   }
 }

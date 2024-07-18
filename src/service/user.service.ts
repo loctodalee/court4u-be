@@ -1,4 +1,4 @@
-import { user } from '@prisma/client';
+import { Sex, user, UserStatus } from '@prisma/client';
 import { UserRepository } from '../repository/user.repository';
 import { IUserService } from './interface/iUser.service';
 import {
@@ -244,5 +244,39 @@ export class UserService implements IUserService {
 
   public async updateUserOtp(otp: string, userId: string): Promise<user> {
     return await UserRepository.getInstance().updateUserOtp(otp, userId);
+  }
+
+  public async updateUserInfo({
+    id,
+    fullname,
+    password,
+    email,
+    sex,
+    phone,
+    avatarUrl,
+    dateOfBirth,
+    status,
+  }: {
+    id: string;
+    fullname?: string;
+    password?: string;
+    email?: string;
+    sex?: Sex;
+    phone?: string;
+    avatarUrl?: string;
+    dateOfBirth?: string;
+    status?: UserStatus;
+  }): Promise<user> {
+    const data = {
+      fullname,
+      password,
+      email,
+      sex,
+      phone,
+      avatarUrl,
+      dateOfBirth,
+      status,
+    };
+    return await UserRepository.getInstance().updateUserInfo(id, data);
   }
 }

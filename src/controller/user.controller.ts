@@ -42,4 +42,14 @@ export class UserController {
       }),
     }).send(res);
   }
+
+  async updateUserInfo(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Update User Success',
+      metaData: await UserController.userService.updateUserInfo({
+        id: req.user.userId,
+        ...req.body,
+      }),
+    }).send(res);
+  }
 }
