@@ -9,10 +9,15 @@ router.get(
   asyncHandler(MemberSubscriptionController.getInstance().paymentCallBack)
 );
 router.use(authentication);
+
 router.post(
   '/buy',
   grantAccess('createOwn', 'buyMemberSubscription'),
   asyncHandler(MemberSubscriptionController.getInstance().buyMemberSubscription)
+);
+router.get(
+  '/find/:clubId',
+  asyncHandler(MemberSubscriptionController.getInstance().findExisted)
 );
 router.use(CheckApiKey);
 router.get(

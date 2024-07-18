@@ -23,4 +23,11 @@ export interface IMemberSubscriptionService {
   getAllMemberSubscription(): Promise<memberSubscription[]>;
   getMemberSubscriptionByClubId(clubId: string): Promise<memberSubscription[]>;
   getMemberSubscriptionByUserId(userId: string): Promise<memberSubscription[]>;
+  findExistedMemberSubscription({
+    clubId,
+    userId,
+  }: {
+    clubId: string;
+    userId: string;
+  }): Promise<memberSubscription | null>;
 }

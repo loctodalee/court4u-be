@@ -45,4 +45,17 @@ export class MemberSubscriptionController {
         ),
     }).send(res);
   }
+
+  public async findExisted(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Find exited membersubscription',
+      metaData:
+        await MemberSubscriptionController.memberSubscriptionService.findExistedMemberSubscription(
+          {
+            clubId: req.params.clubId,
+            userId: req.user.userId,
+          }
+        ),
+    }).send(res);
+  }
 }

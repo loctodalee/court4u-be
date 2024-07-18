@@ -62,6 +62,14 @@ export class AuthController {
     }).send(res);
   }
 
+  async checkLoginOwnerEmailToken(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Owner verify success',
+      metaData: await AuthController.authService.checkLoginEmailToken({
+        token: req.query.token,
+      }),
+    }).send(res);
+  }
   /**
    * @description Chuyển hướng đến trang login của third party (facebook, google) để xử lý và tạo ra accesstoken và refreshtoken
    * @test localhost:3000/v1/api/auth/google

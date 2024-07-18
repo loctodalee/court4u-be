@@ -249,6 +249,11 @@ export class BookedSlotService implements IBookedSlotService {
               memberSubs.id,
               totalTime
             );
+          if (!memberSubscription) {
+            await BookedSlotService._bookingService.deleteBooking(booking.id);
+            await BookedSlotService._billService.deleteBill(bill.id);
+            throw new BadRequestError('Out of subscription');
+          }
           break;
         }
       }

@@ -75,7 +75,7 @@ export class UserService implements IUserService {
     email: string;
     phone: string;
     status: string;
-    otp: string;
+    otp?: string;
   }): Promise<user> {
     const options = {
       data: {
@@ -113,6 +113,7 @@ export class UserService implements IUserService {
   }
 
   public async updateUserAfterVerify({ otp }: { otp: string }): Promise<user> {
+    console.log(otp);
     const options = {
       where: {
         otp,
@@ -226,5 +227,28 @@ export class UserService implements IUserService {
       },
     };
     return await UserRepository.getInstance().createNewUser({ options });
+  }
+
+  public async changePasswordAfterSignUp({
+    userId,
+    password,
+  }: {
+    userId: string;
+    password: string;
+  }): Promise<void> {
+    const user = await UserRepository.getInstance().updateUser({
+      options: {
+        where: {
+          id: userId,
+        },
+        data: {
+          password,
+        },
+      },
+    });
+  }
+
+  public async updateUserOtp(otp: string, userId: string): Promise<user> {
+    return await UserRepository.getInstance().updateUserOtp(otp, userId);
   }
 }

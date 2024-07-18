@@ -12,7 +12,7 @@ export class UserRepository implements IUserRepository {
     return UserRepository.Instance;
   }
   public async getAll(): Promise<any[]> {
-    return await prisma.user.findMany({
+    const users = await prisma.user.findMany({
       select: {
         id: true,
         fullname: true,
@@ -23,8 +23,22 @@ export class UserRepository implements IUserRepository {
         sex: true,
         status: true,
         apiKey: true,
+        userRole: {
+          select: {
+            role: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
       },
     });
+
+    return users.map((user) => ({
+      ...user,
+      userRole: user.userRole[0]?.role.name,
+    }));
   }
   public async getUser({ options }: { options: any }): Promise<user | null> {
     return await prisma.user.findFirst(options);
@@ -43,5 +57,16 @@ export class UserRepository implements IUserRepository {
     } catch (error: any) {
       throw new Error(error);
     }
+  }
+
+  public async updateUserOtp(otp: string, userId: string): Promise<user> {
+    return await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        otp: otp,
+      },
+    });
   }
 }

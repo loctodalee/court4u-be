@@ -33,4 +33,11 @@ export interface IMemberSubscriptionRepository {
   getAll(): Promise<memberSubscription[]>;
   getByClubId(clubId: string): Promise<memberSubscription[]>;
   getByUserId(userId: string): Promise<memberSubscription[]>;
+  findExisted({
+    clubId,
+    userId,
+  }: {
+    clubId: string;
+    userId: string;
+  }): Promise<memberSubscription | null>;
 }

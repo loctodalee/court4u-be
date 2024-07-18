@@ -35,6 +35,10 @@ router.get(
   '/staff/welcome_back',
   asyncHandler(AuthController.getInstance().checkLoginStaffEmailToken)
 );
+router.get(
+  '/owner/welcome_back',
+  asyncHandler(AuthController.getInstance().checkLoginOwnerEmailToken)
+);
 
 router.get('/google', AuthController.getInstance().LoginGoogle);
 router.get(

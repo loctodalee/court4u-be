@@ -1,4 +1,4 @@
-import { keyTokens } from '@prisma/client';
+import { keyTokens, user } from '@prisma/client';
 
 export interface IAuthService {
   login({ email, password }: { email: string; password: string }): Promise<any>;
@@ -36,4 +36,15 @@ export interface IAuthService {
     refreshToken: string;
   }): Promise<any>;
   logOut(userId: string): Promise<void>;
+  newCourtOwnerFirstTime({
+    fullname,
+    password,
+    phone,
+    email,
+  }: {
+    fullname: string;
+    password: string;
+    phone: string;
+    email: string;
+  }): Promise<user>;
 }

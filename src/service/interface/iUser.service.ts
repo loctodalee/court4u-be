@@ -18,7 +18,7 @@ export interface IUserService {
     email: string;
     phone: string;
     status: string;
-    otp: string;
+    otp?: string;
   }): Promise<user>;
   updateUser({ options }: { options: any }): Promise<user>;
   updateUserAfterVerify({ otp }: { otp: string }): Promise<user>;
@@ -76,4 +76,12 @@ export interface IUserService {
     otp: string;
     clubId: string;
   }): Promise<user>;
+  changePasswordAfterSignUp({
+    userId,
+    password,
+  }: {
+    userId: string;
+    password: string;
+  }): Promise<void>;
+  updateUserOtp(otp: string, userId: string): Promise<user>;
 }

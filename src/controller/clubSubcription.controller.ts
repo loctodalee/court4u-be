@@ -34,6 +34,27 @@ export class ClubSubscriptionController {
       res.redirect(`https://court4u-fe.vercel.app/thanks`);
   }
 
+  public async clubBuySubscriptionFirstTime(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Payment redirect',
+      metaData:
+        await ClubSubscriptionController.clubSubscriptionService.buySubscriptionFirstTime(
+          {
+            ...req.body,
+          }
+        ),
+    }).send(res);
+  }
+
+  public async paymentCallBackFirstTime(req: Request, res: Response) {
+    await ClubSubscriptionController.clubSubscriptionService.paymentCallBackFirstTime(
+      {
+        ...req.query,
+      }
+    ),
+      res.redirect(`https://court4u-fe.vercel.app/thanks`);
+  }
+
   public async findClubSubsByClubId(req: Request, res: Response) {
     new SuccessResponse({
       message: 'Find club subscription',

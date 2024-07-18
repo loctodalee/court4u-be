@@ -1,5 +1,6 @@
 import {
   $Enums,
+  club,
   memberSubscription,
   Prisma,
   subscriptionOption,
@@ -220,6 +221,46 @@ export class MemberSubscriptionRepository
           resolve(JSON.parse(data));
         }
       });
+    });
+  }
+
+  public async findExisted({
+    clubId,
+    userId,
+  }: {
+    clubId: string;
+    userId: string;
+  }): Promise<memberSubscription | null> {
+    return new Promise((resolve, reject) => {
+      redisClient?.get(
+        `memberSubs-club-${clubId}-user-${userId}`,
+        async (err, data) => {
+          if (err) {
+            reject(err);
+            throw err;
+          }
+          if (data == null) {
+            const result = await prisma.memberSubscription.findFirst({
+              where: {
+                memberId: userId,
+                subscriptionOption: {
+                  clubId,
+                },
+              },
+            });
+            if (result) {
+              redisClient.setex(
+                `memberSubs-club-${clubId}-user-${userId}`,
+                randomInt(3600, 4200),
+                JSON.stringify(result)
+              );
+            }
+            resolve(result);
+          } else {
+            resolve(JSON.parse(data));
+          }
+        }
+      );
     });
   }
 }

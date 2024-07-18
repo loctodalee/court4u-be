@@ -6,4 +6,5 @@ export interface IUserRepository {
   createNewUser({ options }: { options: any }): Promise<user>;
   updateUser({ options }: { options: any }): Promise<user>;
   upsertUser({ options }: { options: any }): Promise<user>;
+  updateUserOtp(otp: string, userId: string): Promise<user>;
 }

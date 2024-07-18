@@ -15,7 +15,7 @@ import { KeyTokenService } from './keyToken.service';
 import { filterData } from '../util/filterData';
 import { IEmailService } from './interface/iEmail.service';
 import { EmailService } from './email.service';
-import { keyTokens } from '@prisma/client';
+import { keyTokens, user } from '@prisma/client';
 import { IUserService } from './interface/iUser.service';
 import { UserService } from './user.service';
 import passport from 'passport';
@@ -309,5 +309,42 @@ export class AuthService implements IAuthService {
       throw new BadRequestError('Logout fail!');
     }
     await AuthService._keyTokenService.deleteKeyByUserId({ userId });
+  }
+
+  public async newCourtOwnerFirstTime({
+    fullname,
+    password,
+    phone,
+    email,
+  }: {
+    fullname: string;
+    password: string;
+    phone: string;
+    email: string;
+  }): Promise<user> {
+    const foundUser = await AuthService._userService.getUserByEmail({ email });
+    if (foundUser) {
+      throw new NotImplementError('Email already existed');
+    }
+
+    // // send mail
+    // const result = await AuthService._emailService.sendEmailToken({ email });
+    // console.log(result);
+
+    var user = await AuthService._userService.createNewUser({
+      email,
+      password,
+      phone,
+      status: 'disable',
+      fullname,
+      // role: ['owner'],
+    });
+    const roleMember = await AuthService._roleService.findByName('owner');
+    if (!roleMember) throw new BadRequestError('Not found role');
+    await AuthService._roleService.assignRoleToUser({
+      roleId: roleMember.id,
+      userId: user.id,
+    });
+    return user;
   }
 }

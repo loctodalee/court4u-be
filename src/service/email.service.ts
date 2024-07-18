@@ -178,4 +178,31 @@ export class EmailService implements IEmailService {
       throw new Error(error);
     }
   }
+
+  public async sendEmailTokenOwner({ email }: { email: string }): Promise<any> {
+    try {
+      //1. get Token
+      const token = this.generateRandomToken();
+      //2. get template
+      const template = verifyTemplate;
+      const host = process.env.HOST;
+      //3. replace content
+      const params = {
+        link_verify: `${host}/api/auth/owner/welcome_back?token=${token}`,
+      };
+      const content = replacePlaceholder(template, params);
+      console.log('send email link verify');
+      this.sendMailJect({
+        html: content,
+        toEmail: email,
+        subject: 'Verify your email to become a owner',
+        text: 'Verify',
+      }).catch((error) => {
+        throw new Error(error);
+      });
+      return token;
+    } catch (error: any) {
+      throw new Error(error);
+    }
+  }
 }

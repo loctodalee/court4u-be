@@ -11,5 +11,8 @@ router.get(
   asyncHandler(UserController.getInstance().getAllUser)
 );
 router.get('/:id', asyncHandler(UserController.getInstance().getUserById));
-router;
+router.post(
+  '/verify/changePassword',
+  asyncHandler(UserController.getInstance().chagePasswordAfterRegister)
+);
 module.exports = router;

@@ -296,4 +296,19 @@ export class MemberSubscriptionService implements IMemberSubscriptionService {
       userId
     );
   }
+
+  public async findExistedMemberSubscription({
+    clubId,
+    userId,
+  }: {
+    clubId: string;
+    userId: string;
+  }): Promise<memberSubscription | null> {
+    return await MemberSubscriptionService._memberSubscriptionRepository.findExisted(
+      {
+        clubId,
+        userId,
+      }
+    );
+  }
 }

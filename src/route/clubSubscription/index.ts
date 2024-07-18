@@ -9,6 +9,18 @@ router.get(
   '/momo/PaymentCallBack',
   asyncHandler(ClubSubscriptionController.getInstance().paymentCallBack)
 );
+router.get(
+  '/momo/PaymentCallBackFirstTime',
+  asyncHandler(
+    ClubSubscriptionController.getInstance().paymentCallBackFirstTime
+  )
+);
+router.post(
+  '/buyFirstTime',
+  asyncHandler(
+    ClubSubscriptionController.getInstance().clubBuySubscriptionFirstTime
+  )
+);
 router.use(authentication);
 
 router.use(CheckApiKey);
