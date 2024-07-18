@@ -226,20 +226,51 @@ export class BillRepository implements IBillRepository {
       include: {
         booking: {
           include: {
-            user: true,
+            user: {
+              select: {
+                email: true,
+                fullname: true,
+                dateOfBirth: true,
+                id: true,
+                phone: true,
+                avatarUrl: true,
+              },
+            },
             bookedSlot: true,
           },
         },
         clubSubscription: {
           include: {
-            club: true,
+            club: {
+              include: {
+                user: {
+                  select: {
+                    email: true,
+                    fullname: true,
+                    dateOfBirth: true,
+                    id: true,
+                    phone: true,
+                    avatarUrl: true,
+                  },
+                },
+              },
+            },
             SubscriptionForClub: true,
           },
         },
         memberSubscription: {
           include: {
             subscriptionOption: true,
-            user: true,
+            user: {
+              select: {
+                email: true,
+                fullname: true,
+                dateOfBirth: true,
+                id: true,
+                phone: true,
+                avatarUrl: true,
+              },
+            },
           },
         },
       },
