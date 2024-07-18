@@ -58,4 +58,5 @@ export interface IClubService {
     clubId: string;
   }): Promise<club>;
   getClubsByOwnerId(id: string): Promise<club[]>;
+  findClubInfo(clubId: string): Promise<any>;
 }

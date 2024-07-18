@@ -125,8 +125,8 @@ export class DashboardAdminController {
    */
   public async getBillById(req: Request, res: Response) {
     new SuccessResponse({
-      message: 'Get bill',
-      metaData: await DashboardAdminController._billService.getBillById(
+      message: 'Get bill info by id',
+      metaData: await DashboardAdminController._billService.getBillFullInfo(
         req.params.id
       ),
     }).send(res);

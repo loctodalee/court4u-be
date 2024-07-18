@@ -217,4 +217,33 @@ export class BillRepository implements IBillRepository {
       },
     });
   }
+
+  public async getBillIdFullInfo(id: string): Promise<any> {
+    const result = await prisma.bill.findFirst({
+      where: {
+        id,
+      },
+      include: {
+        booking: {
+          include: {
+            user: true,
+            bookedSlot: true,
+          },
+        },
+        clubSubscription: {
+          include: {
+            club: true,
+            SubscriptionForClub: true,
+          },
+        },
+        memberSubscription: {
+          include: {
+            subscriptionOption: true,
+            user: true,
+          },
+        },
+      },
+    });
+    return result;
+  }
 }

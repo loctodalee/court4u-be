@@ -164,4 +164,40 @@ export class ClubRepository implements IClubRepository {
       },
     });
   }
+
+  public async getClubWithSlotAndSubscription(clubId: string): Promise<any> {
+    return await prisma.club.findFirst({
+      where: {
+        id: clubId,
+      },
+
+      //    id: string;
+      // courtOwnerId: string;
+      // name: string;
+      // address: string;
+      // district: string;
+      // cityOfProvince: string;
+      // logoUrl: string | null;
+      // description: string | null;
+      // apiKey: string;
+      // status: $Enums.ClubStatus;
+      // createdAt: Date;
+      // updatedAt: Date;
+      // preOrder: number;
+      select: {
+        id: true,
+        courtOwnerId: true,
+        name: true,
+        address: true,
+        district: true,
+        cityOfProvince: true,
+        logoUrl: true,
+        description: true,
+        status: true,
+        preOrder: true,
+        slot: true,
+        subscriptionOption: true,
+      },
+    });
+  }
 }

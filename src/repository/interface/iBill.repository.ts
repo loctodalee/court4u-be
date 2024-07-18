@@ -24,4 +24,5 @@ export interface IBillRepository {
   deleteBill(id: string): Promise<bill | null>;
   getBillsByClubId(clubId: string): Promise<bill[]>;
   getBillByOwnerId(id: string): Promise<bill[]>;
+  getBillIdFullInfo(id: string): Promise<any>;
 }

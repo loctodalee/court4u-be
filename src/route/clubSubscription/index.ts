@@ -3,6 +3,7 @@ import { asyncHandler } from '../../helper/asyncHandler';
 import { authentication, CheckApiKey } from '../../auth/authUtils';
 import { ClubSubscriptionController } from '../../controller/clubSubcription.controller';
 import { grantAccess } from '../../middleware/rbac';
+import { createClubFirstTime } from '../../validation/club.validation';
 
 const router = express.Router();
 router.get(
@@ -17,6 +18,7 @@ router.get(
 );
 router.post(
   '/buyFirstTime',
+  asyncHandler(createClubFirstTime),
   asyncHandler(
     ClubSubscriptionController.getInstance().clubBuySubscriptionFirstTime
   )

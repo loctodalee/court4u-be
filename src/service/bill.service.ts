@@ -15,6 +15,9 @@ export class BillService implements IBillService {
   private static billRepository: IBillRepository = BillRepository.getInstance();
 
   constructor() {}
+  public async getBillFullInfo(id: string): Promise<any> {
+    return await BillService.billRepository.getBillIdFullInfo(id);
+  }
 
   public async getBillById(id: string): Promise<bill | null> {
     return BillService.billRepository.getBillById(id);

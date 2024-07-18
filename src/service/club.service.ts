@@ -151,4 +151,10 @@ export class ClubService implements IClubService {
   public async getClubsByOwnerId(id: string): Promise<club[]> {
     return await ClubService._clubRepository.getClubsByOwnerId(id);
   }
+
+  public async findClubInfo(clubId: string): Promise<any> {
+    return await ClubService._clubRepository.getClubWithSlotAndSubscription(
+      clubId
+    );
+  }
 }

@@ -35,9 +35,9 @@ export class ClubController {
   async findClub(req: Request, res: Response) {
     new SuccessResponse({
       message: 'create club success',
-      metaData: await ClubController.slotService.findClubInfo({
-        clubId: req.params.clubId as string,
-      }),
+      metaData: await ClubController.clubService.findClubInfo(
+        req.params.clubId
+      ),
     }).send(res);
   }
   async getClubs(req: Request, res: Response) {
