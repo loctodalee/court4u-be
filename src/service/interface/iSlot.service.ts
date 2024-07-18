@@ -34,4 +34,11 @@ export interface ISlotService {
     clubId: string;
     startDate: Date;
   }): Promise<any>;
+  deleteSlot({
+    clubId,
+    slotId,
+  }: {
+    clubId: string;
+    slotId: string;
+  }): Promise<slot>;
 }

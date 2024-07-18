@@ -82,4 +82,14 @@ export class SlotController {
       }),
     }).send(res);
   }
+
+  public async deleteSlot(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'delete slot success',
+      metaData: await SlotController.slotService.deleteSlot({
+        clubId: req.clubId,
+        slotId: req.params.id,
+      }),
+    }).send(res);
+  }
 }

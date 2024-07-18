@@ -34,5 +34,6 @@ router.post(
   '/:id/courts',
   asyncHandler(SlotController.getInstacnce().addCourtOnSlot)
 );
+router.delete('/:id', asyncHandler(SlotController.getInstacnce().deleteSlot));
 
 module.exports = router;

@@ -13,4 +13,11 @@ export interface ICourtRepository {
   getAllCourtByClubId(id: string): Promise<court[]>;
   getCourtBySlotId(slotId: string): Promise<court[]>;
   findExistedCourt(clubId: string, number: number): Promise<court | null>;
+  updateCourt(
+    id: string,
+    data: {
+      status: CourtStatus;
+      number: number;
+    }
+  ): Promise<court>;
 }

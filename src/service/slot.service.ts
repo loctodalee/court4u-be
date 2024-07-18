@@ -234,4 +234,16 @@ export class SlotService implements ISlotService {
     );
     return listSlotInfo;
   }
+
+  public async deleteSlot({
+    clubId,
+    slotId,
+  }: {
+    clubId: string;
+    slotId: string;
+  }): Promise<slot> {
+    return await SlotService._slotRepository.updateSlot(slotId, {
+      status: 'disable',
+    });
+  }
 }

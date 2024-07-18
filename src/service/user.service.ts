@@ -7,6 +7,7 @@ import {
   NotFoundError,
 } from '../handleResponse/error.response';
 import { filterData } from '../util/filterData';
+import bcrypt from 'bcrypt';
 
 export class UserService implements IUserService {
   private static Instance: UserService;
@@ -236,16 +237,9 @@ export class UserService implements IUserService {
     userId: string;
     password: string;
   }): Promise<void> {
-    const user = await UserRepository.getInstance().updateUser({
-      options: {
-        where: {
-          id: userId,
-        },
-        data: {
-          password,
-        },
-      },
-    });
+    console.log(password);
+    const hashPassword = await bcrypt.hash(password, 10);
+    await UserRepository.getInstance().updatePassword(userId, hashPassword);
   }
 
   public async updateUserOtp(otp: string, userId: string): Promise<user> {

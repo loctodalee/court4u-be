@@ -51,13 +51,28 @@ export class MemberSubscriptionService implements IMemberSubscriptionService {
           keySearch: subscriptionId,
         }
       );
-    if (!foundSubs) throw new BadRequestError('Subscription not found');
-
+    if (
+      !foundSubs ||
+      foundSubs.status == 'disable' ||
+      foundSubs.status == 'block'
+    )
+      throw new BadRequestError('Subscription not found');
     const foundUser = await MemberSubscriptionService._userService.getUserById({
       id: memberId,
     });
-    if (!foundUser) throw new BadRequestError('User not found');
-
+    if (
+      !foundUser ||
+      foundUser.status == 'block' ||
+      foundUser.status == 'disable'
+    )
+      throw new BadRequestError('User not found');
+    const foundExistedMemberSubs =
+      await MemberSubscriptionService._memberSubscriptionRepository.findSubscriptionByIdAndUserId(
+        foundSubs.id,
+        foundUser.id
+      );
+    if (foundExistedMemberSubs)
+      throw new BadRequestError('User has buy this subscription');
     const bill = await MemberSubscriptionService._billService.createBill({
       method: 'momo',
       date: new Date(Date.now()),
@@ -109,7 +124,7 @@ export class MemberSubscriptionService implements IMemberSubscriptionService {
       {
         price: foundSubs.price,
         orderId: memberSubs!.id,
-        returnUrl: '/memberSubscription/momo/PaymentCallBack',
+        returnUrl: '/memberSubscriptions/momo/PaymentCallBack',
       }
     );
 
@@ -214,6 +229,8 @@ export class MemberSubscriptionService implements IMemberSubscriptionService {
     if (!subscription) {
       throw new NotFoundError('Subscription not found');
     }
+    if (subscription.status == 'disable' || subscription.status == 'pending')
+      return null;
     if (!subscription.usesHistory.includes(bookDate)) {
       const updatedSubscription =
         await MemberSubscriptionService._memberSubscriptionRepository.updateMemberSubscription(
@@ -259,6 +276,11 @@ export class MemberSubscriptionService implements IMemberSubscriptionService {
         }
       );
     if (!foundMemberSubscription) return null;
+    if (
+      foundMemberSubscription.status == 'disable' ||
+      foundMemberSubscription.status == 'pending'
+    )
+      return null;
     if (foundMemberSubscription.timeRemain! - time < 0) {
       return null;
     }
@@ -303,7 +325,7 @@ export class MemberSubscriptionService implements IMemberSubscriptionService {
   }: {
     clubId: string;
     userId: string;
-  }): Promise<memberSubscription | null> {
+  }): Promise<memberSubscription[] | null> {
     return await MemberSubscriptionService._memberSubscriptionRepository.findExisted(
       {
         clubId,

@@ -39,5 +39,9 @@ export interface IMemberSubscriptionRepository {
   }: {
     clubId: string;
     userId: string;
-  }): Promise<memberSubscription | null>;
+  }): Promise<memberSubscription[] | null>;
+  findSubscriptionByIdAndUserId(
+    subscriptionId: string,
+    userId: string
+  ): Promise<memberSubscription | null>;
 }

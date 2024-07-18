@@ -121,4 +121,19 @@ export class CourtRepository implements ICourtRepository {
       },
     });
   }
+
+  public async updateCourt(
+    id: string,
+    data: {
+      status: CourtStatus;
+      number: number;
+    }
+  ): Promise<court> {
+    return await prisma.court.update({
+      where: {
+        id,
+      },
+      data,
+    });
+  }
 }

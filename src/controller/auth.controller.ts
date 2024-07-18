@@ -54,21 +54,23 @@ export class AuthController {
   }
 
   async checkLoginStaffEmailToken(req: Request, res: Response) {
-    new SuccessResponse({
-      message: 'Staff verify success',
-      metaData: await AuthController.authService.checkLoginEmailToken({
-        token: req.query.token,
-      }),
-    }).send(res);
+    const tokens = await AuthController.authService.checkLoginEmailToken({
+      token: req.query.token,
+    });
+
+    res.redirect(
+      `https://court4u-fe.vercel.app/change-password?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`
+    );
   }
 
   async checkLoginOwnerEmailToken(req: Request, res: Response) {
-    new SuccessResponse({
-      message: 'Owner verify success',
-      metaData: await AuthController.authService.checkLoginEmailToken({
-        token: req.query.token,
-      }),
-    }).send(res);
+    const tokens = await AuthController.authService.checkLoginEmailToken({
+      token: req.query.token,
+    });
+
+    res.redirect(
+      `https://court4u-fe.vercel.app/change-password?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`
+    );
   }
   /**
    * @description Chuyển hướng đến trang login của third party (facebook, google) để xử lý và tạo ra accesstoken và refreshtoken

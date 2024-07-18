@@ -1,4 +1,4 @@
-import { slot } from '@prisma/client';
+import { slot, SlotStatus } from '@prisma/client';
 import { ISlotRepository } from './interface/iSlot.repository';
 import prisma from '../lib/prisma';
 import { getRedis } from '../lib/init.redis';
@@ -66,5 +66,23 @@ export class SlotRepository implements ISlotRepository {
       },
     });
     return result;
+  }
+
+  public async updateSlot(
+    slotId: string,
+    data: {
+      startTime?: Date;
+      endTime?: Date;
+      dateOfWeek?: number;
+      price?: number;
+      status?: SlotStatus;
+    }
+  ): Promise<slot> {
+    return await prisma.slot.update({
+      where: {
+        id: slotId,
+      },
+      data,
+    });
   }
 }

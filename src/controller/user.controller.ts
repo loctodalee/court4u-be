@@ -33,12 +33,12 @@ export class UserController {
       }),
     }).send(res);
   }
-  async chagePasswordAfterRegister(req: Request, res: Response) {
+  async changePasswordAfterRegister(req: Request, res: Response) {
     new SuccessResponse({
       message: 'Change password success',
       metaData: await UserController.userService.changePasswordAfterSignUp({
         userId: req.user.userId,
-        password: req.body,
+        password: req.body.password,
       }),
     }).send(res);
   }

@@ -58,4 +58,14 @@ export class MemberSubscriptionController {
         ),
     }).send(res);
   }
+
+  public async getSubsByUserId(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Get user membersubscription',
+      metaData:
+        await MemberSubscriptionController.memberSubscriptionService.getMemberSubscriptionByUserId(
+          req.user.userId
+        ),
+    }).send(res);
+  }
 }

@@ -30,6 +30,7 @@ import { SendEmailV3_1 } from 'node-mailjet';
 import { IClubService } from './interface/iClub.service';
 import { ClubService } from './club.service';
 import _ from 'lodash';
+import { response } from 'express';
 export type bookSlotInfo = {
   date: Date;
   slotId: string;
@@ -82,6 +83,15 @@ export class BookedSlotService implements IBookedSlotService {
     subscriptionId: string;
     slotList: bookSlot[];
   }): Promise<any> {
+    const foundUser = await BookedSlotService._userService.getUserById({
+      id: userId,
+    });
+    if (
+      !foundUser ||
+      foundUser.status == 'block' ||
+      foundUser.status == 'disable'
+    )
+      throw new BadRequestError('User is not available');
     // sort để lấy toàn bộ id trong list slotList nhận tự request
     const slotIds = slotList.map((entry) => entry.slotId);
 
@@ -93,6 +103,12 @@ export class BookedSlotService implements IBookedSlotService {
         },
       },
     });
+
+    const foundClub = await BookedSlotService._clubService.foundClubById({
+      clubId: slots[0].clubId,
+    });
+    if (!foundClub || foundClub.status == 'disable')
+      throw new BadRequestError('Club is not available');
     //tạo ra nơi để lưu lại full thông tin của 1 bookedSlot
     var bookedSlotInfoList: bookSlotInfo[] = [];
     type lockCheck = {
@@ -305,7 +321,7 @@ export class BookedSlotService implements IBookedSlotService {
         subject: 'Book court confirmation',
         attachment: attachments,
       });
-      return bookedSlot;
+      response.redirect(`https://court4u-fe.vercel.app/thanks`);
     }
   }
 

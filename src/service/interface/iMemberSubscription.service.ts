@@ -29,5 +29,5 @@ export interface IMemberSubscriptionService {
   }: {
     clubId: string;
     userId: string;
-  }): Promise<memberSubscription | null>;
+  }): Promise<memberSubscription[] | null>;
 }

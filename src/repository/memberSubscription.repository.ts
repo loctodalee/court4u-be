@@ -230,7 +230,7 @@ export class MemberSubscriptionRepository
   }: {
     clubId: string;
     userId: string;
-  }): Promise<memberSubscription | null> {
+  }): Promise<memberSubscription[] | null> {
     return new Promise((resolve, reject) => {
       redisClient?.get(
         `memberSubs-club-${clubId}-user-${userId}`,
@@ -240,7 +240,7 @@ export class MemberSubscriptionRepository
             throw err;
           }
           if (data == null) {
-            const result = await prisma.memberSubscription.findFirst({
+            const result = await prisma.memberSubscription.findMany({
               where: {
                 memberId: userId,
                 subscriptionOption: {
@@ -261,6 +261,18 @@ export class MemberSubscriptionRepository
           }
         }
       );
+    });
+  }
+
+  public async findSubscriptionByIdAndUserId(
+    subscriptionId: string,
+    userId: string
+  ): Promise<memberSubscription | null> {
+    return await prisma.memberSubscription.findFirst({
+      where: {
+        memberId: userId,
+        subscriptionId: subscriptionId,
+      },
     });
   }
 }

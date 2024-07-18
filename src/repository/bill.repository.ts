@@ -236,7 +236,11 @@ export class BillRepository implements IBillRepository {
                 avatarUrl: true,
               },
             },
-            bookedSlot: true,
+            bookedSlot: {
+              include: {
+                slot: true,
+              },
+            },
           },
         },
         clubSubscription: {

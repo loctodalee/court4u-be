@@ -16,9 +16,14 @@ router.post(
   asyncHandler(MemberSubscriptionController.getInstance().buyMemberSubscription)
 );
 router.get(
+  '/member',
+  asyncHandler(MemberSubscriptionController.getInstance().getSubsByUserId)
+);
+router.get(
   '/find/:clubId',
   asyncHandler(MemberSubscriptionController.getInstance().findExisted)
 );
+
 router.use(CheckApiKey);
 router.get(
   '/:id',

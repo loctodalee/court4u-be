@@ -13,6 +13,6 @@ router.get(
 router.get('/:id', asyncHandler(UserController.getInstance().getUserById));
 router.post(
   '/verify/changePassword',
-  asyncHandler(UserController.getInstance().chagePasswordAfterRegister)
+  asyncHandler(UserController.getInstance().changePasswordAfterRegister)
 );
 module.exports = router;

@@ -222,6 +222,7 @@ model slot {
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
   price Float
+  status SlotStatus @default(active)
   bookedSlot    bookedSlot[]
   club          club            @relation(fields: [clubId], references: [id])
   subOptionSlot subOptionSlot[]
@@ -385,5 +386,10 @@ enum BookingStatus {
   pending
   active
   canceled
+}
+
+enum SlotStatus {
+  active
+  disable
 }
 
