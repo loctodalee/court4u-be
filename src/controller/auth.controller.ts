@@ -67,7 +67,7 @@ export class AuthController {
     const tokens = await AuthController.authService.checkLoginEmailToken({
       token: req.query.token,
     });
-
+    console.log(tokens);
     res.redirect(
       `https://court4u-fe.vercel.app/change-password?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`
     );

@@ -5,9 +5,11 @@ import { RoleController } from '../../controller/role.controller';
 import { grantAccess } from '../../middleware/rbac';
 
 const router = express.Router();
-router.use(authentication);
-router.use(grantAccess('readAny', 'role'));
 router.post('/', asyncHandler(RoleController.getInstance().addRole));
+
+router.use(authentication);
+
+router.use(grantAccess('readAny', 'role'));
 router.get(
   '/name/:name',
   asyncHandler(RoleController.getInstance().findByName)

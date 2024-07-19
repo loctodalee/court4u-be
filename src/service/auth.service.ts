@@ -337,7 +337,6 @@ export class AuthService implements IAuthService {
       phone,
       status: 'disable',
       fullname,
-      // role: ['owner'],
     });
     const roleMember = await AuthService._roleService.findByName('owner');
     if (!roleMember) throw new BadRequestError('Not found role');

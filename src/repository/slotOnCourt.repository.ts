@@ -3,6 +3,7 @@ import { ISlotOnCourtRepository } from './interface/iSlotOnCourt.repository';
 import prisma from '../lib/prisma';
 import { getRedis } from '../lib/init.redis';
 import { randomInt } from 'crypto';
+import { slotOnCourtData } from '../service/slotOnCourt.service';
 const { instanceConnect: redisClient } = getRedis();
 
 export class SlotOnCourtRepository implements ISlotOnCourtRepository {
@@ -145,6 +146,14 @@ export class SlotOnCourtRepository implements ISlotOnCourtRepository {
           resolve(JSON.parse(data));
         }
       });
+    });
+  }
+
+  public async addManySlotOnCourt(
+    slotOnCourtList: slotOnCourtData[]
+  ): Promise<any> {
+    return await prisma.slotOnCourt.createMany({
+      data: slotOnCourtList,
     });
   }
 }

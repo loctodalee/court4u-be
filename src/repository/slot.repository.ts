@@ -85,4 +85,61 @@ export class SlotRepository implements ISlotRepository {
       data,
     });
   }
+
+  public async findExistedSlot(
+    clubId: string,
+    dateOfWeek: number,
+    startTime: Date,
+    endTime: Date
+  ): Promise<slot[] | null> {
+    const validStartTime = new Date(
+      0,
+      0,
+      0,
+      startTime.getHours(),
+      startTime.getMinutes(),
+      0
+    );
+    const validEndTime = new Date(
+      0,
+      0,
+      0,
+      endTime.getHours(),
+      endTime.getMinutes(),
+      0
+    );
+    const result = await prisma.slot.findMany({
+      where: {
+        dateOfWeek,
+        clubId,
+      },
+    });
+    if (!result) {
+      return null;
+    }
+    result.forEach((x) => {
+      let validStartSlot = new Date(
+        0,
+        0,
+        0,
+        x.startTime.getHours(),
+        x.startTime.getMinutes(),
+        0
+      );
+      let validEndSlot = new Date(
+        0,
+        0,
+        0,
+        x.endTime.getHours(),
+        x.endTime.getMinutes(),
+        0
+      );
+      console.log(validStartTime);
+      console.log(validStartSlot);
+      console.log(validEndTime);
+      console.log(validEndSlot);
+      return validEndSlot == validEndTime || validStartTime == validStartSlot;
+    });
+    return result;
+  }
 }

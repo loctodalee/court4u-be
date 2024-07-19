@@ -25,10 +25,7 @@ export async function signUpNewUser(
   next: NextFunction
 ) {
   const signUpSchema = Joi.object({
-    email: Joi.string()
-      .required()
-      .regex(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/)
-      .min(3),
+    email: Joi.string().required().min(3),
     fullname: Joi.string().required().min(1),
     password: Joi.string().required().min(3),
     phone: Joi.number().required().min(3),

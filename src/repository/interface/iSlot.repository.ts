@@ -29,4 +29,10 @@ export interface ISlotRepository {
     listDate: number[]
   ): Promise<slot[]>;
   findManySlot({ options }: { options: any }): Promise<slot[]>;
+  findExistedSlot(
+    clubId: string,
+    dateOfWeek: number,
+    startTime: Date,
+    endTime: Date
+  ): Promise<slot[] | null>;
 }
