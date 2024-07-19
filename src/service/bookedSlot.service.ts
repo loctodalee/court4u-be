@@ -321,7 +321,7 @@ export class BookedSlotService implements IBookedSlotService {
         subject: 'Book court confirmation',
         attachment: attachments,
       });
-      response.redirect(`https://court4u-fe.vercel.app/thanks`);
+      return bookedSlot;
     }
   }
 

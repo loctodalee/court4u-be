@@ -92,4 +92,11 @@ export class SlotController {
       }),
     }).send(res);
   }
+
+  public async test(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'get exsited',
+      metaData: await SlotController.slotService.test({ ...req.body }),
+    }).send(res);
+  }
 }

@@ -52,4 +52,16 @@ export class StaffProfileRepository implements IStaffProfileRepository {
       },
     });
   }
+
+  public async getStaffProfileByOwnerId(
+    ownerId: string
+  ): Promise<staffProfile[]> {
+    return await prisma.staffProfile.findMany({
+      where: {
+        club: {
+          courtOwnerId: ownerId,
+        },
+      },
+    });
+  }
 }

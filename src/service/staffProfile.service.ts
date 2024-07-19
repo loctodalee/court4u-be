@@ -117,4 +117,12 @@ export class StaffProfileService implements IStaffProfileService {
       clubId
     );
   }
+
+  public async getStaffProfileByOwnerId(
+    ownerId: string
+  ): Promise<staffProfile[]> {
+    return await StaffProfileRepository.getInstance().getStaffProfileByOwnerId(
+      ownerId
+    );
+  }
 }

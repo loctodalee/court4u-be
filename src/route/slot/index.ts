@@ -5,6 +5,7 @@ import { SlotController } from '../../controller/slot.controller';
 import { grantAccess } from '../../middleware/rbac';
 import { createSlotValidation } from '../../validation/slot.validation';
 const router = express.Router();
+router.post(`/test`, asyncHandler(SlotController.getInstacnce().test));
 router.get(
   '/slotInfo/:clubId',
   asyncHandler(SlotController.getInstacnce().getSlotInfo)

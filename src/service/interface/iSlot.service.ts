@@ -41,4 +41,15 @@ export interface ISlotService {
     clubId: string;
     slotId: string;
   }): Promise<slot>;
+  test({
+    clubId,
+    dateOfWeek,
+    startTime,
+    endTime,
+  }: {
+    clubId: string;
+    dateOfWeek: number;
+    startTime: Date;
+    endTime: Date;
+  }): Promise<any>;
 }

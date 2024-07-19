@@ -92,6 +92,7 @@ export class SlotRepository implements ISlotRepository {
     startTime: Date,
     endTime: Date
   ): Promise<slot[] | null> {
+    // Create valid times for comparison
     const validStartTime = new Date(
       0,
       0,
@@ -108,38 +109,53 @@ export class SlotRepository implements ISlotRepository {
       endTime.getMinutes(),
       0
     );
+
+    // Fetch slots from the database
     const result = await prisma.slot.findMany({
       where: {
         dateOfWeek,
         clubId,
       },
     });
-    if (!result) {
+
+    // Return null if no results
+    if (!result || result.length === 0) {
       return null;
     }
-    result.forEach((x) => {
-      let validStartSlot = new Date(
+
+    // Filter matching slots
+    const matchingSlots = result.filter((x) => {
+      const startSlot = new Date(x.startTime);
+      const endSlot = new Date(x.endTime);
+
+      const validStartSlot = new Date(
         0,
         0,
         0,
-        x.startTime.getHours(),
-        x.startTime.getMinutes(),
+        startSlot.getHours(),
+        startSlot.getMinutes(),
         0
       );
-      let validEndSlot = new Date(
+      const validEndSlot = new Date(
         0,
         0,
         0,
-        x.endTime.getHours(),
-        x.endTime.getMinutes(),
+        endSlot.getHours(),
+        endSlot.getMinutes(),
         0
       );
-      console.log(validStartTime);
-      console.log(validStartSlot);
-      console.log(validEndTime);
-      console.log(validEndSlot);
-      return validEndSlot == validEndTime || validStartTime == validStartSlot;
+
+      console.log('Input Start Time:', validStartTime);
+      console.log('Slot Start Time:', validStartSlot);
+      console.log('Input End Time:', validEndTime);
+      console.log('Slot End Time:', validEndSlot);
+
+      return (
+        validStartTime.getTime() === validStartSlot.getTime() &&
+        validEndTime.getTime() === validEndSlot.getTime()
+      );
     });
-    return result;
+
+    return matchingSlots.length > 0 ? matchingSlots : null;
   }
 }

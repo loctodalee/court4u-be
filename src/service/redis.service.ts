@@ -22,7 +22,7 @@ export const acquireLock = async (
   quantity: number
 ) => {
   const key = `lock__${slotId}`;
-  const retryTime = 20; // chỗ này đang bí
+  const retryTime = 50; // chỗ này đang bí
   const expiredTime = 3000;
   for (let i = 0; i < retryTime; i++) {
     const result = await setnxAsync(key, 'lock');

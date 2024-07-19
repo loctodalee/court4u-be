@@ -4,7 +4,16 @@ import { authentication, CheckApiKey } from '../../auth/authUtils';
 import { grantAccess } from '../../middleware/rbac';
 import { DashboardAdminController } from '../../controller/dashboard.controller.admin';
 const router = express.Router();
+//----------------------- Subscription For Club ---------------- //
+router.get(
+  '/subscriptionForClub',
+  asyncHandler(DashboardAdminController.getInstance().getAllSubscriptionForClub)
+);
 router.use(authentication);
+router.get(
+  '/bill/:id',
+  asyncHandler(DashboardAdminController.getInstance().getBillById)
+);
 router.use(grantAccess('readAny', 'Dashboard.Admin'));
 
 //--------------- CLUB -------------------//
@@ -28,10 +37,7 @@ router.get(
   '/bill/club/:clubId',
   asyncHandler(DashboardAdminController.getInstance().getBillByClubId)
 );
-router.get(
-  '/bill/:id',
-  asyncHandler(DashboardAdminController.getInstance().getBillById)
-);
+
 router.get(
   '/bill',
   asyncHandler(DashboardAdminController.getInstance().getAllBill)
@@ -122,9 +128,4 @@ router.get(
   asyncHandler(DashboardAdminController.getInstance().getBookedSlotByClubId)
 );
 
-//----------------------- Subscription For Club ---------------- //
-router.get(
-  '/subscriptionForClub',
-  asyncHandler(DashboardAdminController.getInstance().getAllSubscriptionForClub)
-);
 module.exports = router;

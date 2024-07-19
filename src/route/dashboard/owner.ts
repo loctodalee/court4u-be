@@ -8,6 +8,10 @@ const router = express.Router();
 router.use(authentication);
 router.use(grantAccess('readOwn', 'Dashboard.Owner'));
 
+router.use(
+  '/staffProfile/owner',
+  asyncHandler(DashboardOwnerController.getInstance().getStaffProfileByOwnerId)
+);
 //-------------- SELECT CLUB ---------------//
 router.get(
   '/clubs',

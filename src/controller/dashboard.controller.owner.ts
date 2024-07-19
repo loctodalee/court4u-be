@@ -192,6 +192,16 @@ export class DashboardOwnerController {
     }).send(res);
   }
 
+  public async getStaffProfileByOwnerId(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Get staff profile by club id',
+      metaData:
+        await DashboardOwnerController._staffProfile.getStaffProfileByOwnerId(
+          req.user.userId
+        ),
+    }).send(res);
+  }
+
   public async createStaffProfile(req: Request, res: Response) {
     new SuccessResponse({
       message: 'Create staff profile',

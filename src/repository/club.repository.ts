@@ -170,20 +170,6 @@ export class ClubRepository implements IClubRepository {
       where: {
         id: clubId,
       },
-
-      //    id: string;
-      // courtOwnerId: string;
-      // name: string;
-      // address: string;
-      // district: string;
-      // cityOfProvince: string;
-      // logoUrl: string | null;
-      // description: string | null;
-      // apiKey: string;
-      // status: $Enums.ClubStatus;
-      // createdAt: Date;
-      // updatedAt: Date;
-      // preOrder: number;
       select: {
         id: true,
         courtOwnerId: true,
@@ -196,7 +182,15 @@ export class ClubRepository implements IClubRepository {
         status: true,
         preOrder: true,
         slot: true,
-        subscriptionOption: true,
+        subscriptionOption: {
+          include: {
+            club: {
+              include: {
+                subscriptionDetail: true,
+              },
+            },
+          },
+        },
       },
     });
   }

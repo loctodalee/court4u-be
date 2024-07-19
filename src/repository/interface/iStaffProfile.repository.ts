@@ -9,4 +9,5 @@ export interface IStaffProfileRepository {
   }): Promise<staffProfile>;
 
   getStaffProfileByClubId(clubId: string): Promise<staffProfile[]>;
+  getStaffProfileByOwnerId(ownerId: string): Promise<staffProfile[]>;
 }

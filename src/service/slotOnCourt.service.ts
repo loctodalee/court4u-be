@@ -99,6 +99,10 @@ export class SlotOnCourtService implements ISlotOnCourtService {
         { slotId, date: toMidnight(date) }
       );
 
+    console.log(`numbCourt`);
+    console.log(numbCourt!.length);
+    console.log(`booked slot`);
+    console.log(bookedSlot.length);
     var remainCourt = numbCourt!.length - bookedSlot.length;
     return remainCourt;
   }

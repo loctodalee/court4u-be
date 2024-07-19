@@ -59,7 +59,7 @@ export class AuthController {
     });
 
     res.redirect(
-      `https://court4u-fe.vercel.app/change-password?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`
+      `https://court4u-fe.vercel.app/change-password?accessToken=${tokens.tokens.accessToken}&refreshToken=${tokens.tokens.refreshToken}`
     );
   }
 
@@ -69,7 +69,7 @@ export class AuthController {
     });
     console.log(tokens);
     res.redirect(
-      `https://court4u-fe.vercel.app/change-password?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`
+      `https://court4u-fe.vercel.app/change-password?accessToken=${tokens.tokens.accessToken}&refreshToken=${tokens.tokens.refreshToken}`
     );
   }
   /**

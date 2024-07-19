@@ -122,31 +122,12 @@ export class SlotOnCourtRepository implements ISlotOnCourtRepository {
   }
 
   public async getAllCourtBySlotId(id: string): Promise<slotOnCourt[] | null> {
-    return new Promise((resolve, reject) => {
-      redisClient?.get(`court-slot-${id}`, async (err, data) => {
-        if (err) {
-          reject(err);
-          throw err;
-        }
-        if (data == null) {
-          const result = await prisma.slotOnCourt.findMany({
-            where: {
-              slotId: id,
-            },
-          });
-          if (result) {
-            redisClient.setex(
-              `court-slot-${id}`,
-              randomInt(3600, 4200),
-              JSON.stringify(result)
-            );
-          }
-          resolve(result);
-        } else {
-          resolve(JSON.parse(data));
-        }
-      });
+    const result = await prisma.slotOnCourt.findMany({
+      where: {
+        slotId: id,
+      },
     });
+    return result;
   }
 
   public async addManySlotOnCourt(

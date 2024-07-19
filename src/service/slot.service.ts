@@ -29,6 +29,25 @@ export class SlotService implements ISlotService {
     this._clubService = ClubService.getInstance();
     this._slotRepository = SlotRepository.getInstance();
   }
+  public async test({
+    clubId,
+    dateOfWeek,
+    startTime,
+    endTime,
+  }: {
+    clubId: string;
+    dateOfWeek: number;
+    startTime: Date;
+    endTime: Date;
+  }): Promise<any> {
+    return await SlotService._slotRepository.findExistedSlot(
+      clubId,
+      dateOfWeek,
+      startTime,
+      endTime
+    );
+  }
+
   public async addSlot({
     clubId,
     startTime,
@@ -191,6 +210,8 @@ export class SlotService implements ISlotService {
     for (let i = new Date(start); i <= end; i.setDate(i.getDate() + 1)) {
       listDate.push(i.getDay());
     }
+    console.log(start);
+    console.log(end);
     var club = await SlotService._clubService.foundClubById({ clubId });
     if (!club) throw new BadRequestError('Club not found');
     var slots = await SlotService._slotRepository.findSlotByDateListAndClubId(
@@ -213,6 +234,8 @@ export class SlotService implements ISlotService {
 
     var listSlotInfo: slotInfo[] = [];
     for (let i = start; i <= end; i.setDate(i.getDate() + 1)) {
+      console.log(i);
+      console.log(i.getDay());
       slots.forEach((x) => {
         if (x.dateOfWeek == i.getDay()) {
           listSlotInfo.push({
@@ -230,6 +253,7 @@ export class SlotService implements ISlotService {
             slotId: slotInfo.id,
             date: slotInfo.date,
           });
+        console.log(slotInfo);
       })
     );
     return listSlotInfo;
@@ -242,8 +266,9 @@ export class SlotService implements ISlotService {
     clubId: string;
     slotId: string;
   }): Promise<slot> {
-    return await SlotService._slotRepository.updateSlot(slotId, {
+    const result = await SlotService._slotRepository.updateSlot(slotId, {
       status: 'disable',
     });
+    return result;
   }
 }
