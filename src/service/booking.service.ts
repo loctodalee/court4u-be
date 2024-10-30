@@ -31,13 +31,27 @@ export class BookingService implements IBookingService {
     return await BookingService._bookingRepository.foundBooking(id);
   }
 
-  public async updateBooking(
+  public async updateBookingStatus(
     bookingId: string,
     status: BookingStatus
   ): Promise<booking> {
-    return await BookingService._bookingRepository.updateBooking(
-      bookingId,
-      status
-    );
+    return await BookingService._bookingRepository.updateBooking(bookingId, {
+      status,
+    });
+  }
+
+  public async updateBookingPrice(
+    bookingId: string,
+    price: number
+  ): Promise<booking> {
+    return await BookingService._bookingRepository.updateBooking(bookingId, {
+      totalPrice: price,
+    });
+  }
+  public async deleteBooking(id: string): Promise<void> {
+    await BookingService._bookingRepository.deleteBooking(id);
+  }
+  public async getBookingByClubId(id: string): Promise<booking[]> {
+    return await BookingService._bookingRepository.getBookingsByClubId(id);
   }
 }

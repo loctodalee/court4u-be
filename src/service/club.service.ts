@@ -27,6 +27,7 @@ export class ClubService implements IClubService {
     address?: string;
     name?: string;
   }): Promise<club[]> {
+    console.log(data.cityOfProvince);
     return await ClubService._clubRepository.searchClub(data);
   }
   public async addClub({
@@ -37,6 +38,7 @@ export class ClubService implements IClubService {
     cityOfProvince,
     logoUrl = null,
     description = '',
+    preOrder,
   }: {
     courtOwnerId: string;
     name: string;
@@ -45,6 +47,7 @@ export class ClubService implements IClubService {
     cityOfProvince: string;
     logoUrl: string | null;
     description: string;
+    preOrder: number;
   }): Promise<club> {
     const newClub = await ClubService._clubRepository.addClub({
       name,
@@ -54,6 +57,7 @@ export class ClubService implements IClubService {
       description,
       district,
       logoUrl,
+      preOrder,
     });
     await ClubService._userService.updateApiKey({
       apiKey: newClub.apiKey,
@@ -94,14 +98,63 @@ export class ClubService implements IClubService {
       logoUrl?: string;
       description?: string;
       status?: ClubStatus;
+      preOrder?: number;
     }
   ): Promise<club> {
     var result = await ClubService._clubRepository.updateClub(clubId, data);
     return result;
   }
-
+  public async updateClubStatus({
+    clubId,
+    status,
+  }: {
+    clubId: string;
+    status: ClubStatus;
+  }): Promise<club> {
+    return await ClubService._clubRepository.updateClub(clubId, {
+      status,
+    });
+  }
   public async deleteClub({ id }: { id: string }): Promise<club> {
     var result = await ClubService._clubRepository.deleteClub({ id });
     return result;
+  }
+
+  public async updateApiKey({
+    userId,
+    clubId,
+  }: {
+    userId: string;
+    clubId: string;
+  }): Promise<club> {
+    let user = await ClubService._userService.getUserById({ id: userId });
+    if (!user) throw new BadRequestError('User not found');
+    let club = await ClubService._clubRepository.foundClub({
+      options: {
+        where: {
+          id: clubId,
+        },
+      },
+    });
+    if (!club) throw new BadRequestError('Club not found');
+
+    if (club.courtOwnerId !== user.id)
+      throw new BadRequestError('Login club fail');
+    var result = await ClubService._userService.updateApiKey({
+      apiKey: club.apiKey,
+      userId: user.id,
+    });
+    if (!result) throw new BadRequestError('Login club fail');
+    return club;
+  }
+
+  public async getClubsByOwnerId(id: string): Promise<club[]> {
+    return await ClubService._clubRepository.getClubsByOwnerId(id);
+  }
+
+  public async findClubInfo(clubId: string): Promise<any> {
+    return await ClubService._clubRepository.getClubWithSlotAndSubscription(
+      clubId
+    );
   }
 }

@@ -28,24 +28,39 @@ export class StaffProfileRepository implements IStaffProfileRepository {
     });
   }
 
-  public async createUser(data: {
-    fullname: string;
-    password: string | null;
-    email: string;
-    phone: string | null;
-    sex: Sex;
-    avatarUrl: string | null;
-    dateOfBirth: Date | null;
-  }) {
-    return prisma.user.create({
-      data: {
-        fullname: data.fullname,
-        password: data.password,
-        email: data.email,
-        phone: data.phone,
-        sex: data.sex,
-        avatarUrl: data.avatarUrl,
-        dateOfBirth: data.dateOfBirth,
+  public async getStaffProfileByClubId(
+    clubId: string
+  ): Promise<staffProfile[]> {
+    return await prisma.staffProfile.findMany({
+      where: {
+        clubId,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            apiKey: true,
+            fullname: true,
+            email: true,
+            phone: true,
+            sex: true,
+            status: true,
+            dateOfBirth: true,
+            avatarUrl: true,
+          },
+        },
+      },
+    });
+  }
+
+  public async getStaffProfileByOwnerId(
+    ownerId: string
+  ): Promise<staffProfile[]> {
+    return await prisma.staffProfile.findMany({
+      where: {
+        club: {
+          courtOwnerId: ownerId,
+        },
       },
     });
   }

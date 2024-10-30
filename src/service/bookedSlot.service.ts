@@ -1,7 +1,6 @@
+import Mail from 'nodemailer/lib/mailer';
 import { bookedSlot, booking, checkInStatus, Prisma } from '@prisma/client';
 import { bookSlot, IBookedSlotService } from './interface/iBookedSlot.service';
-import prisma from '../lib/prisma';
-import { forEach } from 'lodash';
 import { ISlotRepository } from '../repository/interface/iSlot.repository';
 import { SlotRepository } from '../repository/slot.repository';
 import { IBookingService } from './interface/iBooking.service';
@@ -21,13 +20,29 @@ import { SubscriptionFactory } from './subscription.service';
 import { acquireLock, releaseLock } from './redis.service';
 import { IPaymentService } from './interface/iPayment.service';
 import { PaymentService } from './payment.service';
-
+import QRCode, { QRCodeSegment } from 'qrcode';
+import { IEmailService } from './interface/iEmail.service';
+import { EmailService } from './email.service';
+import { IUserService } from './interface/iUser.service';
+import { UserService } from './user.service';
+import nodemailer from 'nodemailer';
+import { SendEmailV3_1 } from 'node-mailjet';
+import { IClubService } from './interface/iClub.service';
+import { ClubService } from './club.service';
+import _ from 'lodash';
+import { response } from 'express';
 export type bookSlotInfo = {
   date: Date;
   slotId: string;
   bookingId: string;
   checkedIn: checkInStatus;
   price: number;
+};
+
+export type QRMail = {
+  date: Date;
+  price: number;
+  QRimg: string;
 };
 export class BookedSlotService implements IBookedSlotService {
   private static Instance: BookedSlotService;
@@ -44,6 +59,9 @@ export class BookedSlotService implements IBookedSlotService {
   private static _bookedSlotRepository: IBookedSlotRepository;
   private static _memberSubscriptionService: IMemberSubscriptionService;
   private static _paymentService: IPaymentService;
+  private static _emailService: IEmailService;
+  private static _userService: IUserService;
+  private static _clubService: IClubService;
   static {
     this._memberSubscriptionService = MemberSubscriptionService.getInstance();
     this._bookedSlotRepository = BookedSlotRepository.getInstance();
@@ -52,6 +70,9 @@ export class BookedSlotService implements IBookedSlotService {
     this._slotRepository = SlotRepository.getInstance();
     this._subscriptionService = SubscriptionFactory.getInstance();
     this._paymentService = PaymentService.getInstance();
+    this._emailService = EmailService.getInstance();
+    this._userService = UserService.getInstance();
+    this._clubService = ClubService.getInstance();
   }
   public async createBookedSlot({
     userId,
@@ -61,7 +82,16 @@ export class BookedSlotService implements IBookedSlotService {
     userId: string;
     subscriptionId: string;
     slotList: bookSlot[];
-  }): Promise<Prisma.BatchPayload> {
+  }): Promise<any> {
+    const foundUser = await BookedSlotService._userService.getUserById({
+      id: userId,
+    });
+    if (
+      !foundUser ||
+      foundUser.status == 'block' ||
+      foundUser.status == 'disable'
+    )
+      throw new BadRequestError('User is not available');
     // sort để lấy toàn bộ id trong list slotList nhận tự request
     const slotIds = slotList.map((entry) => entry.slotId);
 
@@ -73,6 +103,12 @@ export class BookedSlotService implements IBookedSlotService {
         },
       },
     });
+
+    const foundClub = await BookedSlotService._clubService.foundClubById({
+      clubId: slots[0].clubId,
+    });
+    if (!foundClub || foundClub.status == 'disable')
+      throw new BadRequestError('Club is not available');
     //tạo ra nơi để lưu lại full thông tin của 1 bookedSlot
     var bookedSlotInfoList: bookSlotInfo[] = [];
     type lockCheck = {
@@ -104,7 +140,6 @@ export class BookedSlotService implements IBookedSlotService {
 
     slotList.forEach((slot) => {
       listLockCheck.forEach((data) => {
-        console.log(data);
         if (slot.slotId === data.slotId && slot.date === data.date) {
           data.quantity += 1;
         } else {
@@ -117,8 +152,6 @@ export class BookedSlotService implements IBookedSlotService {
       });
     });
 
-    console.log(listLockCheck);
-
     // tính total price để tạo bill
     const totalPrice = bookedSlotInfoList.reduce(
       (sum, slot) => sum + slot.price,
@@ -128,7 +161,6 @@ export class BookedSlotService implements IBookedSlotService {
       (sum, slot) => sum + (slot.endTime.getTime() - slot.endTime.getTime()),
       0
     );
-    console.log(totalPrice);
 
     //lock
     const acquireProduct = await Promise.all(
@@ -144,13 +176,21 @@ export class BookedSlotService implements IBookedSlotService {
     if (acquireProduct.includes(false)) {
       throw new BadRequestError('Booked slot is not valid');
     }
+
+    // nếu pass thì vẫn còn sân để trong slot đó để book
     if (!subscriptionId) {
+      const foundClub = await BookedSlotService._clubService.foundClubById({
+        clubId: slots[0].clubId,
+      });
+      if (!foundClub) throw new BadRequestError('Club not found');
+
+      const preOrderCost = (totalPrice * foundClub.preOrder) / 100;
       // nếu không có sử dụng gói để book slot
       const bill = await BookedSlotService._billService.createBill({
         date: new Date(Date.now()),
         method: 'momo',
         status: 'pending',
-        total: totalPrice,
+        total: preOrderCost,
         type: 'booking',
       });
       const booking = await BookedSlotService._bookingService.createBooking({
@@ -167,7 +207,7 @@ export class BookedSlotService implements IBookedSlotService {
         item.bookingId = booking.id;
       });
       var payment = await BookedSlotService._paymentService.momoPayment({
-        price: totalPrice,
+        price: preOrderCost,
         orderId: booking.id,
         returnUrl: '/bookSlots/momo/PaymentCallBack',
       });
@@ -204,25 +244,84 @@ export class BookedSlotService implements IBookedSlotService {
       });
       switch (memberSubsType) {
         case 'Month': {
-          await BookedSlotService._memberSubscriptionService.updateMonthSubscription(
-            memberSubs.id
-          );
+          slotList.forEach(async (x) => {
+            const memberSubscription =
+              await BookedSlotService._memberSubscriptionService.updateMonthSubscription(
+                memberSubs.id,
+                x.date
+              );
+            if (!memberSubscription) {
+              await BookedSlotService._bookingService.deleteBooking(booking.id);
+              await BookedSlotService._billService.deleteBill(bill.id);
+              throw new BadRequestError('Out of subscriptions');
+            }
+          });
           break;
         }
 
         case 'Time': {
-          await BookedSlotService._memberSubscriptionService.updateTimeSubscription(
-            memberSubs.id,
-            totalTime
-          );
+          const memberSubscription =
+            await BookedSlotService._memberSubscriptionService.updateTimeSubscription(
+              memberSubs.id,
+              totalTime
+            );
+          if (!memberSubscription) {
+            await BookedSlotService._bookingService.deleteBooking(booking.id);
+            await BookedSlotService._billService.deleteBill(bill.id);
+            throw new BadRequestError('Out of subscription');
+          }
+          break;
         }
       }
       bookedSlotInfoList.forEach((item) => {
         item.bookingId = booking.id;
       });
-      return await BookedSlotService._bookedSlotRepository.createBookedSlot(
+      await BookedSlotService._bookedSlotRepository.createBookedSlot(
         bookedSlotInfoList
       );
+      var bookedSlot =
+        await BookedSlotService._bookedSlotRepository.getSlotByBookingId(
+          booking.id
+        );
+      var attachments: SendEmailV3_1.InlinedAttachment[] = [];
+      const host = process.env.HOST;
+      var listQRMail: QRMail[] = await Promise.all(
+        bookedSlot.map(async (x, index) => {
+          const qrBuffer = await QRCode.toBuffer(
+            `${host}/api/bookSlots/checkIn?bookedSlotId=${x.id}`
+          );
+          const attachmentId = `qr-${index}.png`;
+          const base64QR = qrBuffer.toString('base64');
+
+          attachments.push({
+            ContentType: 'image/png',
+            Filename: attachmentId,
+            Base64Content: base64QR,
+            ContentID: attachmentId,
+          });
+          return {
+            date: x.date,
+            price: x.price,
+            QRimg: `<h4>Date: </h4>${x.date}</br><h4>Price: </h4>${x.price}</br><img src="cid:${attachmentId}"/>`,
+          };
+        })
+      );
+      const content = listQRMail
+        .map((x) => {
+          return x.QRimg;
+        })
+        .join('');
+      const foundUser = await BookedSlotService._userService.getUserById({
+        id: booking.userId,
+      });
+      if (!foundUser) throw new BadRequestError('user not foud');
+      await BookedSlotService._emailService.sendEmailConfirmation({
+        email: foundUser?.email,
+        content,
+        subject: 'Book court confirmation',
+        attachment: attachments,
+      });
+      return bookedSlot;
     }
   }
 
@@ -254,11 +353,10 @@ export class BookedSlotService implements IBookedSlotService {
     const booking = await BookedSlotService._bookingService.foundBooking(
       bookingId
     );
-    console.log(avgs);
     if (!booking) throw new BadRequestError('Booking not found!');
     if (message == 'Successful.') {
       const updateBooking =
-        await BookedSlotService._bookingService.updateBooking(
+        await BookedSlotService._bookingService.updateBookingStatus(
           bookingId,
           'active'
         );
@@ -270,10 +368,52 @@ export class BookedSlotService implements IBookedSlotService {
       );
 
       if (!billUpdate) throw new BadRequestError('Bill update fail');
-      return booking;
+      var bookedSlot =
+        await BookedSlotService._bookedSlotRepository.getSlotByBookingId(
+          booking.id
+        );
+      const host = process.env.HOST;
+      var attachments: SendEmailV3_1.InlinedAttachment[] = [];
+      var listQRMail: QRMail[] = await Promise.all(
+        bookedSlot.map(async (x, index) => {
+          const qrBuffer = await QRCode.toBuffer(
+            `${host}/api/bookSlots/checkIn?bookedSlotId=${x.id}`
+          );
+          const attachmentId = `qr-${index}.png`;
+          const base64QR = qrBuffer.toString('base64');
+
+          attachments.push({
+            ContentType: 'image/png',
+            Filename: attachmentId,
+            Base64Content: base64QR,
+            ContentID: attachmentId,
+          });
+          return {
+            date: x.date,
+            price: x.price,
+            QRimg: `<h4>Date: </h4>${x.date}</br><h4>Price: </h4>${x.price}</br><img src="cid:${attachmentId}"/>`,
+          };
+        })
+      );
+      const content = listQRMail
+        .map((x) => {
+          return x.QRimg;
+        })
+        .join('');
+      const foundUser = await BookedSlotService._userService.getUserById({
+        id: booking.userId,
+      });
+      if (!foundUser) throw new BadRequestError('user not foud');
+      await BookedSlotService._emailService.sendEmailConfirmation({
+        email: foundUser?.email,
+        content,
+        subject: 'Book court confirmation',
+        attachment: attachments,
+      });
+      return content;
     } else {
       const updateBooking =
-        await BookedSlotService._bookingService.updateBooking(
+        await BookedSlotService._bookingService.updateBookingStatus(
           bookingId,
           'canceled'
         );
@@ -290,5 +430,76 @@ export class BookedSlotService implements IBookedSlotService {
       );
       throw new BadRequestError('Fail at payment');
     }
+  }
+
+  public async updateCheckIn(bookedSlotId: string): Promise<any> {
+    //find bookedSlot
+    var bookedSlot =
+      await BookedSlotService._bookedSlotRepository.findBookedSlot(
+        bookedSlotId
+      );
+    if (!bookedSlot) throw new BadRequestError('Booked slot not found');
+    //find booking
+    var foundBooking = await BookedSlotService._bookingService.foundBooking(
+      bookedSlot.bookingId
+    );
+    if (!foundBooking) throw new BadRequestError('Booking Not found');
+    //find bill
+    var foundBill = await BookedSlotService._billService.getBillById(
+      foundBooking.billId
+    );
+    if (!foundBill) throw new BadRequestError('Bill not found');
+    //find remain money
+    const remainMoney = foundBooking.totalPrice - foundBill.total;
+    //update booked slot checkiIn to "yes"
+    if (bookedSlot.checkedIn == 'yes')
+      throw new BadRequestError('Booked slot is not available');
+    const bookSlot =
+      await BookedSlotService._bookedSlotRepository.updateCheckIn({
+        bookedSlotId: bookedSlot.id,
+        checkIn: 'yes',
+      });
+    return {
+      bookSlot,
+      remainMoney,
+    };
+  }
+
+  public async updateRemainMoney(
+    bookedSlotId: string,
+    money: number
+  ): Promise<any> {
+    var bookedSlot =
+      await BookedSlotService._bookedSlotRepository.findBookedSlot(
+        bookedSlotId
+      );
+    if (!bookedSlot) throw new BadRequestError('Booked slot not found');
+    //find booking
+    var foundBooking = await BookedSlotService._bookingService.foundBooking(
+      bookedSlot.bookingId
+    );
+    if (!foundBooking) throw new BadRequestError('Booking Not found');
+    //find bill
+    var foundBill = await BookedSlotService._billService.getBillById(
+      foundBooking.billId
+    );
+    if (!foundBill) throw new BadRequestError('Bill not found');
+    //find remain money
+    var bookingRemain =
+      await BookedSlotService._bookingService.updateBookingPrice(
+        foundBooking.id,
+        foundBooking.totalPrice + money
+      );
+    const remainMoney = bookingRemain.totalPrice - foundBill.total;
+    return {
+      bookingRemain,
+      remainMoney,
+    };
+  }
+
+  public async getBookedSlotsByClubId(clubId: string): Promise<bookedSlot[]> {
+    return await BookedSlotService._bookedSlotRepository.getBookedSlotByClubId(
+      clubId
+    );
   }
 }

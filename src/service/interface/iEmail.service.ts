@@ -1,3 +1,5 @@
+import { SendEmailV3_1 } from 'node-mailjet';
+
 export interface IEmailService {
   sendEmailLinkVerify({
     html,
@@ -10,6 +12,18 @@ export interface IEmailService {
     subject: string;
     text: string;
   }): Promise<any>;
-
+  sendEmailTokenStaff({ email }: { email: string }): Promise<any>;
+  sendEmailTokenOwner({ email }: { email: string }): Promise<any>;
   sendEmailToken({ email }: { email: string }): Promise<any>;
+  sendEmailConfirmation({
+    email,
+    content,
+    subject,
+    attachment,
+  }: {
+    subject: string;
+    email: string;
+    content: string;
+    attachment: SendEmailV3_1.InlinedAttachment[];
+  }): Promise<any>;
 }

@@ -20,4 +20,13 @@ export interface IBookedSlotRepository {
   }): Promise<bookedSlot[]>;
   getAllBookedSlot(): Promise<bookedSlot[]>;
   deleteManyBookedSlot(bookingId: string): Promise<void>;
+  getSlotByBookingId(bookingId: string): Promise<bookedSlot[]>;
+  updateCheckIn({
+    bookedSlotId,
+    checkIn,
+  }: {
+    bookedSlotId: string;
+    checkIn: checkInStatus;
+  }): Promise<bookedSlot>;
+  getBookedSlotByClubId(clubId: string): Promise<bookedSlot[]>;
 }

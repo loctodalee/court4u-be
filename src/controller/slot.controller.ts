@@ -62,4 +62,41 @@ export class SlotController {
       }),
     }).send(res);
   }
+
+  public async getClubWithDateTime(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'get court remain court',
+      metaData: await SlotController.slotService.getClubWithDateTime(
+        new Date(req.query.date as string),
+        new Date(req.query.time as string)
+      ),
+    }).send(res);
+  }
+
+  public async getSlotInfo(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'get court remain court',
+      metaData: await SlotController.slotService.getSlotInfo({
+        clubId: req.params.clubId as string,
+        startDate: new Date(req.query.startDate as string),
+      }),
+    }).send(res);
+  }
+
+  public async deleteSlot(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'delete slot success',
+      metaData: await SlotController.slotService.deleteSlot({
+        clubId: req.clubId,
+        slotId: req.params.id,
+      }),
+    }).send(res);
+  }
+
+  public async test(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'get exsited',
+      metaData: await SlotController.slotService.test({ ...req.body }),
+    }).send(res);
+  }
 }

@@ -3,7 +3,7 @@ import { List } from 'lodash';
 import { BillRepository } from '../repository/bill.repository';
 import { IBillService } from './interface/iBill.service';
 import { IBillRepository } from '../repository/interface/iBill.repository';
-
+import { getRedis } from '../lib/init.redis';
 export class BillService implements IBillService {
   private static Instance: BillService;
   public static getInstance(): IBillService {
@@ -15,6 +15,9 @@ export class BillService implements IBillService {
   private static billRepository: IBillRepository = BillRepository.getInstance();
 
   constructor() {}
+  public async getBillFullInfo(id: string): Promise<any> {
+    return await BillService.billRepository.getBillIdFullInfo(id);
+  }
 
   public async getBillById(id: string): Promise<bill | null> {
     return BillService.billRepository.getBillById(id);
@@ -44,10 +47,18 @@ export class BillService implements IBillService {
       status?: BillStatus;
     }
   ): Promise<bill | null> {
-    return BillService.billRepository.updateBill(id, data);
+    return await BillService.billRepository.updateBill(id, data);
   }
 
   public async deleteBill(id: string): Promise<bill | null> {
-    return BillService.billRepository.deleteBill(id);
+    return await BillService.billRepository.deleteBill(id);
+  }
+
+  public async getBillsByClubId(clubId: string): Promise<bill[]> {
+    return await BillService.billRepository.getBillsByClubId(clubId);
+  }
+
+  public async getBillByOwnerId(id: string): Promise<bill[]> {
+    return await BillService.billRepository.getBillByOwnerId(id);
   }
 }

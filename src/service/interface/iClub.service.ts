@@ -9,6 +9,7 @@ export interface IClubService {
     cityOfProvince,
     logoUrl,
     description,
+    preOrder,
   }: {
     courtOwnerId: string;
     name: string;
@@ -17,6 +18,7 @@ export interface IClubService {
     cityOfProvince: string;
     logoUrl: string | null;
     description: string;
+    preOrder: number;
   }): Promise<club>;
   // findClubInfo({ clubId }: { clubId: string }): Promise<any>;
   foundClubById({ clubId }: { clubId: string }): Promise<club | null>;
@@ -31,13 +33,30 @@ export interface IClubService {
       logoUrl?: string;
       description?: string;
       status?: ClubStatus;
+      preOrder?: number;
     }
   ): Promise<club>;
   deleteClub({ id }: { id: string }): Promise<club>;
+  updateClubStatus({
+    clubId,
+    status,
+  }: {
+    clubId: string;
+    status: ClubStatus;
+  }): Promise<club>;
   searchByLocation(data: {
     cityOfProvince?: string;
     district?: string;
     address?: string;
     name?: string;
   }): Promise<club[]>;
+  updateApiKey({
+    userId,
+    clubId,
+  }: {
+    userId: string;
+    clubId: string;
+  }): Promise<club>;
+  getClubsByOwnerId(id: string): Promise<club[]>;
+  findClubInfo(clubId: string): Promise<any>;
 }

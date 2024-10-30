@@ -29,6 +29,25 @@ export class SlotService implements ISlotService {
     this._clubService = ClubService.getInstance();
     this._slotRepository = SlotRepository.getInstance();
   }
+  public async test({
+    clubId,
+    dateOfWeek,
+    startTime,
+    endTime,
+  }: {
+    clubId: string;
+    dateOfWeek: number;
+    startTime: Date;
+    endTime: Date;
+  }): Promise<any> {
+    return await SlotService._slotRepository.findExistedSlot(
+      clubId,
+      dateOfWeek,
+      startTime,
+      endTime
+    );
+  }
+
   public async addSlot({
     clubId,
     startTime,
@@ -94,15 +113,20 @@ export class SlotService implements ISlotService {
     startDate: Date;
     endDate: Date;
   }): Promise<any> {
+    var date = startDate.setDate(startDate.getDate() + 1);
+    var start = new Date(date);
+    var end = toMidnight(endDate);
+
+    let listDate: number[] = [];
+    for (let i = start; i <= end; i.setDate(i.getDate() + 1)) {
+      listDate.push(i.getDay());
+    }
     var club = await SlotService._clubService.foundClubById({ clubId });
     if (!club) throw new BadRequestError('Club not found');
-    var slots = await SlotService._slotRepository.findManySlot({
-      options: {
-        where: {
-          clubId,
-        },
-      },
-    });
+    var slots = await SlotService._slotRepository.findSlotByDateListAndClubId(
+      clubId,
+      listDate
+    );
     if (!slots) throw new BadRequestError('Slot not found');
     type slotInfo = {
       id: string;
@@ -117,21 +141,17 @@ export class SlotService implements ISlotService {
       date: Date;
     };
 
-    var start = toMidnight(startDate);
-    var end = toMidnight(endDate);
     var listSlotInfo: slotInfo[] = [];
-    for (let i = start; i <= end; i.setDate(i.getDate() + 1)) {
-      console.log(i);
+
+    for (let i = new Date(date); i <= end; i.setDate(i.getDate() + 1)) {
       slots.forEach((x) => {
-        listSlotInfo.push({
-          ...x,
-          // courtRemain: await SlotService._slotOnCourtService.getRemainCourt({
-          //   slotId: x.id,
-          //   date: i,
-          // }),
-          courtRemain: 1,
-          date: new Date(i.getFullYear(), i.getMonth(), i.getDate()),
-        });
+        if (x.dateOfWeek == i.getDay()) {
+          listSlotInfo.push({
+            ...x,
+            courtRemain: 1,
+            date: new Date(i.getFullYear(), i.getMonth(), i.getDate() + 1),
+          });
+        }
       });
     }
 
@@ -144,7 +164,111 @@ export class SlotService implements ISlotService {
           });
       })
     );
-    console.log(listSlotInfo);
     return listSlotInfo;
+  }
+
+  public async getClubWithDateTime(date: Date, time: Date): Promise<any> {
+    const slots = await SlotService._slotRepository.findManySlot({
+      options: {},
+    });
+    interface slotRemain extends slot {
+      remain: number;
+    }
+    const remainSlotList: slotRemain[] = [];
+
+    await Promise.all(
+      slots.map(async (x) => {
+        const remain = await SlotService._slotOnCourtService.getRemainCourt({
+          slotId: x.id,
+          date,
+        });
+        if (remain != 0) {
+          remainSlotList.push({
+            ...x,
+            remain: remain,
+          });
+        }
+      })
+    );
+
+    console.log(remainSlotList);
+
+    return remainSlotList;
+  }
+
+  public async getSlotInfo({
+    clubId,
+    startDate,
+  }: {
+    clubId: string;
+    startDate: Date;
+  }): Promise<any> {
+    const start = toMidnight(startDate);
+    const end = new Date(startDate);
+    end.setDate(start.getDate() + 6);
+    let listDate: number[] = [];
+    for (let i = new Date(start); i <= end; i.setDate(i.getDate() + 1)) {
+      listDate.push(i.getDay());
+    }
+    console.log(start);
+    console.log(end);
+    var club = await SlotService._clubService.foundClubById({ clubId });
+    if (!club) throw new BadRequestError('Club not found');
+    var slots = await SlotService._slotRepository.findSlotByDateListAndClubId(
+      clubId,
+      listDate
+    );
+    if (!slots) throw new BadRequestError('Slot not found');
+    type slotInfo = {
+      id: string;
+      clubId: string;
+      startTime: Date;
+      endTime: Date;
+      dateOfWeek: number;
+      createdAt: Date;
+      updatedAt: Date;
+      price: number;
+      courtRemain: number;
+      date: Date;
+    };
+
+    var listSlotInfo: slotInfo[] = [];
+    for (let i = start; i <= end; i.setDate(i.getDate() + 1)) {
+      console.log(i);
+      console.log(i.getDay());
+      slots.forEach((x) => {
+        if (x.dateOfWeek == i.getDay()) {
+          listSlotInfo.push({
+            ...x,
+            courtRemain: 1,
+            date: new Date(i.getFullYear(), i.getMonth(), i.getDate() + 1),
+          });
+        }
+      });
+    }
+    await Promise.all(
+      listSlotInfo.map(async (slotInfo) => {
+        slotInfo.courtRemain =
+          await SlotService._slotOnCourtService.getRemainCourt({
+            slotId: slotInfo.id,
+            date: slotInfo.date,
+          });
+        console.log(slotInfo);
+      })
+    );
+    return listSlotInfo;
+  }
+
+  public async deleteSlot({
+    clubId,
+    slotId,
+  }: {
+    clubId: string;
+    slotId: string;
+  }): Promise<slot> {
+    const result = await SlotService._slotRepository.updateSlot(slotId, {
+      status: 'disable',
+    });
+    return result;
   }
 }

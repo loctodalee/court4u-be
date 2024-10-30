@@ -51,13 +51,28 @@ export class MemberSubscriptionService implements IMemberSubscriptionService {
           keySearch: subscriptionId,
         }
       );
-    if (!foundSubs) throw new BadRequestError('Subscription not found');
-
+    if (
+      !foundSubs ||
+      foundSubs.status == 'disable' ||
+      foundSubs.status == 'block'
+    )
+      throw new BadRequestError('Subscription not found');
     const foundUser = await MemberSubscriptionService._userService.getUserById({
       id: memberId,
     });
-    if (!foundUser) throw new BadRequestError('User not found');
-
+    if (
+      !foundUser ||
+      foundUser.status == 'block' ||
+      foundUser.status == 'disable'
+    )
+      throw new BadRequestError('User not found');
+    const foundExistedMemberSubs =
+      await MemberSubscriptionService._memberSubscriptionRepository.findSubscriptionByIdAndUserId(
+        foundSubs.id,
+        foundUser.id
+      );
+    if (foundExistedMemberSubs)
+      throw new BadRequestError('User has buy this subscription');
     const bill = await MemberSubscriptionService._billService.createBill({
       method: 'momo',
       date: new Date(Date.now()),
@@ -109,7 +124,7 @@ export class MemberSubscriptionService implements IMemberSubscriptionService {
       {
         price: foundSubs.price,
         orderId: memberSubs!.id,
-        returnUrl: '/memberSubscription/momo/PaymentCallBack',
+        returnUrl: '/memberSubscriptions/momo/PaymentCallBack',
       }
     );
 
@@ -197,9 +212,10 @@ export class MemberSubscriptionService implements IMemberSubscriptionService {
   }
 
   public async updateMonthSubscription(
-    id: string
-  ): Promise<memberSubscription> {
-    const today = new Date(Date.now()).toISOString().split('T')[0];
+    id: string,
+    date: Date
+  ): Promise<memberSubscription | null> {
+    const bookDate = new Date(date).toISOString().split('T')[0];
     const subscription =
       await MemberSubscriptionService._memberSubscriptionRepository.foundMemberSubscription(
         {
@@ -213,7 +229,9 @@ export class MemberSubscriptionService implements IMemberSubscriptionService {
     if (!subscription) {
       throw new NotFoundError('Subscription not found');
     }
-    if (!subscription.usesHistory.includes(today)) {
+    if (subscription.status == 'disable' || subscription.status == 'pending')
+      return null;
+    if (!subscription.usesHistory.includes(bookDate)) {
       const updatedSubscription =
         await MemberSubscriptionService._memberSubscriptionRepository.updateMemberSubscription(
           {
@@ -221,7 +239,7 @@ export class MemberSubscriptionService implements IMemberSubscriptionService {
               where: { id },
               data: {
                 usesHistory: {
-                  push: today,
+                  push: bookDate,
                 },
               },
             },
@@ -229,14 +247,14 @@ export class MemberSubscriptionService implements IMemberSubscriptionService {
         );
       return updatedSubscription;
     } else {
-      return subscription;
+      return null;
     }
   }
 
   public async updateTimeSubscription(
     id: string,
     time: number
-  ): Promise<memberSubscription> {
+  ): Promise<memberSubscription | null> {
     const options = {
       where: {
         id,
@@ -247,9 +265,71 @@ export class MemberSubscriptionService implements IMemberSubscriptionService {
         },
       },
     };
+    const foundMemberSubscription =
+      await MemberSubscriptionService._memberSubscriptionRepository.foundMemberSubscription(
+        {
+          options: {
+            where: {
+              id,
+            },
+          },
+        }
+      );
+    if (!foundMemberSubscription) return null;
+    if (
+      foundMemberSubscription.status == 'disable' ||
+      foundMemberSubscription.status == 'pending'
+    )
+      return null;
+    if (foundMemberSubscription.timeRemain! - time < 0) {
+      return null;
+    }
     return await MemberSubscriptionService._memberSubscriptionRepository.updateMemberSubscription(
       {
         options,
+      }
+    );
+  }
+
+  public async findMemberSubscriptionBySubId(
+    id: string
+  ): Promise<memberSubscription[]> {
+    return await MemberSubscriptionService._memberSubscriptionRepository.findBySubscriptionId(
+      id
+    );
+  }
+
+  public async getAllMemberSubscription(): Promise<memberSubscription[]> {
+    return await MemberSubscriptionService._memberSubscriptionRepository.getAll();
+  }
+
+  public async getMemberSubscriptionByClubId(
+    clubId: string
+  ): Promise<memberSubscription[]> {
+    return await MemberSubscriptionService._memberSubscriptionRepository.getByClubId(
+      clubId
+    );
+  }
+
+  public async getMemberSubscriptionByUserId(
+    userId: string
+  ): Promise<memberSubscription[]> {
+    return await MemberSubscriptionService._memberSubscriptionRepository.getByUserId(
+      userId
+    );
+  }
+
+  public async findExistedMemberSubscription({
+    clubId,
+    userId,
+  }: {
+    clubId: string;
+    userId: string;
+  }): Promise<memberSubscription[] | null> {
+    return await MemberSubscriptionService._memberSubscriptionRepository.findExisted(
+      {
+        clubId,
+        userId,
       }
     );
   }

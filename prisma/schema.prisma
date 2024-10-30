@@ -25,15 +25,15 @@ model user {
   googleAccessToken   String?
   facebookId          String?              @unique
   facebookAccessToken String?
-  apiKey              String?              @unique
+  apiKey              String?         
   booking             booking[]
-  cancellation        cancellation[]
   club                club[]
   keyToken            keyTokens?
   memberSubscription  memberSubscription[]
   review              review[]
   staffProfile        staffProfile?
   userRole userRole[]
+  
 }
 
 model keyTokens {
@@ -69,10 +69,11 @@ model userRole {
 
 model staffProfile {
   id        String        @id @default(uuid())
-  userId    String     @unique
-  clubId    String     @unique
-  club      club       @relation(fields: [clubId], references: [id])
-  user      user      @relation(fields: [userId], references: [id])
+  userId    String @unique   
+  clubId    String     
+  club club @relation(fields: [clubId], references: [id])
+  user user @relation(fields: [userId], references: [id])
+  
 }
 
 
@@ -90,14 +91,6 @@ model review {
   user         user    @relation(fields: [reviewerId], references: [id])
 }
 
-model cancellation {
-  id             String   @id
-  canceledSlotId String?
-  cancelerId     String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  user           user    @relation(fields: [cancelerId], references: [id])
-}
 
 model bookedSlot {
   id        String   @id @default(uuid())
@@ -115,7 +108,7 @@ model bookedSlot {
 model booking {
   id        String   @id @default(uuid())
   userId    String
-  billId    String
+  billId    String @unique
   date      DateTime
   status    BookingStatus
   totalPrice Float
@@ -123,6 +116,8 @@ model booking {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   user      user    @relation(fields: [userId], references: [id])
+  bill bill @relation(fields: [billId], references: [id])
+
 }
 
 model bill {
@@ -136,6 +131,7 @@ model bill {
   type      BillType
   memberSubscription memberSubscription?
   clubSubscription clubSubscription?
+  booking booking?
 }
 
 model club {
@@ -147,17 +143,18 @@ model club {
   cityOfProvince     String               @db.VarChar
   logoUrl            String?              @db.VarChar
   description        String?              @db.VarChar
-  apiKey             String               @unique @default(uuid())
+  apiKey             String               @default(uuid())
   status ClubStatus @default(disable)
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt
   user               user                @relation(fields: [courtOwnerId], references: [id])
+  preOrder Int @default(100)
   clubImage          clubImage[]
   review             review[]
   slot               slot[]
   clubSubscription  clubSubscription?
-  staffProfile       staffProfile?
-  subscriptionDetail subscriptionDetail?
+  staffProfile       staffProfile[]
+  subscriptionDetail subscriptionDetail[]
   subscriptionOption subscriptionOption[]
   court court[]
 }
@@ -210,7 +207,7 @@ model subscriptionDetail {
   totalTime  Int?
   createdAt   DateTime                 @default(now())
   updatedAt   DateTime                 @updatedAt
-  clubId      String                   @unique
+  clubId      String                   
   status      SubscriptionOptionStatus
   club        club                     @relation(fields: [clubId], references: [id])
 }
@@ -225,6 +222,7 @@ model slot {
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
   price Float
+  status SlotStatus @default(active)
   bookedSlot    bookedSlot[]
   club          club            @relation(fields: [clubId], references: [id])
   subOptionSlot subOptionSlot[]
@@ -388,5 +386,10 @@ enum BookingStatus {
   pending
   active
   canceled
+}
+
+enum SlotStatus {
+  active
+  disable
 }
 

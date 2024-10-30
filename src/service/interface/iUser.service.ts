@@ -1,9 +1,10 @@
-import { user } from '@prisma/client';
+import { Sex, user, UserStatus } from '@prisma/client';
 
 export interface IUserService {
-  getAll(): Promise<user[]>;
+  getAll(): Promise<any[]>;
   getUserByEmail({ email }: { email: string }): Promise<user | null>;
   getUserById({ id }: { id: string }): Promise<user | null>;
+  getUserByIdFilter({ id }: { id: string }): Promise<any>;
   createNewUser({
     fullname,
     password,
@@ -17,7 +18,7 @@ export interface IUserService {
     email: string;
     phone: string;
     status: string;
-    otp: string;
+    otp?: string;
   }): Promise<user>;
   updateUser({ options }: { options: any }): Promise<user>;
   updateUserAfterVerify({ otp }: { otp: string }): Promise<user>;
@@ -74,5 +75,34 @@ export interface IUserService {
     role: string[];
     otp: string;
     clubId: string;
+  }): Promise<user>;
+  changePasswordAfterSignUp({
+    userId,
+    password,
+  }: {
+    userId: string;
+    password: string;
+  }): Promise<void>;
+  updateUserOtp(otp: string, userId: string): Promise<user>;
+  updateUserInfo({
+    id,
+    fullname,
+    password,
+    email,
+    sex,
+    phone,
+    avatarUrl,
+    dateOfBirth,
+    status,
+  }: {
+    id: string;
+    fullname?: string;
+    password?: string;
+    email?: string;
+    sex?: Sex;
+    phone?: string;
+    avatarUrl?: string;
+    dateOfBirth?: string;
+    status?: UserStatus;
   }): Promise<user>;
 }

@@ -5,12 +5,10 @@ export interface IStaffProfileService {
   getStaffProfiles(): Promise<List<staffProfile> | null>;
   addStaffProfile(data: {
     fullname: string;
-    password: string | null;
     email: string;
-    phone: string | null;
-    sex: Sex;
-    avatarUrl: string | null;
-    dateOfBirth: Date | null;
+    phone: string;
     clubId: string;
   }): Promise<staffProfile>;
+  getStaffProfileByClubId(clubId: string): Promise<staffProfile[]>;
+  getStaffProfileByOwnerId(ownerId: string): Promise<staffProfile[]>;
 }

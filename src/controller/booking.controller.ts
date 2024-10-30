@@ -62,11 +62,28 @@ export class BookingController {
   }
 
   public async paymentCallBack(req: Request, res: Response) {
+    await BookingController.bookedSlotService.paymentCallBack({
+      ...req.query,
+    }),
+      res.redirect(`https://court4u-fe.vercel.app/thanks`);
+  }
+
+  public async checkIn(req: Request, res: Response) {
     new SuccessResponse({
-      message: 'Payment response',
-      metaData: await BookingController.bookedSlotService.paymentCallBack({
-        ...req.query,
-      }),
+      message: 'Checkin Success',
+      metaData: await BookingController.bookedSlotService.updateCheckIn(
+        req.query.bookedSlotId as string
+      ),
+    }).send(res);
+  }
+
+  public async updateRemainPrice(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Checkin Success',
+      metaData: await BookingController.bookedSlotService.updateRemainMoney(
+        req.params.bookedSlotId,
+        req.body.price
+      ),
     }).send(res);
   }
 }

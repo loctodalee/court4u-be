@@ -32,4 +32,16 @@ export class SubscriptionController {
         ),
     }).send(res);
   }
+
+  async getSubscriptionByClubId(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Create new subscription',
+      metaData:
+        await SubscriptionController.subscriptionService.searchSubscriptionByClubId(
+          {
+            keySearch: req.params.clubId,
+          }
+        ),
+    }).send(res);
+  }
 }

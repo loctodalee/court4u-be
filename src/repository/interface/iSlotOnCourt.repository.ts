@@ -1,4 +1,5 @@
 import { CourtSlotStatus, slotOnCourt, slot } from '@prisma/client';
+import { slotOnCourtData } from '../../service/slotOnCourt.service';
 
 export interface ISlotOnCourtRepository {
   addCourtOnSlot(data: {
@@ -16,4 +17,5 @@ export interface ISlotOnCourtRepository {
   searchSlotOnCourt(id: string): Promise<slotOnCourt | null>;
   getAllSlotOnCourt(): Promise<slotOnCourt[]>;
   getAllCourtBySlotId(id: string): Promise<slotOnCourt[] | null>;
+  addManySlotOnCourt(slotOnCourtList: slotOnCourtData[]): Promise<any>;
 }

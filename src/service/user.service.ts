@@ -1,7 +1,13 @@
-import { user } from '@prisma/client';
+import { Sex, user, UserStatus } from '@prisma/client';
 import { UserRepository } from '../repository/user.repository';
 import { IUserService } from './interface/iUser.service';
-import { AuthFailure, BadRequestError } from '../handleResponse/error.response';
+import {
+  AuthFailure,
+  BadRequestError,
+  NotFoundError,
+} from '../handleResponse/error.response';
+import { filterData } from '../util/filterData';
+import bcrypt from 'bcrypt';
 
 export class UserService implements IUserService {
   private static Instance: UserService;
@@ -11,7 +17,7 @@ export class UserService implements IUserService {
     }
     return this.Instance;
   }
-  public async getAll(): Promise<user[]> {
+  public async getAll(): Promise<any[]> {
     return UserRepository.getInstance().getAll();
   }
   public async getUserByEmail({
@@ -26,7 +32,29 @@ export class UserService implements IUserService {
     };
     return await UserRepository.getInstance().getUser({ options });
   }
-
+  public async getUserByIdFilter({ id }: { id: string }): Promise<any> {
+    const options = {
+      where: {
+        id,
+      },
+    };
+    const result = await UserRepository.getInstance().getUser({ options });
+    if (!result) throw new NotFoundError('User not found');
+    return filterData({
+      fields: [
+        'id',
+        'fullname',
+        'email',
+        'phone',
+        'sex',
+        'avatarUrl',
+        'dateOfBirth',
+        'status',
+        'apiKey',
+      ],
+      object: result,
+    });
+  }
   public async getUserById({ id }: { id: string }): Promise<user | null> {
     const options = {
       where: {
@@ -48,7 +76,7 @@ export class UserService implements IUserService {
     email: string;
     phone: string;
     status: string;
-    otp: string;
+    otp?: string;
   }): Promise<user> {
     const options = {
       data: {
@@ -86,6 +114,7 @@ export class UserService implements IUserService {
   }
 
   public async updateUserAfterVerify({ otp }: { otp: string }): Promise<user> {
+    console.log(otp);
     const options = {
       where: {
         otp,
@@ -199,5 +228,55 @@ export class UserService implements IUserService {
       },
     };
     return await UserRepository.getInstance().createNewUser({ options });
+  }
+
+  public async changePasswordAfterSignUp({
+    userId,
+    password,
+  }: {
+    userId: string;
+    password: string;
+  }): Promise<void> {
+    console.log(password);
+    const hashPassword = await bcrypt.hash(password, 10);
+    await UserRepository.getInstance().updatePassword(userId, hashPassword);
+  }
+
+  public async updateUserOtp(otp: string, userId: string): Promise<user> {
+    return await UserRepository.getInstance().updateUserOtp(otp, userId);
+  }
+
+  public async updateUserInfo({
+    id,
+    fullname,
+    password,
+    email,
+    sex,
+    phone,
+    avatarUrl,
+    dateOfBirth,
+    status,
+  }: {
+    id: string;
+    fullname?: string;
+    password?: string;
+    email?: string;
+    sex?: Sex;
+    phone?: string;
+    avatarUrl?: string;
+    dateOfBirth?: string;
+    status?: UserStatus;
+  }): Promise<user> {
+    const data = {
+      fullname,
+      password,
+      email,
+      sex,
+      phone,
+      avatarUrl,
+      dateOfBirth,
+      status,
+    };
+    return await UserRepository.getInstance().updateUserInfo(id, data);
   }
 }

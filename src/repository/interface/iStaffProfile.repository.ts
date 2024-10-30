@@ -1,4 +1,4 @@
-import { Sex, staffProfile, users } from '@prisma/client';
+import { Sex, staffProfile, user } from '@prisma/client';
 import { List } from 'lodash';
 
 export interface IStaffProfileRepository {
@@ -7,13 +7,7 @@ export interface IStaffProfileRepository {
     userId: string;
     clubId: string;
   }): Promise<staffProfile>;
-  createUser(data: {
-    fullname: string;
-    password: string | null;
-    email: string;
-    phone: string | null;
-    sex: Sex;
-    avatarUrl: string | null;
-    dateOfBirth: Date | null;
-  }): Promise<users>;
+
+  getStaffProfileByClubId(clubId: string): Promise<staffProfile[]>;
+  getStaffProfileByOwnerId(ownerId: string): Promise<staffProfile[]>;
 }

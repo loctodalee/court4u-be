@@ -50,9 +50,28 @@ export class AuthController {
     await AuthController.authService.checkLoginEmailToken({
       token: req.query.token,
     }),
-      res.redirect('http://localhost:3000/login');
+      res.redirect('https://court4u-fe.vercel.app/login');
   }
 
+  async checkLoginStaffEmailToken(req: Request, res: Response) {
+    const tokens = await AuthController.authService.checkLoginEmailToken({
+      token: req.query.token,
+    });
+
+    res.redirect(
+      `https://court4u-fe.vercel.app/change-password?accessToken=${tokens.tokens.accessToken}&refreshToken=${tokens.tokens.refreshToken}`
+    );
+  }
+
+  async checkLoginOwnerEmailToken(req: Request, res: Response) {
+    const tokens = await AuthController.authService.checkLoginEmailToken({
+      token: req.query.token,
+    });
+    console.log(tokens);
+    res.redirect(
+      `https://court4u-fe.vercel.app/change-password?accessToken=${tokens.tokens.accessToken}&refreshToken=${tokens.tokens.refreshToken}`
+    );
+  }
   /**
    * @description Chuyển hướng đến trang login của third party (facebook, google) để xử lý và tạo ra accesstoken và refreshtoken
    * @test localhost:3000/v1/api/auth/google
@@ -65,7 +84,7 @@ export class AuthController {
     );
     console.log(tokens);
     res.redirect(
-      `http://localhost:3000/redirect?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`
+      `https://court4u-fe.vercel.app/redirect?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`
     );
   }
   async LoginGoogle(req: Request, res: Response) {
@@ -95,6 +114,13 @@ export class AuthController {
     new SuccessResponse({
       message: 'Send mail success',
       metaData: await AuthController.authService.newCourtOwner({ ...req.body }),
+    }).send(res);
+  }
+
+  async logout(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Send mail success',
+      metaData: await AuthController.authService.logOut(req.user.userId),
     }).send(res);
   }
 }

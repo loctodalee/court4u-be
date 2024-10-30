@@ -25,6 +25,7 @@ export interface IClubSubscriptionRepository {
       status?: clubSubscriptionStatus;
     }
   ): Promise<clubSubscription>;
-
+  foundClubsubByClubId(id: string): Promise<clubSubscription | null>;
   foundClubSubById(id: string): Promise<clubSubscription | null>;
+  getAll(): Promise<clubSubscription[]>;
 }

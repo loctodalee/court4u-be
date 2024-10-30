@@ -25,4 +25,31 @@ export class UserController {
       }),
     }).send(res);
   }
+  async getUserById(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Get Success',
+      metaData: await UserController.userService.getUserById({
+        id: req.params.id,
+      }),
+    }).send(res);
+  }
+  async changePasswordAfterRegister(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Change password success',
+      metaData: await UserController.userService.changePasswordAfterSignUp({
+        userId: req.user.userId,
+        password: req.body.password,
+      }),
+    }).send(res);
+  }
+
+  async updateUserInfo(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Update User Success',
+      metaData: await UserController.userService.updateUserInfo({
+        id: req.user.userId,
+        ...req.body,
+      }),
+    }).send(res);
+  }
 }

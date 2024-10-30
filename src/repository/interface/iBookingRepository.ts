@@ -10,5 +10,13 @@ export interface IBookingRepository {
   }): Promise<booking>;
   getAllBooking(): Promise<booking[]>;
   foundBooking(id: string): Promise<booking | null>;
-  updateBooking(bookingId: string, status: BookingStatus): Promise<booking>;
+  updateBooking(
+    bookingId: string,
+    data: {
+      status?: BookingStatus;
+      totalPrice?: number;
+    }
+  ): Promise<booking>;
+  deleteBooking(id: string): Promise<void>;
+  getBookingsByClubId(id: string): Promise<booking[]>;
 }

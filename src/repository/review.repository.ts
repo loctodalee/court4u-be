@@ -1,6 +1,9 @@
 import { review } from '@prisma/client';
 import { IReviewRepository } from './interface/iReview.repository';
 import prisma from '../lib/prisma';
+import { getRedis } from '../lib/init.redis';
+import { randomInt } from 'crypto';
+const { instanceConnect: redisClient } = getRedis();
 
 export class ReviewRepository implements IReviewRepository {
   private static Instance: ReviewRepository;
@@ -16,7 +19,8 @@ export class ReviewRepository implements IReviewRepository {
   }: {
     options: any;
   }): Promise<review | null> {
-    return await prisma.review.findFirst(options);
+    const result = await prisma.review.findFirst(options);
+    return result;
   }
 
   public async updateManyReview({ options }: { options: any }): Promise<any> {

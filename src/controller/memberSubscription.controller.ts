@@ -28,16 +28,44 @@ export class MemberSubscriptionController {
   }
 
   public async paymentCallBack(req: Request, res: Response) {
+    await MemberSubscriptionController.memberSubscriptionService.paymentCallBack(
+      {
+        ...req.query,
+      }
+    ),
+      res.redirect(`https://court4u-fe.vercel.app/thanks`);
+  }
+
+  public async findBySubscriptionId(req: Request, res: Response) {
     new SuccessResponse({
-      message: 'Direct Payment',
+      message: 'Find membersubscription',
       metaData:
-        await MemberSubscriptionController.memberSubscriptionService.paymentCallBack(
+        await MemberSubscriptionController.memberSubscriptionService.findMemberSubscriptionBySubId(
+          req.params.id
+        ),
+    }).send(res);
+  }
+
+  public async findExisted(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Find exited membersubscription',
+      metaData:
+        await MemberSubscriptionController.memberSubscriptionService.findExistedMemberSubscription(
           {
-            ...req.query,
+            clubId: req.params.clubId,
+            userId: req.user.userId,
           }
         ),
     }).send(res);
-    // res.status(200).json(req.query);
-    // console.log(req.query);
+  }
+
+  public async getSubsByUserId(req: Request, res: Response) {
+    new SuccessResponse({
+      message: 'Get user membersubscription',
+      metaData:
+        await MemberSubscriptionController.memberSubscriptionService.getMemberSubscriptionByUserId(
+          req.user.userId
+        ),
+    }).send(res);
   }
 }
